@@ -1,0 +1,110 @@
+<script setup>
+</script>
+
+<template>
+  <footer class="footer">
+    <div class="footer__wrapper">
+      <div class="footer__left">
+        <div class="footer__left-top">
+          <nuxt-link to="/">Юристы</nuxt-link>
+          <nuxt-link to="/">Психологи</nuxt-link>
+          <nuxt-link to="/">Психологи</nuxt-link>
+        </div>
+        <p>
+          © 2025 LAPS
+          iDoctor – сервис по поиску врачей по всему Казахстану. Вызов врача на дом, онлайн-консультация, бесплатная запись на приём.
+        </p>
+      </div>
+      <div class="footer__right">
+        <h3>Мы в социальных сетях</h3>
+        <div class="footer__right-social">
+          <a
+            href=""
+            aria-label="instagram">
+            <img
+              src="/icons/inst.svg"
+              alt="">
+          </a>
+          <a
+            href=""
+            aria-label="youtube">
+            <img
+              src="/icons/youtube.svg"
+              alt="">
+          </a>
+        </div>
+        <p>Есть ошибка? Сообщите нам</p>
+      </div>
+    </div>
+  </footer>
+</template>
+
+<style lang="scss" scoped>
+.footer {
+  background: #1F72EE;
+  padding-top: 32px;
+  padding-bottom: 64px;
+  
+  &__wrapper {
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    width: 100%;
+    margin: auto;
+  }
+
+
+  &__left {
+    max-width: 730px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 42px;
+
+    &-top {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 16.59px;
+      line-height: 28px;
+    }
+
+    p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 11.06px;
+      line-height: 16px;
+    }
+  }
+
+  &__right {
+    max-width: 280px;
+    width: 100%;
+
+    h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      font-size: 22.13px;
+      line-height: 32px;
+    }
+
+    &-social {
+      margin-top: 16px;
+      margin-bottom: 21px;
+      display: flex;
+      gap: 18px;
+    }
+
+    p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      font-size: 11.06px;
+      line-height: 16px;
+    }
+  }
+}
+</style>
