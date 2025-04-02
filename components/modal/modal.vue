@@ -1,5 +1,4 @@
 <script setup>
-import { MaskInput } from 'vue-3-mask';
 import { computed, reactive } from 'vue';
 
 const emit = defineEmits()
@@ -77,12 +76,12 @@ const closeModal = () => {
           <img
             src="/icons/auth/electro-icon.svg"
             alt="icon">
-          <MaskInput
+          <input
             v-model="recordData.phone_number"
-            type="tel"
-            mask="+7 (###) ###-##-##" 
+            v-mask="'+7 (###) ###-##-##'"
+            type="tel" 
             placeholder="Введите номер телефона"
-            class="form-item__input"/>
+            class="form-item__input">
         </div>
       </div>
       <div

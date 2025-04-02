@@ -26,6 +26,7 @@ export default defineNuxtConfig({
 
   plugins: [
     '~/plugins/v-calendar.js',
+    '~/plugins/v-mask.js', 
   ],
 
   schemaOrg: {

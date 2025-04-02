@@ -1,6 +1,4 @@
 <script setup>
-import { MaskInput } from 'vue-3-mask'
-
 const emit = defineEmits()
 
 const userActions = (type) => {
@@ -26,12 +24,12 @@ const userActions = (type) => {
         <img
           src="/icons/auth/stack-icon.svg"
           alt="icon">
-        <MaskInput
+        <input
           v-model="phoneNumber"
-          type="tel"
-          mask="+7 (###) ###-##-##" 
+          v-mask="'+7 (###) ###-##-##'"
+          type="tel" 
           placeholder="Введите номер телефона"
-          class="form-item__input"/>
+          class="form-item__input">
       </div>
       <div class="form-item">
         <img
