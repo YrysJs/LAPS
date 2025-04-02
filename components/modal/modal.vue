@@ -1,47 +1,125 @@
 <script setup>
-import { MaskInput } from 'vue-3-mask'
+import { MaskInput } from 'vue-3-mask';
+import { computed, reactive } from 'vue';
+
+const emit = defineEmits()
+
 const step = ref(0)
+const stepText = ['Ваши данные', 'Информация о консультации', 'Подтвердите и оплатите']
+const recordData = reactive({
+  full_name: '',
+  phone_number: '',
+  appointment_date: '',
+  communication_method: "phone",
+  consultation_type: "primary",
+  specialist_id: 0,
+  specialization_id: 0
+})
+
+const disabledStepButton = computed(() => {
+  if (step.value == 0) {
+    return (recordData.full_name && recordData.phone_number)
+  }
+  if (step.value == 1) {
+    return (recordData.appointment_date && recordData.communication_method)
+  }
+  if (step.value == 2) {
+    return true
+  }
+
+  return false
+})
+
+const stepHandler = () => {
+  if (step.value < 2) {
+    step.value += 1
+  }
+}
+
+const closeModal = () => {
+  emit('close', false)
+}
 
 </script>
 
 <template>
   <div class="modal-record">
     <div class="modal-record__main">
+      <button
+        class="close"
+        @click="closeModal">
+        <img
+          src="/icons/x-close.svg"
+          alt="close icon">
+      </button>
       <h3>Морозова Алена Олеговна</h3>
-      <h4>Ваши данные {{ step + 1 }}/3</h4>
+      <h4>{{ stepText[step] }} {{ step + 1 }}/3</h4>
       <div class="modal-record__main-step">
-        
-        <div></div>
-        <div></div>
-        <div></div>
+        <div :class="{ 'active': step == 0 }"></div>
+        <div :class="{ 'active': step == 1 }"></div>
+        <div :class="{ 'active': step == 2 }"></div>
       </div>
-      <div class="modal-record__main-step-1">
-        <div class="form-item">
-          <img
-            src="/icons/auth/electro-icon.svg"
-            alt="icon">
-          <input
-            id="password"
-            type="text"
-            placeholder="|ФИО"
-            class="form-item__input" >
-        </div>
+      <div
+        v-if="step == 0"
+        class="modal-record__main-step-1">
         <div class="form-item">
           <img
             src="/icons/auth/stack-icon.svg"
             alt="icon">
+          <input
+            id="password"
+            v-model="recordData.full_name"
+            type="text"
+            placeholder="|ФИО"
+            class="form-item__input">
+        </div>
+        <div class="form-item">
+          <img
+            src="/icons/auth/electro-icon.svg"
+            alt="icon">
           <MaskInput
-            v-model="phoneNumber"
+            v-model="recordData.phone_number"
             type="tel"
             mask="+7 (###) ###-##-##" 
             placeholder="Введите номер телефона"
             class="form-item__input"/>
         </div>
       </div>
-      <div class="modal-record__main-step-1"></div>
-      <div class="modal-record__main-step-1"></div>
+      <div
+        v-if="step == 1"
+        class="modal-record__main-step-2">
+        <div>
+          <p>Дата и время</p>
+          <input type="date">
+        </div>
+        <button @click="recordData.communication_method == 'whatsapp'">
+          <img
+            src="/icons/wp-modal-icon.svg"
+            alt="icon"> <span></span> <div>
+              <img
+                src=""
+                alt="icon">
+            </div>
+        </button>
+        <button @click="recordData.communication_method == 'phone'">
+          <img
+            src="/icons/phone-modal-icon.svg"
+            alt="icon"> <span></span> <div>
+              <img
+                src=""
+                alt="icon">
+            </div>
+        </button>
+      </div>
+      <div class="modal-record__main-step-1">
+        
+      </div>
 
-      <button>Записаться на прием</button>
+      <button
+        :disabled="!disabledStepButton"
+        @click="stepHandler">
+        Записаться на прием
+      </button>
     </div>
   </div>
 </template>
@@ -65,6 +143,7 @@ const step = ref(0)
     height: fit-content;
     padding: 24px;
     border-radius: 16px;
+    position: relative;
 
     button {
       width: 100%;
@@ -150,6 +229,17 @@ const step = ref(0)
       transform: translateY(-50%);
     }
   }
+}
+
+.active {
+  background: #1F8EFB !important;
+}
+.close {
+  background: transparent !important;
+  width: fit-content !important;
+  position: absolute;
+  top: -10px;
+  right: 30px;
 }
 </style>
   

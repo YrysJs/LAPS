@@ -22,6 +22,7 @@
     "@popperjs/core": "^2.11.8",
     "@unhead/vue": "^2.0.0-rc.8",
     "@vitejs/plugin-vue": "^5.2.3",
+    "axios": "^1.8.4",
     "dayjs-nuxt": "^2.1.11",
     "eslint": "^9.22.0",
     "nuxt": "^3.16.0",

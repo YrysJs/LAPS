@@ -7,6 +7,7 @@ const router = useRouter()
 
 //data
 const activeTab = ref(0)
+const recordModal = ref(false)
 
 //tab fn
 const tabSegment = [Info, Reviews]
@@ -19,34 +20,60 @@ const setTab = (index) => {
 
 <template>
   <NuxtLayout name="default">
-    <Modal />
+    <Modal
+      v-if="recordModal"
+      @close="data => recordModal = data"/>
     <div class="specialist">
       <div class="specialist__list">
         <div class="specialist__list-item">
-          <div
-            class="specialist__list-item__left">
-            <div class="specialist__list-avatar">
-              <img
-                src="/images/test-image.png"
-                alt="avatar">
-            </div>
-            <div class="specialist__list-info">
-              <div class="specialist__list-info-top">
-                <div class="specialist__list-info__rating">
-                  <span>Юрист</span>
-                </div>
+          <div class="specialist__list-item__head">
+            <div
+              class="specialist__list-item__left">
+              <div class="specialist__list-avatar">
+                <img
+                  src="/images/test-image.png"
+                  alt="avatar">
               </div>
-              <div class="specialist__list-info-main">
-                <div class="specialist__list-info__main-name">
-                  Морозов Алена Олеговна
+              <div class="specialist__list-info">
+                <div class="specialist__list-info-top">
+                  <div class="specialist__list-info__rating">
+                    <span>Юрист</span>
+                  </div>
                 </div>
-                <div class="specialist__list-info__main-departure">
-                  Гражданство • Стаж 12 лет
+                <div class="specialist__list-info-main">
+                  <div class="specialist__list-info__main-name">
+                    Морозов Алена Олеговна
+                  </div>
+                  <div class="specialist__list-info__main-departure">
+                    Гражданство • Стаж 12 лет
+                  </div>
                 </div>
-              </div>
 
-              <div class="specialist__list-info-bottom">
+                <div class="specialist__list-info-bottom">
               
+                </div>
+              </div>
+            </div>
+            <div class="specialist__subblock">
+              <div class="specialist__subblock-btn">
+                <div class="profile__content">
+                  <div class="profile__tabs">
+                    <button
+                      :class="{ 'active': activeTab === 0 }"
+                      @click="setTab(0)">
+                      Основная информация
+                    </button>
+                    <button
+                      :class="{ 'active': activeTab === 1 }"
+                      @click="setTab(1)">
+                      Отзывы (5)
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="profile__wrapper">
+                <component
+                  :is="tabSegment[activeTab]"/>
               </div>
             </div>
           </div>
@@ -73,30 +100,8 @@ const setTab = (index) => {
                 <div><p>Первичный приём</p><strong>11 000 ₸</strong></div>
                 <div><p>Вторичный приём</p><strong>9 000 ₸</strong></div>
               </div>
-              <button>Записаться онлайн</button>
+              <button @click="recordModal = true">Записаться онлайн</button>
               <a href="tel:79093332211">Позвонить</a>
-            </div>
-          </div>
-          <div class="specialist__subblock">
-            <div class="specialist__subblock-btn">
-              <div class="profile__content">
-                <div class="profile__tabs">
-                  <button
-                    :class="{ 'active': activeTab === 0 }"
-                    @click="setTab(0)">
-                    Основная информация
-                  </button>
-                  <button
-                    :class="{ 'active': activeTab === 1 }"
-                    @click="setTab(1)">
-                    Отзывы (5)
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="profile__wrapper">
-              <component
-                :is="tabSegment[activeTab]"/>
             </div>
           </div>
         </div>
@@ -138,9 +143,13 @@ const setTab = (index) => {
 
     &-item {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: center;
       flex-wrap: wrap;
+
+      &__head {
+        max-width: 830px;
+        width: 100%;
+      }
 
       &__left {
         display: flex;

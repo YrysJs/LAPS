@@ -1,5 +1,4 @@
 import { defineNuxtConfig } from "nuxt/config"
-import vue from '@vitejs/plugin-vue';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -27,7 +26,6 @@ export default defineNuxtConfig({
 
   plugins: [
     '~/plugins/v-calendar.js',
-    vue()
   ],
 
   schemaOrg: {
