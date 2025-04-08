@@ -1,4 +1,32 @@
 <script setup>
+import { useUserStore } from '~/store/useUserStore';
+import { useToast } from 'vue-toastification';
+
+//fn
+const userStore = useUserStore()
+const toast = useToast()
+
+
+//data
+const newPassword = ref('')
+const passwordRepeat = ref('')
+
+
+//actions
+const updatePassword = async () => {
+  if (newPassword.value !== passwordRepeat.value) {
+    toast.warning('Значения в полях не совпадают')
+  } else if (!newPassword.value.length || !passwordRepeat.value.length) {
+    toast.warning('Заполните поля')
+  } else {
+    const data = {
+      new_password: newPassword.value,
+      old_password: passwordRepeat
+    }
+    await userStore.updateUserPassword(userStore.user.id, data)
+  }
+}
+
 </script>
 
 <template>
@@ -14,6 +42,7 @@
               Новый пароль
             </p>
             <input
+              v-model="newPassword"
               type="password"
               placeholder="Введите пароль">
           </div>
@@ -22,12 +51,15 @@
               Повторите новый пароль
             </p>
             <input
+              v-model="passwordRepeat"
               type="password"
               placeholder="Повторите пароль">
           </div>
         </div>
       </div>
-      <button class="content-submit">
+      <button
+        class="content-submit"
+        @click="updatePassword">
         Сохранить
       </button>
     </div>

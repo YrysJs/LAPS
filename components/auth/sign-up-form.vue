@@ -1,12 +1,74 @@
 <script setup>
+import { ref } from 'vue'
+import { useAuthStore } from '~/store/useAuthStore'
+import { useToast } from 'vue-toastification'
+
 const emit = defineEmits()
+const authStore = useAuthStore()
+const route = useRoute()
+const toast = useToast()
+
+const email = ref('')
+const first_name = ref('')
+const last_name = ref('')
+const middle_name = ref('')
+const password = ref('')
+const phone = ref('')
+const role = ref(route.query.type)
 
 const userActions = (type) => {
-  if (type == 'login') {
+  if (type === 'login') {
     emit('action', 'login')
   }
 }
 
+const signUp = async () => {
+  if (
+    !email.value ||
+    !first_name.value ||
+    !last_name.value ||
+    !middle_name.value ||
+    !password.value ||
+    !phone.value
+  ) {
+    toast.error('Пожалуйста, заполните все поля')
+    return
+  }
+
+  if (!/\d/.test(password.value)) {
+    toast.error('Пароль должен содержать хотя бы одну цифру')
+    return
+  }
+
+  const uppercaseCount = (password.value.match(/[A-Z]/g) || []).length
+  if (uppercaseCount !== 1) {
+    toast.error('Пароль должен содержать ровно одну заглавную букву (латиница)')
+    return
+  }
+
+  const symbolMatches = password.value.match(/[^A-Za-z0-9]/g)
+  if (!symbolMatches || symbolMatches.length !== 1) {
+    toast.error('Пароль должен содержать ровно один спецсимвол')
+    return
+  }
+
+  const userData = {
+    email: email.value,
+    first_name: first_name.value,
+    last_name: last_name.value,
+    middle_name: middle_name.value,
+    password: password.value,
+    phone: phone.value.replace(/[()\s-]/g, ''),
+    role: role.value
+  }
+
+  const res = await authStore.register(userData)
+
+  if (res.status) {
+    toast('Регистрация прошла успешно')
+    emit('action', 'login')
+  }
+}
 </script>
 
 <template>
@@ -14,73 +76,85 @@ const userActions = (type) => {
     <img
       src="/images/logo-auth.svg"
       alt="logo"
-      class="logo">
+      class="logo" >
     <p class="logo-subtitle">Личный кабинет специалиста</p>
-    <form class="mt-8 space-y-6">
+    <div class="mt-8 space-y-6">
       <div class="form-item">
         <img
           src="/icons/auth/stack-icon.svg"
-          alt="icon">
+          alt="icon" >
         <input
-          id="password"
-          type="password"
+          id="first_name"
+          v-model="first_name"
+          type="text"
           placeholder="Имя"
-          class="form-item__input" >
+          class="form-item__input"
+        >
       </div>
       <div class="form-item">
         <img
           src="/icons/auth/stack-icon.svg"
-          alt="icon">
+          alt="icon" >
         <input
-          id="password"
-          type="password"
+          id="last_name"
+          v-model="last_name"
+          type="text"
           placeholder="Фамилия"
-          class="form-item__input" >
+          class="form-item__input"
+        >
       </div>
       <div class="form-item">
         <img
           src="/icons/auth/stack-icon.svg"
-          alt="icon">
+          alt="icon" >
         <input
-          id="password"
-          type="password"
+          id="middle_name"
+          v-model="middle_name"
+          type="text"
           placeholder="Отчество"
-          class="form-item__input" >
+          class="form-item__input"
+        >
       </div>
       <div class="form-item">
         <img
           src="/icons/auth/stack-icon.svg"
-          alt="icon">
+          alt="icon" >
         <input
-          id="password"
+          id="email"
+          v-model="email"
           type="email"
           placeholder="Email"
-          class="form-item__input" >
+          class="form-item__input"
+        >
       </div>
       <div class="form-item">
         <img
           src="/icons/auth/stack-icon.svg"
-          alt="icon">
+          alt="icon" >
         <input
-          v-model="phoneNumber"
+          v-model="phone"
           v-mask="'+7 (###) ###-##-##'"
-          type="tel" 
+          type="tel"
           placeholder="Введите номер телефона"
-          class="form-item__input">
+          class="form-item__input"
+        >
       </div>
       <div class="form-item">
         <img
           src="/icons/auth/electro-icon.svg"
-          alt="icon">
+          alt="icon" >
         <input
           id="password"
+          v-model="password"
           type="password"
           placeholder="Введите пароль"
-          class="form-item__input" >
+          class="form-item__input"
+        >
       </div>
       <button
         type="submit"
-        class="submit">
+        class="submit"
+        @click="signUp">
         Зарегистрироваться
       </button>
       <button
@@ -88,9 +162,10 @@ const userActions = (type) => {
         @click.prevent="userActions('login')">
         Уже есть аккаунт? <span>Войти</span>
       </button>
-    </form>
+    </div>
   </div>
 </template>
+
 
 <style lang="scss" scoped>
 .form {
@@ -188,6 +263,34 @@ const userActions = (type) => {
     span {
       color: #5A8CFF;
       font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 540px) {
+  .form {
+    padding: 64px 16px;
+
+    &-item {
+      &__input {
+        height: 54px;
+      }
+    }
+
+    .logo {
+      &-subtitle {
+        font-weight: 500;
+        font-size: 16px;
+        letter-spacing: -0.06px;
+      }
+    }
+    .submit, .reset {
+      height: 40px;
+      font-size: 14px;
+    }
+    .register {
+      font-size: 14px;
+      line-height: normal;
     }
   }
 }

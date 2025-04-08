@@ -54,4 +54,11 @@ const actionPage = (data) => {
   align-items: center;
   padding: 20px 16px;
 }
+
+@media (max-width: 540px) {
+  .auth {
+    padding: 0;
+    background: #fff;
+  }
+}
 </style>

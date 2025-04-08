@@ -1,16 +1,17 @@
 import axios from 'axios';
+import { getCookie, setCookie } from '~/utlis/cookie';
 
 export default defineNuxtPlugin(nuxtApp => {
   const axiosNoAuth = axios.create({
-    baseURL: process.env.API_BASE_URL,
+    baseURL: 'http://94.247.129.222:8080/api/v1',
   });
 
   const axiosWithAuth = axios.create({
-    baseURL: process.env.API_BASE_URL,
+    baseURL: 'http://94.247.129.222:8080/api/v1',
   });
 
   axiosWithAuth.interceptors.request.use(config => {
-    const token = localStorage.getItem('token');
+    const token = getCookie('access_token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -24,13 +25,13 @@ export default defineNuxtPlugin(nuxtApp => {
     async error => {
       if (error.response && error.response.status === 401) {
         try {
-          const refreshToken = localStorage.getItem('refresh_token'); 
-          const refreshResponse = await axios.post('https://your-auth-api-url.com/refresh', {
+          const refreshToken = getCookie('refresh_token'); 
+          const refreshResponse = await axios.post('http://94.247.129.222:8080/api/v1/auth/refresh', {
             refresh_token: refreshToken,
           });
 
-          const newToken = refreshResponse.data.token;
-          localStorage.setItem('token', newToken);
+          const newToken = refreshResponse.data.data.access_token;
+          setCookie('access_token', newToken);
           error.config.headers['Authorization'] = `Bearer ${newToken}`;
 
           return axios(error.config);

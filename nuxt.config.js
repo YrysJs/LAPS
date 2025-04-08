@@ -24,9 +24,17 @@ export default defineNuxtConfig({
     'dayjs-nuxt'
   ],
 
+  runtimeConfig: {
+    public: {
+      API_BASE_URL: process.env.API_BASE_URL || 'http://94.247.129.222:8080/api/v1',
+    },
+  },
+
   plugins: [
     '~/plugins/v-calendar.js',
-    '~/plugins/v-mask.js', 
+    '~/plugins/v-mask.js',
+    '~/plugins/axios',
+    '~/plugins/vue-toastification.client.js',
   ],
 
   schemaOrg: {

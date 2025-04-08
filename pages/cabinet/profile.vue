@@ -3,13 +3,20 @@ import Personal from '~/components/cabinet/profile/personal.vue'
 import Experience from '~/components/cabinet/profile/experience.vue'
 import Education from '~/components/cabinet/profile/education.vue'
 import WorkSchedule from '~/components/cabinet/profile/work schedule.vue'
+import { onMounted } from 'vue'
+import { useUserStore } from '~/store/useUserStore'
+import { useAuthStore } from '~/store/useAuthStore'
+
+
 //fn
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
+const authStore = useAuthStore()
 
 //data
 const activeTab = ref(0)
-const personal = ref({})
+const personal = ref(userStore.user ?? {})
 const education = ref({})
 const work = ref({})
 const experience = ref({})
@@ -50,7 +57,13 @@ const setPersonalData = (data) => {
 
 onMounted(() => {
   const tab = parseInt(route.query.tab) || 0 
-  activeTab.value = tab 
+  activeTab.value = tab
+  
+  if (authStore.user_type === 'client') {
+    userStore.getUserInfo()
+  } else {
+    userStore.getSpecialistInfo()
+  }
 })
 </script>
 

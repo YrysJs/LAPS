@@ -2,8 +2,12 @@
 import Info from '~/components/specialists/info.vue'
 import Reviews from '~/components/specialists/reviews.vue'
 import Modal from '~/components/modal/modal.vue'
+import { useMainStore } from '~/store/useMainStore'
 
+//fn
 const router = useRouter()
+const route = useRoute()
+const mainStore = useMainStore()
 
 //data
 const activeTab = ref(0)
@@ -16,6 +20,12 @@ const setTab = (index) => {
 
   router.push({ query: { tab: index } });
 }
+
+
+onMounted(async() => {
+  await mainStore.getSpecialistById(route.params.id)
+  await mainStore.getReviews()
+})
 </script>
 
 <template>

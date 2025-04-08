@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useMainStore } from '~/store/useMainStore'
 import Pagination from '~/components/layout/pagination.vue'
 
 const router = useRouter()
 const route = useRoute()
+const store = useMainStore()
 
 const searchQuery = ref('')
 const suggestions = ref([])
@@ -49,6 +51,20 @@ const updateSpecialization = (specialization) => {
     },
   })
 }
+
+async function getSpecializations(params) {
+  await store.getSpecializations(params)
+}
+
+async function getSpecialists(params) {
+  await store.getSpecialists(params)
+}
+
+onMounted( async() => {
+  // await getSpecializations({type: 'lawyer'})
+  await getSpecialists({type: 'lawyer'})
+})
+
 </script>
 
 <template>

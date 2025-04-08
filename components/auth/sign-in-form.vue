@@ -1,5 +1,16 @@
 <script setup>
+import { useAuthStore } from '~/store/useAuthStore';
+import { useToast } from 'vue-toastification';
+import { setCookie } from '~/utlis/cookie';
+
+
+const route = useRoute()
 const emit = defineEmits()
+const toast = useToast()
+const authStore = useAuthStore()
+
+const phoneNumber = ref('')
+const password = ref('')
 
 const userActions = (type) => {
   if (type == 'reset') {
@@ -10,6 +21,24 @@ const userActions = (type) => {
     emit('action', 'register')
   }
 }
+
+const signIn = async () => {
+  if (phoneNumber.value.length && password.value.length) {
+    const userData = {
+      login: phoneNumber.value.replace(/[()\s-]/g, ''),
+      password: password.value
+    }
+    await authStore.auth(userData)
+    await authStore.setUserType(route.query.type)
+  } else {
+    toast.warning('Заполните поля логин и пароль')
+  }
+}
+
+onMounted(() => {
+  setCookie('user_type', route.query.type)
+  authStore.setUserType(route.query.type)
+})
 </script>
 
 <template>
@@ -19,8 +48,10 @@ const userActions = (type) => {
       alt="logo"
       class="logo">
     <p class="logo-subtitle">Личный кабинет специалиста</p>
-    <form class="mt-8 space-y-6">
-      <div class="form-item">
+    <div class="mt-8 space-y-6">
+      <div
+        class="form-item"
+      >
         <img
           src="/icons/auth/stack-icon.svg"
           alt="icon">
@@ -37,13 +68,15 @@ const userActions = (type) => {
           alt="icon">
         <input
           id="password"
+          v-model="password"
           type="password"
           placeholder="Введите пароль"
-          class="form-item__input" >
+          class="form-item__input">
       </div>
       <button
         type="submit"
-        class="submit">
+        class="submit"
+        @click="signIn">
         Войти
       </button>
       <button
@@ -57,7 +90,7 @@ const userActions = (type) => {
         @click.prevent="userActions('register')">
         Не зарегистрированы? <span>Регистрация</span>
       </button>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -106,7 +139,7 @@ const userActions = (type) => {
       font-weight: 600;
       margin-top: 8px;
       text-align: center;
-      font-size: 15px;
+      font-size: 18px;
       color: #202224;
     }
   }
@@ -157,6 +190,34 @@ const userActions = (type) => {
     span {
       color: #5A8CFF;
       font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 540px) {
+  .form {
+    padding: 0px 16px;
+
+    &-item {
+      &__input {
+        height: 54px;
+      }
+    }
+
+    .logo {
+      &-subtitle {
+        font-weight: 500;
+        font-size: 16px;
+        letter-spacing: -0.06px;
+      }
+    }
+    .submit, .reset {
+      height: 40px;
+      font-size: 14px;
+    }
+    .register {
+      font-size: 14px;
+      line-height: normal;
     }
   }
 }

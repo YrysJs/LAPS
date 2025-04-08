@@ -1,7 +1,13 @@
 <script setup>
+import { useUserStore } from '~/store/useUserStore';
 
+//fn
+const userStore = useUserStore()
+
+//data
 const connect = ref(true)
 const filterState = ref(true)
+const appointments = ref(userStore.consultations)
 
 </script>
 
@@ -32,7 +38,7 @@ const filterState = ref(true)
       </div>
       <div class="history__content">
         <div
-          v-if="true"
+          v-if="appointments.length"
           class="history__container">
           <div class="history__header">
             <div>Имя</div>
