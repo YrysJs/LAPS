@@ -71,7 +71,7 @@ onMounted(() => {
   <NuxtLayout name="cabinet">
     <div class="profile">
       <h3 class="profile__title">
-        Изменение пароля
+        Ваши данные
       </h3>
       <div class="profile__content">
         <div class="profile__tabs">
@@ -170,10 +170,35 @@ onMounted(() => {
       height: 30px;
     } 
   }
+
+  @media (max-width: 990px) {
+    &__title {
+      font-size: 24px;
+    }
+    
+    &__content {
+      padding: 24px 16px;
+    }
+
+    &__tabs {
+      button {
+        height: initial;
+        font-size: 12px;
+      }
+    }
+  }
 }
 
 .active {
   color: #1F72EE !important;
   border-bottom: 3px solid #1F72EE;
+}
+
+@media (max-width: 578px) {
+  .content-submit {
+    height: 40px;
+    font-size: 14px;
+    margin-top: 30px;
+  }
 }
 </style>

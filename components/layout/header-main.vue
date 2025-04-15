@@ -12,12 +12,12 @@
         alt="logo">
     </nuxt-link>
     <nuxt-link
-      to="/specialists?type=lawyers"
+      to="/specialists?type=lawyer"
       class="font-montserrat font-medium text-normal">
       ЮРИСТЫ
     </nuxt-link>
     <nuxt-link
-      to="/specialists?type=psychologists"
+      to="/specialists?type=psycholog"
       class="font-montserrat font-medium text-normal">
       ПСИХОЛОГИ
     </nuxt-link>

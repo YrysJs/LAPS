@@ -48,12 +48,12 @@ const updatePassword = async () => {
           </div>
           <div class="settings__item">
             <p>
-              Повторите новый пароль
+              Старый пароль
             </p>
             <input
               v-model="passwordRepeat"
               type="password"
-              placeholder="Повторите пароль">
+              placeholder="Старый пароль">
           </div>
         </div>
       </div>
@@ -131,6 +131,53 @@ const updatePassword = async () => {
           outline: 2px solid #1F72EE;
       }
     }
+  }
+
+  @media (max-width: 990px) {
+    &__title {
+      font-size: 24px;
+    }
+
+    &__content {
+      padding: 24px 16px;
+    }
+
+    &__wrapper {
+      gap: 32px;
+    }
+    &__item {
+      max-width: 100%;
+
+      input {
+        height: 52px;
+      }
+    }
+  }
+
+  @media (max-width: 578px) {
+    &__title {
+      font-size: 18px;
+    }
+
+    &__wrapper {
+      flex-wrap: wrap;
+    }
+
+    &__item {
+      input {
+        padding-left: 12px;
+        height: 52px;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+@media (max-width: 578px) {
+  .content-submit {
+    height: 40px;
+    font-size: 14px;
+    margin-top: 30px;
   }
 }
 </style>

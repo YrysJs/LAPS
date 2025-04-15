@@ -50,5 +50,9 @@ export default defineNuxtConfig({
     hostname: 'https://example.com',
     routes: async () => {
     }
-  }
+  },
+
+  vite: {
+    envPrefix: ['VITE_', 'NUXT_'],
+  },
 })

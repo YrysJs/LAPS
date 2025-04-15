@@ -79,6 +79,10 @@
   font-family: 'Arial', sans-serif;
   padding-top: 22px;
   padding-bottom: 22px;
+
+  @media (max-width: 990px) {
+    display: none;
+  }
 }
 
 .sidebar__header {

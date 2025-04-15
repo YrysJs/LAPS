@@ -9,32 +9,23 @@ const route = useRoute()
 const store = useMainStore()
 
 const searchQuery = ref('')
-const suggestions = ref([])
+const suggestions = ref(store.getSpecializationsList || [])
 const currentPage = ref(1);
 const totalPages = ref(10);
 
-const specializations = [
-  'Конституционное право',
-  'Семейное право',
-  'Трудовое право',
-  'Гражданство',
-  'Уголовное право',
-  'Медицинское право',
-  'Наследство',
-  'Военное право',
-  'Налоговое право',
-  'Права потребителя'
-]
+const bulletSpecializations = ref(store.getSpecializationsBulletList)
 
-const fetchSpecializations = async () => {
+const fetchSpecializations = async (e) => {
   if (searchQuery.value.trim() === '') {
     suggestions.value = []
     return
   }
-
-  const mockData = specializations
-
-  suggestions.value = mockData.filter(item => item.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  
+  await store.getSpecializations({
+    limit: 10,
+    type: route.query.type,
+    search: e.target.value
+  })
 }
 
 const updateSpecialization = (specialization) => {
@@ -52,17 +43,17 @@ const updateSpecialization = (specialization) => {
   })
 }
 
-async function getSpecializations(params) {
-  await store.getSpecializations(params)
+async function getSpecializationsBullet(params) {
+  await store.getSpecializationsBullet(params)
 }
 
 async function getSpecialists(params) {
   await store.getSpecialists(params)
 }
 
-onMounted( async() => {
-  // await getSpecializations({type: 'lawyer'})
-  await getSpecialists({type: 'lawyer'})
+onUpdated( async() => {
+  await getSpecializationsBullet({type: route.query.type})
+  await getSpecialists({type: route.query.type})
 })
 
 </script>
@@ -83,18 +74,18 @@ onMounted( async() => {
             v-for="suggestion in suggestions" 
             :key="suggestion" 
             class="suggestion-item"
-            @click="updateSpecialization(suggestion)">
-            {{ suggestion }}
+            @click="updateSpecialization(suggestion.name)">
+            {{ suggestion.name }}
           </li>
         </ul>
       </div>
 
       <div class="specialist__category">
         <button
-          v-for="specialization in specializations" 
+          v-for="specialization in bulletSpecializations" 
           :key="specialization" 
-          @click="updateSpecialization(specialization)">
-          {{ specialization }}
+          @click="updateSpecialization(specialization.name)">
+          {{ specialization.name }}
         </button>
       </div>
       <div class="specialist__list">
@@ -212,7 +203,7 @@ onMounted( async() => {
     input {
       width: 100%;
       height: 48px;
-      background: #F1F2F7;
+      background: #fff;
       border-radius: 28px;
       padding-left: 24px;
       padding-right: 24px;
@@ -370,6 +361,86 @@ onMounted( async() => {
           font-weight: 500;
           font-size: 14px;
           line-height: 19.6px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 1015px) {
+    &__list {
+      align-content: center;
+      &-item {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        max-width: 650px;
+        margin: auto;
+
+        &__left {
+          justify-content: center;
+          gap: 25px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 680px) {
+
+    h1 {
+      font-size: 26px;
+    }
+
+    &__list {
+      text-align: center;
+
+      &-item {
+        flex-wrap: wrap;
+
+
+        &__left {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+      
+      &-info {
+        display: flex;
+        flex-direction: column;
+
+        &-main {
+          order: 0;
+          margin-bottom: 5px;
+        }
+
+        &-top {
+          order: 1;
+          margin-top: 10px;
+        }
+      }
+
+      &-info-top, &-info-bottom {
+        justify-content: center;
+      }
+      &-info-top {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  @media (max-width: 465px) {
+    h1 {
+      font-size: 21px;
+    }
+    &__list {
+      &-shedule {
+        max-width: 300px;
+        
+        &__worktime {
+          padding-left: 14px;
+
+          div {
+            flex-wrap: wrap;
+          }
         }
       }
     }

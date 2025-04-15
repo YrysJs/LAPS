@@ -25,6 +25,7 @@ const setTab = (index) => {
 onMounted(async() => {
   await mainStore.getSpecialistById(route.params.id)
   await mainStore.getReviews()
+  await mainStore.getSpecialistsSheduleById(route.params.id)
 })
 </script>
 

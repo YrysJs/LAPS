@@ -38,7 +38,7 @@ const appointments = ref(userStore.consultations)
       </div>
       <div class="history__content">
         <div
-          v-if="appointments.length"
+          v-if="false"
           class="history__container">
           <div class="history__header">
             <div>Имя</div>
@@ -46,7 +46,7 @@ const appointments = ref(userStore.consultations)
             <div>Дата</div>
             <div>Статус</div>
           </div>
-          <div class="history__row">
+          <div class="history__row history__row-desktop">
             <div>Сымбат Алтынбекова</div>
             <div class="history-phone">
               <img
@@ -56,6 +56,29 @@ const appointments = ref(userStore.consultations)
             </div>
             <div>14 марта 2025</div>
             <div class="status">Оплачено</div>
+          </div>
+          <div class="history__row history__row-mobile">
+            <div class="history__row-mobile__item">
+              <div class="label">Имя:</div>
+              <div>Сымбат Алтынбекова</div>
+            </div>
+            <div class="history__row-mobile__item">
+              <div class="label">Номер телефона:</div>
+              <div class="history-phone">
+                <img
+                  class="phone-icon"
+                  :src="connect == true ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
+                  alt="phone-icon"> <a :href="connect == true ? 'tel:88005553535' : 'https://wp/88005553535'">+7 777 77 77</a>
+              </div>
+            </div>
+            <div class="history__row-mobile__item">
+              <div class="label">Дата:</div>
+              <div>14 марта 2025</div>
+            </div>
+            <div class="history__row-mobile__item">
+              <div class="label">Статус:</div>
+              <div class="status">Оплачено</div>
+            </div>
           </div>
         </div>
         <div
@@ -138,6 +161,7 @@ const appointments = ref(userStore.consultations)
     flex-direction: column;
     border: .5px solid #e0e0e0;
     border-radius: 14px;
+    overflow: hidden;
   }
 
   &__header {
@@ -161,7 +185,6 @@ const appointments = ref(userStore.consultations)
   }
 
   &__row {
-    display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     background-color: #fff;
     padding: 10px 20px;
@@ -175,9 +198,128 @@ const appointments = ref(userStore.consultations)
     line-height: 100%;
     border-top: 1px solid #D5D5D5;
 
+    &-desktop {
+      display: grid;
+    }
+
+    &-mobile {
+      display: none;
+    }
+
     div {
       display: flex;
       align-items: center;
+    }
+  }
+
+  @media (max-width: 990px) {
+    &__title {
+      font-size: 24px;
+    }
+    &__filter {
+      height: 55px;
+
+      button {
+        padding-left: 16px;
+        padding-right: 15px;
+        height: 70px;
+
+        font-family: Nunito Sans;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0px;
+
+      }
+    }
+    &__content {
+      padding: 24px 16px;
+    }
+
+    &__header {
+      display: none;
+    }
+
+    &__row {
+      &-desktop {
+        display: none;
+      }
+      &-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        &__item {
+          display: flex;
+          gap: 30px;
+
+          .label {
+            min-width: 230px;
+          }
+        }
+      }
+    }
+
+    &__empty {
+      padding: 24px 18px;
+    }
+  }
+
+  @media (max-width: 578px) {
+    &__title {
+      font-size: 18px;
+    }
+    &__filter {
+      height: 55px;
+      margin: 15px auto;
+
+      &-1 {
+        display: none;
+      }
+      &-2 {
+        border: none;
+      }
+      button {
+        padding-left: 16px;
+        padding-right: 15px;
+        height: 70px;
+
+        font-family: Nunito Sans;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0px;
+
+      }
+    }
+    &__content {
+      padding: 0px 0px 16px 0px;
+    }
+
+    &__row {
+      &-desktop {
+        display: none;
+      }
+      &-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        &__item {
+          border-bottom: 1px solid rgb(221, 221, 221);
+          padding-bottom: 16px;
+          padding-top: 16px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 5px;
+          font-size: 12px;
+
+          .label {
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 230px;
+          }
+        }
+      }
     }
   }
 }

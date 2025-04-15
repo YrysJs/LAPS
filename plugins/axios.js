@@ -3,11 +3,11 @@ import { getCookie, setCookie } from '~/utlis/cookie';
 
 export default defineNuxtPlugin(nuxtApp => {
   const axiosNoAuth = axios.create({
-    baseURL: 'http://94.247.129.222:8080/api/v1',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
   });
 
   const axiosWithAuth = axios.create({
-    baseURL: 'http://94.247.129.222:8080/api/v1',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
   });
 
   axiosWithAuth.interceptors.request.use(config => {
@@ -15,6 +15,7 @@ export default defineNuxtPlugin(nuxtApp => {
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
+    config.headers['Content-Type'] = `application/json`;
     return config;
   });
 
@@ -26,7 +27,7 @@ export default defineNuxtPlugin(nuxtApp => {
       if (error.response && error.response.status === 401) {
         try {
           const refreshToken = getCookie('refresh_token'); 
-          const refreshResponse = await axios.post('http://94.247.129.222:8080/api/v1/auth/refresh', {
+          const refreshResponse = await axios.post('http://94.247.129.222/api/v1/auth/refresh', {
             refresh_token: refreshToken,
           });
 

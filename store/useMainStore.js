@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useAxios } from "~/composables/useAxios";
 import { useToast } from 'vue-toastification'
 
@@ -8,6 +8,7 @@ export const useMainStore = defineStore('main', () => {
   const specialists = ref([])
   const specialistById = ref([])
   const specializations = ref([])
+  const specializationBullet = ref([])
   const reviews = ref({})
   const specialistShedule = ref([])
   const specialistSheduleById = ref([])
@@ -16,10 +17,18 @@ export const useMainStore = defineStore('main', () => {
   const { axiosNoAuth, axiosWithAuth } = useAxios();
   const toast = useToast()
 
+  const getSpecializationsList = computed(() => {
+    return specializations
+  })
+
+  const getSpecializationsBulletList = computed(() => {
+    return specializationBullet
+  })
+
   //actions
   const getSpecialists = async(params) => {
     try {
-      const { data } = await axiosNoAuth.get('/specialists', {
+      const { data } = await axiosNoAuth.get('/specialists/', {
         params: params
       })
       
@@ -51,14 +60,30 @@ export const useMainStore = defineStore('main', () => {
 
   const getSpecializations = async(params) => {
     try {
-      const { data } = await axiosNoAuth.get('/specializations', {
+      const { data } = await axiosNoAuth.get('/specializations/', {
+        params: params
+      })
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } 
+      specializations.value = data.data
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  const getSpecializationsBullet = async(params) => {
+    try {
+      const { data } = await axiosNoAuth.get('/specializations/', {
         params: params
       })
       
       if (data.status === !'success') {
         toast.error('Произошла ошибка')
       } else {
-        specializations.value = data.data
+        specializationBullet.value = data.data
       }
     } catch(e) {
       const errorMessage = e.response.data.message || 'Произошла ошибка'
@@ -68,7 +93,7 @@ export const useMainStore = defineStore('main', () => {
 
   const getReviews = async(params) => {
     try {
-      const { data } = await axiosNoAuth.get('/reviews', {
+      const { data } = await axiosNoAuth.get('/reviews/', {
         params: params
       })
       
@@ -85,7 +110,7 @@ export const useMainStore = defineStore('main', () => {
 
   const getSpecialistsShedule = async(params) => {
     try {
-      const { data } = await axiosNoAuth.get('/shedules', {
+      const { data } = await axiosNoAuth.get('/schedules', {
         params: params
       })
       
@@ -102,7 +127,7 @@ export const useMainStore = defineStore('main', () => {
 
   const getSpecialistsSheduleById = async(id) => {
     try {
-      const { data } = await axiosNoAuth.get(`/shedules/${id}`)
+      const { data } = await axiosNoAuth.get(`/schedules/${id}`)
       
       if (data.status === !'success') {
         toast.error('Произошла ошибка')
@@ -117,7 +142,7 @@ export const useMainStore = defineStore('main', () => {
 
   const getSpecialistsFreeSlots = async(params) => {
     try {
-      const { data } = await axiosNoAuth.get(`/shedules/free-slots`, {
+      const { data } = await axiosNoAuth.get(`/schedules/free-slots`, {
         params: params
       })
       
@@ -201,9 +226,11 @@ export const useMainStore = defineStore('main', () => {
     specialistShedule, 
     specialistSheduleById, 
     specializations,
+    specializationBullet,
     getSpecialists,
     getSpecialistById,
     getSpecializations,
+    getSpecializationsBullet,
     getReviews,
     getSpecialistsShedule,
     getSpecialistsSheduleById,
@@ -212,5 +239,7 @@ export const useMainStore = defineStore('main', () => {
     deleteReview,
     addRevuewReplies,
     createAppointments,
+    getSpecializationsList,
+    getSpecializationsBulletList
   }
 })
