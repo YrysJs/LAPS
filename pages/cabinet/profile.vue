@@ -70,46 +70,135 @@ onMounted(() => {
 <template>
   <NuxtLayout name="cabinet">
     <div class="profile">
-      <h3 class="profile__title">
-        Ваши данные
-      </h3>
-      <div class="profile__content">
-        <div class="profile__tabs">
+      <div class="profile-desktop">
+        <h3 class="profile__title">
+          Ваши данные
+        </h3>
+        <div class="profile__content">
+          <div class="profile__tabs">
+            <button
+              :class="{ 'active': activeTab === 0 }"
+              @click="setTab(0)">
+              Ваши данные
+            </button>
+            <button
+              :class="{ 'active': activeTab === 1 }"
+              @click="setTab(1)">
+              Образование
+            </button>
+            <button
+              :class="{ 'active': activeTab === 2 }"
+              @click="setTab(2)">
+              Опыт работы
+            </button>
+            <button
+              :class="{ 'active': activeTab === 3 }"
+              @click="setTab(3)">
+              График работы
+            </button>
+          </div>
+          <div class="profile__wrapper">
+            <component
+              :is="tabSegment[activeTab]"
+              @personal="setPersonalData"
+              @experience="setExperienceData"
+              @work="setWorkData"
+              @education="setEducationData"/>
+          </div>
+        </div>
+      </div>
+      <div class="profile-mobile">
+        <div
+          v-if="!route.query.tab"
+          class="profile-mobile__info">
+          <div class="flex gap-[20px]">
+            <div class="min-w-[92px] min-h-[92px] max-w-[160px] max-h-[160px] w-full">
+              <img
+                src="/images/test-image.png"
+                alt=""
+                class="w-full h-full object-cover">
+            </div>
+            <div class="min-w-[200px]">
+              <h3 class="text-xs text-[#767485] font-montserrat">Гражданство · Стаж 40 лет</h3>
+              <h4 class="font-montserrat text-base font-bold text-[#242424] leading-[18px] mt-[6px] mb-[8px]">
+                Морозов Алена
+                Олеговна
+              </h4>
+              <h5 class="text-sm font-montserrat text-[#242424] flex gap-[6px]">
+                Рейтинг <img
+                  src="/icons/cabinet/star-black.svg"
+                  alt="icon-star">
+                8.4
+              </h5>
+            </div>
+          </div>
+          <div class="flex flex-col gap-[6px] mt-[24px]">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-[16px]">
+                <img
+                  src="/icons/main/phone-modal-icon.svg"
+                  alt="icon">
+                <h3 class="text-xs text-[#767485] font-montserrat">Звонок</h3>
+              </div>
+              <a
+                href="77077778899"
+                class="text-sm text-[#242424] font-medium">77077778899</a>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-[16px]">
+                <img
+                  src="/icons/wp-modal-icon.svg"
+                  alt="icon">
+                <h3 class="text-xs text-[#767485] font-montserrat">WhatsApp</h3>
+              </div>
+              <a
+                href="77077778899"
+                class="text-sm text-[#242424] font-medium">77077778899</a>
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="!route.query.tab"
+          class="profile-mobile__tabs">
           <button
-            :class="{ 'active': activeTab === 0 }"
             @click="setTab(0)">
             Ваши данные
+            <img
+              src="/icons/cabinet/arrow-blue.svg"
+              alt="">
           </button>
           <button
-            :class="{ 'active': activeTab === 1 }"
             @click="setTab(1)">
             Образование
+            <img
+              src="/icons/cabinet/arrow-blue.svg"
+              alt="">
           </button>
           <button
-            :class="{ 'active': activeTab === 2 }"
             @click="setTab(2)">
             Опыт работы
+            <img
+              src="/icons/cabinet/arrow-blue.svg"
+              alt="">
           </button>
           <button
-            :class="{ 'active': activeTab === 3 }"
             @click="setTab(3)">
             График работы
+            <img
+              src="/icons/cabinet/arrow-blue.svg"
+              alt="">
           </button>
         </div>
         <div class="profile__wrapper">
           <component
             :is="tabSegment[activeTab]"
+            v-if="route.query.tab"
             @personal="setPersonalData"
             @experience="setExperienceData"
             @work="setWorkData"
             @education="setEducationData"/>
         </div>
       </div>
-      <button
-        class="content-submit"
-        @click="stepHandler">
-        {{ activeTab !== 3 ? 'Продолжить' : 'Сохранить' }}
-      </button>
     </div>
   </NuxtLayout>
 </template>
@@ -132,6 +221,9 @@ onMounted(() => {
 }
 
 .profile {
+  &-mobile {
+    display: none;
+  }
   &__title {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
@@ -167,7 +259,7 @@ onMounted(() => {
       padding-left: 30px;
       padding-right: 30px;
       padding-bottom: 10px;
-      height: 30px;
+      min-height: 30px;
     } 
   }
 
@@ -187,6 +279,14 @@ onMounted(() => {
       }
     }
   }
+  @media (max-width: 640px) {
+    &-desktop {
+      display: none;
+    }
+    &-mobile {
+      display: block;
+    }
+  }
 }
 
 .active {
@@ -199,6 +299,30 @@ onMounted(() => {
     height: 40px;
     font-size: 14px;
     margin-top: 30px;
+  }
+}
+
+.profile-mobile__tabs {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+  gap: 8px;
+
+  button {
+    background: #E9EAEB;
+    padding: 16px;
+    border-radius: 12px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    color: #1F72EE;
   }
 }
 </style>

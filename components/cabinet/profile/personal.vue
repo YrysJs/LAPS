@@ -95,6 +95,11 @@
         </div>
       </div>
     </div>
+    <button
+      class="content-submit"
+      @click="stepHandler">
+      Сохранить
+    </button>
   </div>
 </template>
 
@@ -214,6 +219,35 @@
 
       &:focus {
           outline: 2px solid #1F72EE;
+      }
+    }
+  }
+
+  @media (max-width: 1285px) {
+    &__item {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 940px) {
+    &__item {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    &__content {
+      margin-top: 0;
+      padding: 16px;
+    }
+
+    &__wrapper {
+      gap: 30px;
+    }
+
+    &__item {
+      input {
+        padding-left: 8px;
       }
     }
   }

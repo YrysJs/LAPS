@@ -74,7 +74,7 @@
 .sidebar {
   max-width: 280px;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #ffffff;
   font-family: 'Arial', sans-serif;
   padding-top: 22px;

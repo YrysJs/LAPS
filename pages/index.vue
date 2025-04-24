@@ -3,25 +3,24 @@ import HeaderMain from '@/components/layout/header-main.vue'
 </script>
 
 <template>
-  <div class="min-h-[100vh] relative overflow-hidden">
+  <div class="main-page min-h-[100vh] relative overflow-hidden">
     <!-- Radial Elements -->
     <div class="top-radio w-[650px] h-[650px] rounded-[50%]"></div>
     <div class="bottom-radio w-[650px] h-[650px] rounded-[50%]"></div>
-
+    <HeaderMain />
     <!-- Content Container -->
     <div class="container mx-auto py-[37px]">
       <!-- Header -->
-      <HeaderMain />
+      
       <!-- Main Section -->
-      <section class="flex flex-col-reverse md:flex-row items-end justify-between px-8 pt-8">
-        <!-- Text Section -->
-        <div class="text-center md:text-left md:w-1/2">
-          <h1 class="text-[48px] font-montserrat font-bold text-[#1A1C1F] leading-[105%] mb-2">Сервис по поиску юристов и психологов</h1>
-          <p class="mt-4 text-[22px] font-montserrat font-extralight text-[#1A1C1F]">Мы поможем найти проверенного юриста или психолога и записаться на прием в удобное для Вас время</p>
-          <div class="mt-[128px] flex justify-center md:justify-start space-x-6">
+      <section class="main">
+        <div class="main-left">
+          <h1 class="main-title text-[48px] font-montserrat font-bold text-[#1A1C1F] leading-[105%] mb-2">Сервис по поиску юристов и психологов</h1>
+          <p class="main-subtitle mt-4 text-[22px] font-montserrat font-extralight text-[#1A1C1F]">Мы поможем найти проверенного юриста или психолога и записаться на прием в удобное для Вас время</p>
+          <div class="main-btn mt-[128px] flex justify-center md:justify-start space-x-6">
             <nuxt-link
-              to="/specialists?type=lawyers"
-              class="pt-[29px] pl-[18px] pb-[14px] bg-blue-600 text-white rounded-[48px] text-[36px] font-montserrat_alt font-bold hover:bg-blue-700">
+              to="/specialists?type=lawyer"
+              class="main-btn__item pt-[29px] pl-[18px] pb-[14px] bg-blue-600 text-white rounded-[48px] text-[36px] font-montserrat_alt font-bold hover:bg-blue-700">
               Выбрать юриста
               <img
                 src="/icons/main/arrow.svg"
@@ -29,8 +28,8 @@ import HeaderMain from '@/components/layout/header-main.vue'
                 class="mt-[57px]">
             </nuxt-link>
             <nuxt-link
-              to="/specialists?type=psychologists"
-              class="pt-[29px] pl-[18px] pb-[14px] bg-green-600 text-white rounded-[48px] text-[36px] font-montserrat_alt font-bold hover:bg-green-700">
+              to="/specialists?type=psychologist"
+              class="main-btn__item pt-[29px] pl-[18px] pb-[14px] bg-green-600 text-white rounded-[48px] text-[36px] font-montserrat_alt font-bold hover:bg-green-700">
               Выбрать психолога
               <img
                 src="/icons/main/arrow.svg"
@@ -39,9 +38,7 @@ import HeaderMain from '@/components/layout/header-main.vue'
             </nuxt-link>
           </div>
         </div>
-
-        <!-- Image Section -->
-        <div class="mt-12 min-w-[300px] max-w-[550xp] md:mt-0 flex justify-center items-center">
+        <div class="main-right">
           <img
             src="/images/main.webp"
             alt="main image"
@@ -66,5 +63,131 @@ import HeaderMain from '@/components/layout/header-main.vue'
   bottom: -30%;
   right: -15%;
   z-index: -1;
+}
+
+.main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 50px;
+
+  &-left {
+    max-width: 706px;
+  }
+
+  @media (max-width: 1281px) {
+    gap: 40px;
+
+    &-left {
+      max-width: initial;
+    }
+
+    &-right {
+      min-width: 530px;
+    }
+
+    &-title {
+      font-size: 36px;
+    }
+    &-btn {
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 30px;
+
+      &__item {
+        min-width: 306px;
+        font-size: 24px;
+        word-wrap: break-word;
+        word-wrap: break-word;
+        padding-right: 18px;
+        margin-left: 0 !important;
+      }
+    }
+  }
+
+  @media (max-width: 1030px) {
+    padding-left: 20px;
+    padding-right: 20px;
+    min-height: 70vh;
+    align-items: center;
+    &-right {
+      display: none;
+    }
+
+    &-title {
+      color: #fff;
+    }
+    &-subtitle {
+      color: #fff;
+    }
+  }
+
+  @media (max-width: 769px) {
+    &-title {
+      color: #fff;
+    }
+    &-subtitle {
+      color: #fff;
+    }
+
+    &-btn {
+
+      &__item {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        justify-content: left;
+        gap: 50px;
+        padding: 16px;
+        width: 100%;
+        min-width: none;
+
+        img {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 590px) {
+    padding: 16px;
+    min-height: 80vh;
+    align-items: flex-end;
+    &-title {
+      font-size: 20px;
+      margin-bottom: 0;
+    }
+    &-subtitle {
+      font-size: 10px;
+      margin-top: 8px;
+    }
+
+    &-btn {
+      gap: 11px;
+      a {
+        font-size: 16px;
+
+        img {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 1030px) {
+  .top-radio, .bottom-radio {
+    display: none;
+  }
+  .main-page {
+    background-image:
+    linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
+    url('/images/main.webp');
+    background-size: cover;
+    background-position: center;
+  }
+  .container {
+    padding-top: 0px;
+  }
 }
 </style>

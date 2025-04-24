@@ -1,168 +1,227 @@
+<script setup>
+import { ref } from 'vue';
+import Rating from './rating.vue';
+
+const isExpanded = ref(false);
+function toggle() {
+  isExpanded.value = !isExpanded.value;
+}
+</script>
+
 <template>
   <div class="reviews">
-    <div class="review-item">
-      <div class="review-header">
-        <div class="review-avatar">
-          <img
-            src="/images/test-image.png"
-            alt="avatar" >
-        </div>
-        <div class="review-info">
-          <span class="review-name">Усманова Арзыгуль</span>
-          <span class="review-date">12 ноября 2024</span>
-        </div>
+    <div class="reviews-item">
+      <div class="reviews-avatar">
+        <img
+          src="/images/avator-none.jpg"
+          alt="avatar" >
       </div>
-      <div class="review-rating">
-        <span>⭐⭐⭐⭐⭐</span>
-        <span>Обслуживание, Эффективность встречи, Профессионализм</span>
-      </div>
-      <p
-        class="review-text"
-        :class="{ 'expanded': isExpanded }">
-        Алена очень юрист, профессионал. Порекомендовала именно её и всем рекомендую, всё подсказала, рассказала, всё докачно изучила, помогла, молодец, спасибо!
-      </p>
-      <button
-        class="review-button"
-        @click="toggleExpand">
-        {{ isExpanded ? 'Скрыть' : 'Развернуть' }}
-      </button>
-      <div class="review-response">
-        <span class="response-name">Ответ LAPS:</span>
-        <p class="response-text">
-          Спасибо за ваш отзыв, Арзыгуль! Мы рады, что вы остались довольны консультацией с Аленой Олеговной. Ваши слова благодарности важны для нас, и мы обязательно передадим их...
-        </p>
+      <div class="reviews-content">
+        <div class="reviews-content__top">
+          <div>
+            <h3>Усманова Арзыгуль</h3>
+            <Rating
+              rating="4.2"
+              color="#1F72EE" />
+          </div>
+          <div class="date">12 ноября 2024</div>
+        </div>
+        <div class="reviews-bullet">
+          <div>Обслуживание</div>
+          <div>Эффективность встречи</div>
+          <div>Профессионализм</div>
+          <div>Цена</div>
+          <div>Профессионализм</div>
+          <div>Цена</div>
+        </div>
+        <div class="reviews-text">
+          Алена очень юрист, профессионал.
+          Порекомендовали именно ее👍 и я всем рекомендую, всё подсказала,
+          рассказала , всё досконально изучила, помогла ,молодец, спасибо 💐
+        </div>
+
+        <div class="reviews-send">
+          <h4>Ответ</h4>
+          <div class="reviews-send__top">
+            <div class="reviews-send__top-left">
+              <div class="reviews-avatar">
+                <img
+                  src="/images/avator-none.jpg"
+                  alt="avatar" >
+              </div>
+              <h3>LAPS</h3>
+            </div>
+            <div class="date">12 ноября 2024</div>
+          </div>
+
+          <!-- здесь добавили :class и убрали троеточие в разметке -->
+          <div
+            class="reviews-text reviews-send__text"
+            :class="{ 'reviews-send__text--expanded': isExpanded }"
+          >
+            Спасибо за ваш отзыв, Арзыгуль! ❤️ Мы рады, что вы остались
+            довольны консультацией с Аленой Олеговной. Ваши слова благодарности
+            важны для нас, и мы обязательно передадим их
+            Спасибо за ваш отзыв, Арзыгуль! ❤️ Мы рады, что вы остались
+            довольны консультацией с Аленой Олеговной. Ваши слова благодарности
+            важны для нас, и мы обязательно передадим их
+          </div>
+
+          <button
+            class="reviews-send__btn"
+            @click="toggle">
+            {{ isExpanded ? 'Свернуть' : 'Развернуть' }}
+          </button>
+        </div>
       </div>
     </div>
-  
-    <!-- Добавьте другие отзывы по аналогии -->
-    <button
-      class="load-more"
-      @click="showAllReviews">
-      Показать еще
-    </button>
   </div>
 </template>
   
-<script setup>
-import { ref } from 'vue'
-  
-const isExpanded = ref(false)
-  
-const toggleExpand = () => {
-  isExpanded.value = !isExpanded.value
-}
-  
-const showAllReviews = () => {
-  // Логика для загрузки и отображения дополнительных отзывов
-}
-</script>
-  
 <style lang="scss" scoped>
 .reviews {
-  background-color: #f9fafb;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  background: #fff;
+  padding: 24px;
 
-  .review-item {
-    background: #fff;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    
-    .review-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
-    
-    .review-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      overflow: hidden;
-      
-      img {
+  &-avatar {
+    min-width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      }
     }
+  }
+  
+  &-item {
+    border-radius: 0px 0px 20px 20px;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 17px;
 
-      .review-info {
-        display: flex;
-        flex-direction: column;
-        
-        .review-name {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  &-content {
+    &__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      h3 {
+        font-family: 'Montserrat', sans-serif;
         font-weight: 700;
-        font-size: 16px;
+        font-size: 14.38px;
+        line-height: 24px;
+      }
+
+      .date {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        font-size: 11.44px;
+        line-height: 16px;
+        color: #6B7280;
+      }
+    }
+  }
+
+  &-bullet {
+    padding-top: 16px;
+    padding-bottom: 24px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    div {
+      padding: 5px 8px;
+      border-radius: 12px;
+      background: #F1F2F7;
+
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 12.91px;
+      line-height: 20px;
+
+      width: fit-content;
+    }
+  }
+
+
+  &-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 12.8px;
+    line-height: 20px;
+    color: #242424;
+  }
+
+  &-send {
+    >h4 {
+      padding-top: 10px;
+      padding-bottom: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 11.63px;
+      line-height: 16px;
+      color: #6B7280;
+    }
+
+    &__text {
+      max-width: 600px;
+      width: 100%;
+      height: 50px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &__text--expanded {
+      height: auto;
+      overflow: visible;
+    }
+
+    &__top {
+      padding-bottom: 24px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      &-left {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+
+        h3 {
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 700;
+          font-size: 14.38px;
+          line-height: 24px;
         }
-        
-        .review-date {
-        font-size: 12px;
-        color: #888;
-        }
+      }
+
+      .date {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        font-size: 11.44px;
+        line-height: 16px;
+        color: #6B7280;
       }
     }
 
-    .review-rating {
-    font-size: 14px;
-    margin-bottom: 10px;
-    }
-
-    .review-text {
-      max-height: 60px;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      font-size: 14px;
-      color: #333;
-    }
-
-    .review-text.expanded {
-      max-height: 500px;
-    }
-
-    .review-button {
-      background: #e1e9f1;
-      color: #1f8efb;
-      font-size: 14px;
-      border: none;
-      padding: 8px;
-      cursor: pointer;
-      border-radius: 4px;
-      margin-top: 10px;
-    }
-
-    .review-response {
-      margin-top: 15px;
-      background-color: #f1f2f7;
-      padding: 10px;
-      border-radius: 6px;
-    
-    .response-name {
-      font-weight: 700;
-    }
-
-    .response-text {
-      font-size: 14px;
-    }
+    button {
+      margin-top: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 12.91px;
+      line-height: 20px;
+      color: #1F72EE;
     }
   }
-
-  .load-more {
-      display: block;
-      background-color: #e1e9f1;
-      color: #1f8efb;
-      border: none;
-      padding: 10px;
-      text-align: center;
-      width: 100%;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-  }
+}
 </style>
   

@@ -49,9 +49,12 @@
     color: #fff;
     display: flex;
     justify-content: space-between;
+    gap: 30px;
     max-width: 1200px;
     width: 100%;
     margin: auto;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
 
@@ -105,6 +108,20 @@
       font-size: 11.06px;
       line-height: 16px;
     }
+  }
+
+  @media (max-width: 680px) {
+    &__wrapper {
+      flex-direction: column;
+    }
+  }
+  @media (max-width: 390px) {
+      &__left {
+        &-top {
+          flex-direction: column;
+          gap: 20px;
+        }
+      }
   }
 }
 </style>

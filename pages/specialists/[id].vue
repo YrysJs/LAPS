@@ -2,6 +2,7 @@
 import Info from '~/components/specialists/info.vue'
 import Reviews from '~/components/specialists/reviews.vue'
 import Modal from '~/components/modal/modal.vue'
+import Rating from '~/components/specialists/rating.vue'
 import { useMainStore } from '~/store/useMainStore'
 
 //fn
@@ -61,7 +62,18 @@ onMounted(async() => {
                 </div>
 
                 <div class="specialist__list-info-bottom">
-              
+                  <div class="specialist__list-info-bottom-count">
+                    <Rating
+                      :rating="4.5"
+                      color="#f5a623"/>
+                    <span>(4.5)</span>
+                  </div>
+                  <div class="specialist__list-info__reviews">
+                    <img
+                      src="/icons/comment-blue.svg"
+                      alt="comment-icon">
+                    <span>{{ 5 }} отзывов</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -96,7 +108,8 @@ onMounted(async() => {
               borderless
               expanded 
               :color="selectedColor"
-              mode="dateTime"/>
+              mode="dateTime"
+              @dayclick="e => console.log(e)"/>
             <div class="specialist__list-shedule__worktime">
               <p>Свободное время</p>
               <div>
@@ -232,6 +245,15 @@ onMounted(async() => {
         display: flex;
         align-items: center;
         gap: 24px;
+
+        &-count {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          font-weight: bold;
+          font-size: 14px;
+        }
       }
     }
 

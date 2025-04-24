@@ -64,15 +64,25 @@ const toggleExpand = () => {
   }
 
   &__button {
-    background: #e1e9f1;
-    color: #1f8efb;
+    background: #E9F1FD;
+    color: #1F72EE;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     padding: 8px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 20px;
+    width: 100%;
+
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 14.63px;
+    line-height: 24px;
+    letter-spacing: 0%;
+    text-align: center;
+    vertical-align: middle;
+
 
     &:hover {
       background: #d0e1f1;

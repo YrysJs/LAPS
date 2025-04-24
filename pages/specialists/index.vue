@@ -10,10 +10,11 @@ const store = useMainStore()
 
 const searchQuery = ref('')
 const suggestions = ref(store.getSpecializationsList || [])
-const currentPage = ref(1);
-const totalPages = ref(10);
+const currentPage = ref(6);
+const totalPages = ref(250);
 
 const bulletSpecializations = ref(store.getSpecializationsBulletList)
+const specialist = ref(store.getSpecialistsList)
 
 const fetchSpecializations = async (e) => {
   if (searchQuery.value.trim() === '') {
@@ -89,7 +90,10 @@ onUpdated( async() => {
         </button>
       </div>
       <div class="specialist__list">
-        <div class="specialist__list-item">
+        <div
+          v-for="specialist of specialist"
+          :key="specialist.id"
+          class="specialist__list-item">
           <nuxt-link
             to="/specialists/1"
             class="specialist__list-item__left">
@@ -101,34 +105,34 @@ onUpdated( async() => {
             <div class="specialist__list-info">
               <div class="specialist__list-info-top">
                 <div class="specialist__list-info__rating">
-                  <span>Рейтинг</span> <span>&#9733; 5</span>
+                  <span>Рейтинг</span> <span>&#9733; {{ specialist.rating }}</span>
                 </div>
                 <div class="specialist__list-info__reviews">
                   <img
                     src="/icons/comment-blue.svg"
                     alt="comment-icon">
-                  <span>5 отзывов</span>
+                  <span>{{ specialist.reviews_count }} отзывов</span>
                 </div>
               </div>
           
               <div class="specialist__list-info-main">
                 <div class="specialist__list-info__main-name">
-                  Морозов Алена Олеговна • Стаж 12 лет
+                  {{ specialist.user.last_name }} {{  specialist.user.first_name }} {{ specialist.user.middle_name }} • Стаж {{ specialist.experience_years }} лет
                 </div>
                 <div class="specialist__list-info__main-departure">
-                  Гражданство • Стаж 12 лет
+                  {{ specialist.specialization }} • Стаж {{ specialist.experience_years }} лет
                 </div>
               </div>
 
               <div class="specialist__list-info-bottom">
                 <div class="specialist__list-info__price-first">
                   <h4>Первичный приём</h4>
-                  <p>от 7 000 ₸</p>
+                  <p>от {{ specialist.primary_consult_price }} ₸</p>
                 </div>
                 <div class="line"></div>
                 <div class="specialist__list-info__price-second">
                   <h4>Вторичный приём</h4>
-                  <p>от 5 000 ₸</p>
+                  <p>от {{ specialist.secondary_consult_price }} ₸</p>
                 </div>
               </div>
             </div>
@@ -378,16 +382,19 @@ onUpdated( async() => {
 
         &__left {
           justify-content: center;
-          gap: 25px;
+          gap: 15px;
         }
       }
     }
   }
 
   @media (max-width: 680px) {
-
+    padding-left: 16px;
+    padding-right: 16px;
     h1 {
       font-size: 26px;
+      
+      line-height: 30px;
     }
 
     &__list {
@@ -395,7 +402,7 @@ onUpdated( async() => {
 
       &-item {
         flex-wrap: wrap;
-
+        gap: 15px;
 
         &__left {
           flex-direction: column;
@@ -416,6 +423,11 @@ onUpdated( async() => {
           order: 1;
           margin-top: 10px;
         }
+
+        &-bottom {
+          order: 1;
+          margin-top: 15px;
+        }
       }
 
       &-info-top, &-info-bottom {
@@ -430,18 +442,37 @@ onUpdated( async() => {
   @media (max-width: 465px) {
     h1 {
       font-size: 21px;
+      text-align: left;
     }
     &__list {
+      &-avatar {
+        max-height: 100px;
+        max-width: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        img {
+          height: 100%;
+          width: 100%;
+        }
+      }
+
       &-shedule {
         max-width: 300px;
         
         &__worktime {
           padding-left: 14px;
+          margin-top: 10px;
 
           div {
             flex-wrap: wrap;
+            margin-top: 10px;
           }
         }
+      }
+
+      &-info__main-name {
+        font-size: 12px;
+        line-height: 18px;
       }
     }
   }

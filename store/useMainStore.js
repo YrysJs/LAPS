@@ -25,6 +25,10 @@ export const useMainStore = defineStore('main', () => {
     return specializationBullet
   })
 
+  const getSpecialistsList = computed(() => {
+    return specialists
+  })
+
   //actions
   const getSpecialists = async(params) => {
     try {
@@ -240,6 +244,7 @@ export const useMainStore = defineStore('main', () => {
     addRevuewReplies,
     createAppointments,
     getSpecializationsList,
-    getSpecializationsBulletList
+    getSpecializationsBulletList,
+    getSpecialistsList
   }
 })
