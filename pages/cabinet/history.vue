@@ -1,86 +1,159 @@
 <script setup>
-import { useUserStore } from '~/store/useUserStore';
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '~/store/useUserStore'
 
-//fn
 const userStore = useUserStore()
+const route = useRoute()
+const router = useRouter()
 
-//data
 const connect = ref(true)
-const filterState = ref(true)
-const appointments = ref(userStore.consultations)
+// Фильтр: true = Предстоящие, false = Отмененные
+const filterState = ref(route.query.filter === 'canceled' ? false : true)
+// Текущая страница (из query или 1)
+const currentPage = ref(Number(route.query.page) || 1)
 
+const appointments = ref([])
+
+// Параметры запроса
+const params = computed(() => {
+  const isClient = userStore.user.role === 'client'
+  const idKey = isClient ? 'client_id' : 'specialist_id'
+  const idValue = isClient
+    ? userStore.user.id
+    : userStore.specialistsMainInfo.id
+  return {
+    [idKey]: idValue,
+    status: filterState.value ? 'paid' : 'canceled',
+    limit: 10,
+    page: currentPage.value
+  }
+})
+
+// Запрос консультаций через стор
+async function fetchAppointments() {
+  await userStore.getAppointments(params.value)
+  appointments.value = userStore.consultations || []
+}
+
+// Форматирование даты
+function formatDate(dateStr) {
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+onMounted(fetchAppointments)
+
+// При изменении фильтра или страницы — обновляем query и перезагружаем
+watch([filterState, currentPage], ([f, p]) => {
+  router.replace({
+    query: { filter: f ? 'paid' : 'canceled', page: String(p) }
+  })
+  fetchAppointments()
+})
 </script>
 
 <template>
   <NuxtLayout name="cabinet">
     <div class="history">
-      <h3 class="history__title">
-        Консультации
-      </h3>
+      <h3 class="history__title">Консультации</h3>
+
+      <!-- Фильтр состояний -->
       <div class="history__filter">
         <div class="history__filter-item history__filter-1">
           <img
             src="/icons/cabinet/filter.svg"
-            alt="filter-icon">
+            alt="filter-icon" >
         </div>
         <button
           class="history__filter-item history__filter-2"
           :class="{ active: filterState }"
-          @click="filterState = true">
+          @click="filterState = true"
+        >
           Предстоящие
         </button>
         <button
           class="history__filter-item history__filter-3"
           :class="{ active: !filterState }"
-          @click="filterState = false">
+          @click="filterState = false"
+        >
           Отмененные
         </button>
       </div>
+
       <div class="history__content">
-        <div
-          v-if="false"
-          class="history__container">
-          <div class="history__header">
-            <div>Имя</div>
-            <div>Номер телефона</div>
-            <div>Дата</div>
-            <div>Статус</div>
-          </div>
-          <div class="history__row history__row-desktop">
-            <div>Сымбат Алтынбекова</div>
-            <div class="history-phone">
-              <img
-                class="phone-icon"
-                :src="connect == true ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
-                alt="phone-icon"> <a :href="connect == true ? 'tel:88005553535' : 'https://wp/88005553535'">+7 777 77 77</a>
+        <template v-if="appointments.length">
+          <div
+            v-for="(item, index) in appointments"
+            :key="index"
+            class="history__container"
+          >
+            <div class="history__header">
+              <div>Имя</div>
+              <div>Номер телефона</div>
+              <div>Дата</div>
+              <div>Статус</div>
             </div>
-            <div>14 марта 2025</div>
-            <div class="status">Оплачено</div>
-          </div>
-          <div class="history__row history__row-mobile">
-            <div class="history__row-mobile__item">
-              <div class="label">Имя:</div>
-              <div>Сымбат Алтынбекова</div>
-            </div>
-            <div class="history__row-mobile__item">
-              <div class="label">Номер телефона:</div>
+            <div class="history__row history__row-desktop">
+              <div>{{ item.client_name || item.specialist_name }}</div>
               <div class="history-phone">
                 <img
                   class="phone-icon"
-                  :src="connect == true ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
-                  alt="phone-icon"> <a :href="connect == true ? 'tel:88005553535' : 'https://wp/88005553535'">+7 777 77 77</a>
+                  :src="connect ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
+                  alt="phone-icon"
+                >
+                <a
+                  :href="connect
+                    ? `tel:${item.phone}`
+                    : `https://wa.me/${item.phone.replace(/\D/g, '')}`"
+                >{{ item.phone }}</a>
+              </div>
+              <div>{{ formatDate(item.date) }}</div>
+              <div class="status">{{ item.status }}</div>
+            </div>
+            <!-- Мобильный вид -->
+            <div class="history__row history__row-mobile">
+              <div class="history__row-mobile__item">
+                <div class="label">Имя:</div>
+                <div>{{ item.client_name || item.specialist_name }}</div>
+              </div>
+              <div class="history__row-mobile__item">
+                <div class="label">Номер телефона:</div>
+                <div class="history-phone">
+                  <img
+                    class="phone-icon"
+                    :src="connect ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
+                    alt="phone-icon"
+                  >
+                  <a
+                    :href="connect
+                      ? `tel:${item.phone}`
+                      : `https://wa.me/${item.phone.replace(/\D/g, '')}`"
+                  >{{ item.phone }}</a>
+                </div>
+              </div>
+              <div class="history__row-mobile__item">
+                <div class="label">Дата:</div>
+                <div>{{ formatDate(item.date) }}</div>
+              </div>
+              <div class="history__row-mobile__item">
+                <div class="label">Статус:</div>
+                <div class="status">{{ item.status }}</div>
               </div>
             </div>
-            <div class="history__row-mobile__item">
-              <div class="label">Дата:</div>
-              <div>14 марта 2025</div>
-            </div>
-            <div class="history__row-mobile__item">
-              <div class="label">Статус:</div>
-              <div class="status">Оплачено</div>
-            </div>
           </div>
-        </div>
+          <!-- Пагинация (упрощённо) -->
+          <div class="pagination">
+            <button
+              :disabled="currentPage <= 1"
+              @click="currentPage--"
+            >
+              &larr; Назад
+            </button>
+            <span>Страница {{ currentPage }}</span>
+            <button @click="currentPage++">Вперёд &rarr;</button>
+          </div>
+        </template>
         <div
           v-else
           class="history__empty">

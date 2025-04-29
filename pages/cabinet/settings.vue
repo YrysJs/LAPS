@@ -14,19 +14,20 @@ const passwordRepeat = ref('')
 
 //actions
 const updatePassword = async () => {
-  if (newPassword.value !== passwordRepeat.value) {
-    toast.warning('Значения в полях не совпадают')
-  } else if (!newPassword.value.length || !passwordRepeat.value.length) {
+  if (!newPassword.value.length || !passwordRepeat.value.length) {
     toast.warning('Заполните поля')
   } else {
     const data = {
       new_password: newPassword.value,
-      old_password: passwordRepeat
+      old_password: passwordRepeat.value
     }
     await userStore.updateUserPassword(userStore.user.id, data)
   }
 }
 
+definePageMeta({
+  middleware: 'cabinet'
+})
 </script>
 
 <template>

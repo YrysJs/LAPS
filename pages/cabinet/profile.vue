@@ -65,6 +65,10 @@ onMounted(() => {
     userStore.getSpecialistInfo()
   }
 })
+
+definePageMeta({
+  middleware: 'cabinet'
+})
 </script>
 
 <template>
@@ -82,16 +86,19 @@ onMounted(() => {
               Ваши данные
             </button>
             <button
+              v-if="userStore.user.role !== 'client'"
               :class="{ 'active': activeTab === 1 }"
               @click="setTab(1)">
               Образование
             </button>
             <button
+              v-if="userStore.user.role !== 'client'"
               :class="{ 'active': activeTab === 2 }"
               @click="setTab(2)">
               Опыт работы
             </button>
             <button
+              v-if="userStore.user.role !== 'client'"
               :class="{ 'active': activeTab === 3 }"
               @click="setTab(3)">
               График работы
@@ -112,19 +119,26 @@ onMounted(() => {
           v-if="!route.query.tab"
           class="profile-mobile__info">
           <div class="flex gap-[20px]">
-            <div class="min-w-[92px] min-h-[92px] max-w-[160px] max-h-[160px] w-full">
+            <div
+              v-if="userStore.user.role !== 'client'"
+              class="min-w-[92px] min-h-[92px] max-w-[160px] max-h-[160px] w-full">
               <img
                 src="/images/test-image.png"
                 alt=""
                 class="w-full h-full object-cover">
             </div>
             <div class="min-w-[200px]">
-              <h3 class="text-xs text-[#767485] font-montserrat">Гражданство · Стаж 40 лет</h3>
+              <h3
+                v-if="userStore.user.role !== 'client'"
+                class="text-xs text-[#767485] font-montserrat">
+                Гражданство · Стаж 40 лет
+              </h3>
               <h4 class="font-montserrat text-base font-bold text-[#242424] leading-[18px] mt-[6px] mb-[8px]">
-                Морозов Алена
-                Олеговна
+                {{ userStore.user.last_name }} {{ userStore.user.first_name }} {{ userStore.user.middle_name }}
               </h4>
-              <h5 class="text-sm font-montserrat text-[#242424] flex gap-[6px]">
+              <h5
+                v-if="userStore.user.role !== 'client'"
+                class="text-sm font-montserrat text-[#242424] flex gap-[6px]">
                 Рейтинг <img
                   src="/icons/cabinet/star-black.svg"
                   alt="icon-star">
@@ -141,10 +155,12 @@ onMounted(() => {
                 <h3 class="text-xs text-[#767485] font-montserrat">Звонок</h3>
               </div>
               <a
-                href="77077778899"
-                class="text-sm text-[#242424] font-medium">77077778899</a>
+                :href="`tel:${userStore.user.phone}`"
+                class="text-sm text-[#242424] font-medium">{{ userStore.user.phone }}</a>
             </div>
-            <div class="flex items-center justify-between">
+            <div
+              v-if="userStore.user.role !== 'client'"
+              class="flex items-center justify-between">
               <div class="flex items-center gap-[16px]">
                 <img
                   src="/icons/wp-modal-icon.svg"
@@ -168,6 +184,7 @@ onMounted(() => {
               alt="">
           </button>
           <button
+            v-if="userStore.user.role !== 'client'"
             @click="setTab(1)">
             Образование
             <img
@@ -175,6 +192,7 @@ onMounted(() => {
               alt="">
           </button>
           <button
+            v-if="userStore.user.role !== 'client'"
             @click="setTab(2)">
             Опыт работы
             <img
@@ -182,6 +200,7 @@ onMounted(() => {
               alt="">
           </button>
           <button
+            v-if="userStore.user.role !== 'client'"
             @click="setTab(3)">
             График работы
             <img

@@ -1,55 +1,175 @@
 <script setup>
+import { ref, watch } from 'vue'
+import { useUserStore } from '~/store/useUserStore'
+
+const userStore = useUserStore()
+
+const job = ref([])
+const newJob = ref([])
+
+const jobItemTemplate = () => ({
+  company: "",
+  end_year: 0,
+  position: "",
+  start_year: 0,
+})
+
+watch(
+  () => userStore.job,
+  (val) => {
+    job.value = val.map(item => ({ ...item }))
+  },
+  { immediate: true }
+)
+
+const addJob = () => {
+  newJob.value.push(jobItemTemplate())
+}
+
+const removeJob = (index) => {
+  newJob.value.splice(index, 1)
+}
+
+const removeExistingJob = async (id, index) => {
+  try {
+    await userStore.deleteSpecialistJob(id)
+    education.value.splice(index, 1)
+  } catch (e) {
+    console.error('Ошибка удаления:', e)
+  }
+}
+
+const saveJob = async () => {
+  try {
+    for (const item of newJob.value) {
+      await userStore.addSpecialistJob({specialist_id : userStore.specialistsMainInfo.id}, item)
+    }
+    newJob.value = []
+
+    for (const item of job.value) {
+      if (item.id) {
+        await userStore.updateSpecialistJob(item.id, item)
+      }
+    }
+
+    await userStore.getWork({specialist_id: userStore.specialistsMainInfo.id})
+  } catch (e) {
+    console.error('Ошибка при сохранении:', e)
+  }
+}
+
+onMounted(async () => {
+  await userStore.getWork({specialist_id: userStore.specialistsMainInfo.id, date_from: '', date_to: ''})
+})
 </script>
 
 <template>
   <div class="experience">
     <div class="experience__content">
       <div class="experience__wrapper">
-        <div class="experience__wrapper-item">
-          <button class="delete">
+        <div
+          v-for="(item, index) in job"
+          :key="item.id"
+          class="experience__wrapper-item"
+        >
+          <button
+            class="delete"
+            @click="removeExistingJob(item.id, index)"
+          >
             &#10006;
           </button>
           <div class="experience__item">
-            <p>
-              Место работы
-            </p>
+            <p>Место работы</p>
             <input
+              v-model="job[index].company"
               type="text"
-              placeholder="Введите название">
+              placeholder="Введите год"
+            >
           </div>
           <div class="experience__item">
-            <p>
-              Должность
-            </p>
+            <p>Должность</p>
             <input
+              v-model="job[index].position"
               type="text"
-              placeholder="Введите название">
+              placeholder="Введите название"
+            >
           </div>
           <div class="experience__item">
-            <p>
-              Год начала работы
-            </p>
+            <p>Год начала работы</p>
             <input
-              type="date"
-              placeholder="Введите год">
+              v-model="job[index].start_year"
+              type="number"
+              placeholder="Введите год"
+            >
           </div>
           <div class="experience__item">
-            <p>
-              Год окончания работы
-            </p>
+            <p>Год окончания работы</p>
             <input
-              type="date"
-              placeholder="Введите год">
+              v-model="job[index].end_year"
+              type="number"
+              placeholder="Введите год"
+            >
           </div>
         </div>
-        <button class="add-item">
+        
+        <div
+          v-for="(item, index) in newJob"
+          :key="index"
+          class="experience__wrapper-item"
+        >
+          <button
+            class="delete"
+            @click="removeJob(index)"
+          >
+            &#10006;
+          </button>
+          <div class="experience__item">
+            <p>Место работы</p>
+            <input
+              v-model="newJob[index].company"
+              type="text"
+              placeholder="Введите название"
+            >
+          </div>
+          <div class="experience__item">
+            <p>Должность</p>
+            <input
+              v-model="newJob[index].position"
+              type="text"
+              placeholder="Введите название"
+            >
+          </div>
+          <div class="experience__item">
+            <p>Год начала работы</p>
+            <input
+              v-model="newJob[index].start_year"
+              type="number"
+              placeholder="Введите год"
+            >
+          </div>
+          <div class="experience__item">
+            <p>Год окончания работы</p>
+            <input
+              v-model="newJob[index].end_year"
+              type="number"
+              placeholder="Введите год"
+            >
+          </div>
+        </div>
+
+        <button
+          class="add-item"
+          @click="addJob"
+        >
           &#10011; Добавить место работы
         </button>
       </div>
     </div>
+
     <button
       class="content-submit"
-      @click="stepHandler">
+      @click="saveJob"
+    >
       Сохранить
     </button>
   </div>
@@ -68,7 +188,6 @@
   background: #1F72EE;
   font-weight: 700;
   font-size: 14.38px;
-
   cursor: pointer;
 }
 .delete {
@@ -81,6 +200,7 @@
   border-radius: 50%;
   background: #f3f3f3;
   padding: 15px;
+  cursor: pointer;
 }
 .add-item {
   border: 1px solid #0069FF;
@@ -92,17 +212,10 @@
   width: fit-content;
   padding: 6px 15px;
   border-radius: 5px;
+  cursor: pointer;
 }
 .experience {
   width: 100%;
-
-  &__title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 32px;
-    line-height: 100%;
-    letter-spacing: -0.11px;
-  }
 
   &__content {
     margin-top: 24px;
@@ -140,7 +253,6 @@
       font-weight: 600;
       font-size: 14px;
       line-height: 100%;
-      letter-spacing: 0px;
       margin-bottom: 14px;
     }
 
@@ -155,7 +267,7 @@
       font-weight: 500;
 
       &:focus {
-          outline: 2px solid #1F72EE;
+        outline: 2px solid #1F72EE;
       }
     }
   }
@@ -166,30 +278,19 @@
     }
   }
 
-  @media (max-width: 940px) {
-    &__item {
-      max-width: 100%;
-    }
-  }
-
   @media (max-width: 640px) {
     &__content {
       margin-top: 0;
       padding: 16px;
     }
-
     &__wrapper {
       gap: 30px;
-
       &-item {
-        padding: 30px 16px
+        padding: 30px 16px;
       }
     }
-
-    &__item {
-      input {
-        padding-left: 8px;
-      }
+    &__item input {
+      padding-left: 8px;
     }
   }
 }

@@ -1,4 +1,7 @@
 <script setup>
+definePageMeta({
+  middleware: 'cabinet'
+})
 </script>
 
 <template>

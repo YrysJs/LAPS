@@ -20,7 +20,7 @@ const burgerPath = ['/icons//burger-ff.svg', '/icons/cabinet/close-burger.svg']
             ЮРИСТЫ
           </nuxt-link>
           <nuxt-link
-            to="/specialists?type=psycholog"
+            to="/specialists?type=psychologist"
             class="font-montserrat font-medium text-normal"
             :class="{ active: $route.query.type === 'psychologists' }">
             ПСИХОЛОГИ

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useAuthStore } from '~/store/useAuthStore'
 import { useToast } from 'vue-toastification'
+import Select from '../ui/select.vue'
 
 const emit = defineEmits()
 const authStore = useAuthStore()
@@ -15,9 +16,38 @@ const middle_name = ref('')
 const password = ref('')
 const phone = ref('')
 const role = ref(route.query.type)
+const specialistType = ref({
+  label: '',
+  value: ''
+})
+const selectValue = [
+  {
+    value: 'lawyer',
+    label: 'Юрист'
+  },
+  {
+    value: 'psychologist',
+    label: 'Психолог'
+  }
+]
 
 const userActions = (type) => {
   if (type === 'login') {
+    emit('action', 'login')
+  }
+}
+
+async function createSpecialistProfile(user_id, token) {
+  const data = {
+    type: specialistType.value,
+    user_id: user_id,
+  }
+  console.log(data);
+  
+  const res = await authStore.createSpecialistProfile(data, token)
+
+  if (res.status) {
+    toast('Регистрация прошла успешно')
     emit('action', 'login')
   }
 }
@@ -64,11 +94,16 @@ const signUp = async () => {
 
   const res = await authStore.register(userData)
 
-  if (res.status) {
+  if (route.query.type !== 'client') {
+    await createSpecialistProfile(res.data.id, res.data.access_token)
+  }
+
+  if (route.query.type == 'client' && res.status) {
     toast('Регистрация прошла успешно')
     emit('action', 'login')
   }
 }
+
 </script>
 
 <template>
@@ -151,6 +186,17 @@ const signUp = async () => {
           class="form-item__input"
         >
       </div>
+      <div class="form-item form-item__select">
+        <img
+          src="/icons/auth/electro-icon.svg"
+          alt="icon" >
+        <Select
+          v-model="specialistType"
+          :options="selectValue"
+          label-key="label"
+          value-key="value"
+          placeholder="Выберите специализацию"/>
+      </div>
       <button
         type="submit"
         class="submit"
@@ -166,7 +212,6 @@ const signUp = async () => {
   </div>
 </template>
 
-
 <style lang="scss" scoped>
 .form {
   min-width: 300px;
@@ -179,6 +224,21 @@ const signUp = async () => {
 
   &-item {
     position: relative;
+
+    &__select {
+      width: 100%;
+      height: 64px;
+      padding-left: 64px;
+      border-radius: 12px;
+      background: #ebeefc;
+      border: 1px solid #E9EAEB;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      
+      &:focus {
+        outline: 2px solid #1F72EE;
+      }
+    }
 
     &__input {
       width: 100%;

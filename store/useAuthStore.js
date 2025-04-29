@@ -38,6 +38,8 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async(obj) => {
     try {
       const { data } = await axiosNoAuth.post('/auth/register', obj)
+      console.log(data);
+      
       return data
     } catch(e) {
       const errorMessage = e.response.data.message || 'Произошла ошибка'
@@ -69,5 +71,23 @@ export const useAuthStore = defineStore('auth', () => {
     user_type.value = type
   }
 
-  return { user, user_type, auth, register, refreshToken, logout, setUserType }
+  const createSpecialistProfile = async (obj, token) => {
+    try {
+      const { data } = await axiosNoAuth.post(
+        '/specialists',
+        obj,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      return data
+    } catch (e) {
+      const errorMessage = e.response?.data?.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  return { user, user_type, auth, register, refreshToken, logout, setUserType, createSpecialistProfile }
 })

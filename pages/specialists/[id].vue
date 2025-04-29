@@ -9,6 +9,7 @@ import { useMainStore } from '~/store/useMainStore'
 const router = useRouter()
 const route = useRoute()
 const mainStore = useMainStore()
+const specialist_info = ref(mainStore.specialistById)
 
 //data
 const activeTab = ref(0)
@@ -26,7 +27,7 @@ const setTab = (index) => {
 onMounted(async() => {
   await mainStore.getSpecialistById(route.params.id)
   await mainStore.getReviews()
-  await mainStore.getSpecialistsSheduleById(route.params.id)
+  await mainStore.getSpecialistsSheduleById(specialist_info.value.id)
 })
 </script>
 

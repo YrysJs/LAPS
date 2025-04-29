@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMainStore } from '~/store/useMainStore'
 import Pagination from '~/components/layout/pagination.vue'
@@ -95,7 +95,7 @@ onUpdated( async() => {
           :key="specialist.id"
           class="specialist__list-item">
           <nuxt-link
-            to="/specialists/1"
+            :to="`/specialists/${specialist.id}`"
             class="specialist__list-item__left">
             <div class="specialist__list-avatar">
               <img

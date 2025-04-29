@@ -1,14 +1,89 @@
 <script setup>
+import { ref, watch } from 'vue'
+import { useUserStore } from '~/store/useUserStore'
+
+const userStore = useUserStore()
+
+const previewAvatar = ref(userStore.specialistsMainInfo.profile_photo_url || '')
+
+watch(
+  () => userStore.specialistsMainInfo.profile_photo_url,
+  url => { previewAvatar.value = url || '' },
+  { immediate: true }
+)
+
+async function onAvatarChange(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+
+  previewAvatar.value = URL.createObjectURL(file)
+
+  const formData = new FormData()
+  formData.append('photo', file, file.name)
+
+  await userStore.addSpecialistPhoto(userStore.specialistsMainInfo.id, formData)
+}
+
+async function deleteAvatar() {
+  await userStore.deleteSpecialistPhoto(userStore.specialistsMainInfo.id)
+  await userStore.getSpecialistInfo().then(res => {
+    previewAvatar.value = '/images/avatar.png'
+  })
+}
+
+const userData = ref({
+  first_name: userStore.user.first_name,
+  last_name:  userStore.user.last_name,
+  middle_name: userStore.user.middle_name,
+  email:      userStore.user.email,
+  phone:      userStore.user.phone,
+})
+
+watch(
+  () => userStore.user,
+  user => {
+    if (user && Object.keys(user).length) {
+      userData.value = {
+        first_name:  user.first_name,
+        last_name:   user.last_name,
+        middle_name: user.middle_name,
+        email:       user.email,
+        phone:       user.phone,
+      }
+    }
+  },
+  { immediate: true }
+)
+
+const save = async () => {
+  await userStore.updateUserData(userStore.user.id, userData.value)
+  await userStore.getUserInfo()
+}
 </script>
 
 <template>
   <div class="experience">
     <div class="experience__content">
       <div class="experience__wrapper">
-        <div class="experience__avatar">
-          <img
-            src="/images/avatar.png"
-            alt="avatar">
+        <div
+          v-if="userStore.user.role !== 'client'"
+          class="experience__avatar">
+          <button
+            v-if="previewAvatar"
+            @click="deleteAvatar">
+            &#10005;
+          </button>
+          <label for="avatar">
+            <img
+              :src="previewAvatar || '/images/avatar.png'"
+              alt="avatar" >
+          </label>
+          <input
+            id="avatar"
+            type="file"
+            accept="image/*"
+            @change="onAvatarChange"
+          >
           <p>Фото профиля</p>
         </div>
         <div class="experience__wrapper-item">
@@ -17,6 +92,7 @@
               Имя
             </p>
             <input
+              v-model="userData.first_name"
               type="text"
               placeholder="Введите имя">
           </div>
@@ -25,6 +101,7 @@
               Фамилия
             </p>
             <input
+              v-model="userData.last_name"
               type="text"
               placeholder="Введите фамилию">
           </div>
@@ -33,6 +110,7 @@
               E-mail
             </p>
             <input
+              v-model="userData.email"
               type="text"
               placeholder="Введите email">
           </div>
@@ -41,18 +119,25 @@
               Номер телефона
             </p>
             <input
+              v-model="userData.phone"
+              v-mask="'+7 (###) ###-##-##'"
               type="text"
               placeholder="Введите ваш номер телефона">
           </div>
-          <div class="experience__item">
+          <div
+            v-if="userStore.user.role !== 'client'"
+            class="experience__item">
             <p>
               Номер телефона WhatsApp
             </p>
             <input
+              v-mask="'+7 (###) ###-##-##'"
               type="text"
               placeholder="Введите ваш номер телефона">
           </div>
-          <div class="experience__item">
+          <div
+            v-if="userStore.user.role !== 'client'"
+            class="experience__item">
             <p>
               Стаж работы
             </p>
@@ -60,7 +145,9 @@
               type="text"
               placeholder="Стаж работы в годах">
           </div>
-          <div class="experience__item">
+          <div
+            v-if="userStore.user.role !== 'client'"
+            class="experience__item">
             <p>
               Специализация
             </p>
@@ -68,7 +155,9 @@
               type="text"
               placeholder="Выберите специализацию">
           </div>
-          <div class="experience__item">
+          <div
+            v-if="userStore.user.role !== 'client'"
+            class="experience__item">
             <p>
               Пол
             </p>
@@ -76,7 +165,9 @@
               type="text"
               placeholder="Введите год">
           </div>
-          <div class="experience__item">
+          <div
+            v-if="userStore.user.role !== 'client'"
+            class="experience__item">
             <p>
               Стоимость первичной консультации
             </p>
@@ -84,7 +175,9 @@
               type="text"
               placeholder="Цена">
           </div>
-          <div class="experience__item">
+          <div
+            v-if="userStore.user.role !== 'client'"
+            class="experience__item">
             <p>
               Стоимость вторичной консультации
             </p>
@@ -97,7 +190,7 @@
     </div>
     <button
       class="content-submit"
-      @click="stepHandler">
+      @click="save">
       Сохранить
     </button>
   </div>
@@ -146,8 +239,34 @@
 
   &__avatar {
     text-align: center;
-    max-width: 116px;
-    width: 100%;
+    position: relative;
+
+    button {
+      position: absolute;
+      right: -15px;
+      top: -10px;
+      font-size: 22px;
+      color: #fff;
+      background: rgb(255, 93, 93);
+      font-weight: bold;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+    
+
+    img {
+      width: 116px;
+      height: 116px;
+      object-fit: cover;
+      overflow: hidden;
+      border-radius: 50%;
+    }
+
+    input {
+      display: none;
+    }
 
     p {
       margin-top: 16px;

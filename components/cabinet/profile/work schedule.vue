@@ -1,45 +1,16 @@
-<script setup>
-import { reactive } from 'vue'
-const days = [
-  { key: 'monday',    label: 'Понедельник' },
-  { key: 'tuesday',   label: 'Вторник'     },
-  { key: 'wednesday', label: 'Среда'       },
-  { key: 'thursday',  label: 'Четверг'     },
-  { key: 'friday',    label: 'Пятница'     },
-  { key: 'saturday',  label: 'Суббота'     },
-  { key: 'sunday',    label: 'Воскресенье' }
-]
-
-const schedule = reactive({
-  slot_time: 0,
-  week_schedule: {
-    monday:    { work_time: [ { start_time: new Date(), end_time: new Date() } ] },
-    tuesday:   { work_time: [ { start_time: new Date(), end_time: new Date() } ] },
-    wednesday: { work_time: [ { start_time: new Date(), end_time: new Date() } ] },
-    thursday:  { work_time: [ { start_time: new Date(), end_time: new Date() } ] },
-    friday:    { work_time: [ { start_time: new Date(), end_time: new Date() } ] },
-    saturday:  { work_time: [ { start_time: new Date(), end_time: new Date() } ] },
-    sunday:    { work_time: [ { start_time: new Date(), end_time: new Date() } ] }
-  }
-})
-
-// Добавить новый слот для указанного дня
-function addSlot(dayKey) {
-  schedule.week_schedule[dayKey].work_time.push({
-    start_time: '',
-    end_time: ''
-  })
-}
-
-// Удалить слот по индексу
-function removeSlot(dayKey, idx) {
-  schedule.week_schedule[dayKey].work_time.splice(idx, 1)
-}
-</script>
-
 <template>
   <div class="settings">
     <div class="settings__content">
+      <!-- Опционально: ввод длительности слота -->
+      <div class="settings__item">
+        <p>Длительность слота (минут):</p>
+        <input
+          v-model.number="schedule.slot_time"
+          type="number"
+          min="0"
+          placeholder="Введите длительность"
+        >
+      </div>
       <div class="settings__wrapper">
         <div
           v-for="({ key, label }) in days"
@@ -51,11 +22,11 @@ function removeSlot(dayKey, idx) {
           <div
             v-for="(slot, idx) in schedule.week_schedule[key].work_time"
             :key="idx"
-            class="flex items-center justify-start gap-[8px] mb-2"
+            class="flex items-center gap-2 mb-2"
           >
-            <div class="flex flex-wrap items-center gap-[8px] mb-2 w-[230px] sm:w-fit border-1 border-gray-600">
-              <div class="flex items-center gap-[18px]">
-                <div class="w-[80px]">Начало:</div>
+            <div class="flex items-center gap-1 border p-2">
+              <div class="flex items-center gap-2">
+                <span>Начало:</span>
                 <VDatePicker
                   v-model="slot.start_time"
                   mode="time"
@@ -65,9 +36,8 @@ function removeSlot(dayKey, idx) {
                   class="w-24"
                 />
               </div>
-
-              <div class="flex items-center gap-[18px]">
-                <div class="w-[80px]">Конец:</div>
+              <div class="flex items-center gap-2">
+                <span>Конец:</span>
                 <VDatePicker
                   v-model="slot.end_time"
                   mode="time"
@@ -78,10 +48,9 @@ function removeSlot(dayKey, idx) {
                 />
               </div>
             </div>
-
             <button
               type="button"
-              class="text-red-500 w-[30px] h-[30px] bg-[#FFD8D8] rounded-full"
+              class="remove-slot-btn"
               @click="removeSlot(key, idx)"
             >
               ✕
@@ -90,7 +59,7 @@ function removeSlot(dayKey, idx) {
 
           <button
             type="button"
-            class="mt-1 px-3 py-1 bg-blue-100 text-blue-700 rounded"
+            class="add-slot-btn"
             @click="addSlot(key)"
           >
             + Добавить время
@@ -98,78 +67,200 @@ function removeSlot(dayKey, idx) {
         </div>
       </div>
     </div>
+
     <button
       class="content-submit"
-      @click="stepHandler">
+      @click="stepHandler"
+    >
       Сохранить
     </button>
   </div>
 </template>
 
+<script setup>
+import { reactive, onMounted } from 'vue'
+import { useUserStore } from '~/store/useUserStore'
+
+const userStore = useUserStore()
+const specialistId = userStore.specialistsMainInfo?.id || userStore.user.id
+
+// Храним оригинал API-данных
+const sheduleData = reactive({
+  slot_time: 30,
+  week_schedule: {}
+})
+
+// Дни недели
+const days = [
+  { key: 'monday',    label: 'Понедельник' },
+  { key: 'tuesday',   label: 'Вторник'     },
+  { key: 'wednesday', label: 'Среда'       },
+  { key: 'thursday',  label: 'Четверг'     },
+  { key: 'friday',    label: 'Пятница'     },
+  { key: 'saturday',  label: 'Суббота'     },
+  { key: 'sunday',    label: 'Воскресенье' }
+]
+
+function formatYMD(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+const today = new Date()
+const nextWeek = new Date(today)
+nextWeek.setDate(today.getDate() + 7)
+
+// Строковые даты
+const date_from = formatYMD(today)
+const date_to   = formatYMD(nextWeek)
+
+// Локальное редактируемое расписание
+const schedule = reactive({
+  slot_time: 30,
+  week_schedule: days.reduce((acc, { key }) => {
+    acc[key] = { work_time: [] }
+    return acc
+  }, {})
+})
+
+// Парсим "HH:MM" → Date
+function parseTimeString(str) {
+  const [h, m] = str.split(':').map(Number)
+  const d = new Date(); d.setHours(h, m, 0, 0)
+  return d
+}
+
+// Инициализируем локальный schedule из sheduleData
+function initWeekSchedule() {
+  schedule.slot_time = sheduleData.slot_time || 30
+  days.forEach(({ key }) => {
+    const list = sheduleData.week_schedule[key]?.work_time || []
+    schedule.week_schedule[key].work_time = list.map(slot => ({
+      start_time: typeof slot.start_time === 'string'
+        ? parseTimeString(slot.start_time)
+        : new Date(slot.start_time),
+      end_time: typeof slot.end_time === 'string'
+        ? parseTimeString(slot.end_time)
+        : new Date(slot.end_time)
+    }))
+  })
+}
+const dataShedule = computed(() => {
+  return userStore.shedule
+})
+// Загружаем из стора
+async function fetchSchedule() {
+  await userStore.getShedule({ specialist_id: specialistId, date_from: date_from, date_to: date_to })
+  sheduleData.slot_time     = dataShedule.value.slot_time
+  sheduleData.week_schedule = dataShedule.value.week_schedule
+  initWeekSchedule()
+}
+
+onMounted(fetchSchedule)
+
+// Добавить слот
+function addSlot(dayKey) {
+  schedule.week_schedule[dayKey].work_time.push({
+    start_time: new Date(),
+    end_time:   new Date()
+  })
+}
+// Удалить слот
+function removeSlot(dayKey, idx) {
+  schedule.week_schedule[dayKey].work_time.splice(idx, 1)
+}
+
+// Сохранить (используем экшены из стора)
+async function stepHandler() {
+  // Формируем только непустые дни
+  const week = {}
+  days.forEach(({ key }) => {
+    const slots = schedule.week_schedule[key].work_time
+    if (slots.length > 0) {
+      week[key] = {
+        work_time: slots.map(slot => ({
+          start_time: slot.start_time.toTimeString().slice(0,5),
+          end_time:   slot.end_time.toTimeString().slice(0,5)
+        }))
+      }
+    }
+  })
+
+  const payload = {
+    slot_time:     schedule.slot_time,
+    week_schedule: week
+  }
+
+  // Решаем – обновляем или создаём
+  if (Object.keys(sheduleData.week_schedule).length > 0) {
+    await userStore.updateSpecialistShedule(payload)
+  } else {
+    await userStore.addSpecialistShedule(payload)
+  }
+
+  // Перезагружаем после сохранения
+  await fetchSchedule()
+}
+</script>
+
 <style lang="scss" scoped>
 .content-submit {
   max-width: 418px;
-  display: block;
+  margin: 55px auto 0;
   width: 100%;
   height: 50px;
-  margin: 55px 0 0 auto;
+  background: #1F72EE;
   color: #fff;
   border-radius: 8px;
   font-family: 'Montserrat', sans-serif;
-  background: #1F72EE;
   font-weight: 700;
-  font-size: 14.38px;
-
+  font-size: 14px;
   cursor: pointer;
 }
-
-.settings {
-  &__title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 32px;
-    line-height: 100%;
-    letter-spacing: -0.11px;
+.remove-slot-btn {
+  width: 30px;
+  height: 30px;
+  background: #FFD8D8;
+  color: #e53e3e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.add-slot-btn {
+  margin-top: 4px;
+  padding: 6px 12px;
+  background: #ebf8ff;
+  color: #3182ce;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.settings__item {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  p {
+    font-weight: 600;
   }
-
-  &__content {
-    margin-top: 24px;
-    border-radius: 14px;
-    background: #fff;
-    padding: 48px;
+  input {
+    width: 80px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
   }
-
-  &__wrapper {
-    display: grid;
-    grid-template-columns: 2fr 2fr;
-    gap: 60px;
-
-    h4 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      font-size: 18px;
-      line-height: 100%;
-      letter-spacing: 0px;
-      margin-bottom: 14px;
-    }
-  }
-
-  &__item {
-    max-width: 360px;
-    width: 100%;
-  }
-
-  @media (max-width: 1340px) {
-    &__wrapper {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  }
-  @media (max-width: 640px) {
-    &__content {
-      padding: 24px 16px;
-      margin-top: 0;
-    }
+}
+.settings__wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+@media (max-width: 768px) {
+  .settings__wrapper {
+    grid-template-columns: 1fr;
   }
 }
 </style>

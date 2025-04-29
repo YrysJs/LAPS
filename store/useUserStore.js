@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user', () => {
   const shedule = ref([])
   const reviews = ref([])
   const consultations = ref([])
+  const specialistsMainInfo = ref({})
   
 
   const { axiosWithAuth } = useAxios();
@@ -20,12 +21,15 @@ export const useUserStore = defineStore('user', () => {
   const getUserInfo = async () => {
     try {
       const { data } = await axiosWithAuth.get('/users/me')
+      console.log(data);
       
-      if (data.status === !'success') {
+      if (data.status !== "success") {
         toast.error('Произошла ошибка')
-      } else {
-        user.value = data.data
+        return
       }
+      console.log('asd');
+      
+      user.value = data.data
     } catch(e) {
       const errorMessage = e.response.data.message || 'Произошла ошибка'
       toast.error(errorMessage)
@@ -39,7 +43,8 @@ export const useUserStore = defineStore('user', () => {
       if (data.status === !'success') {
         toast.error('Произошла ошибка')
       } else {
-        user.value = data.data
+        user.value = data.data.user
+        specialistsMainInfo.value = data.data
       }
     } catch(e) {
       const errorMessage = e.response.data.message || 'Произошла ошибка'
@@ -47,9 +52,28 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const addSpecialistEducation = async (obj) => {
+  const getSpecialistEducation = async (params) => {
     try {
-      const { data } = await axiosWithAuth.post(`/education`, obj)
+      const { data } = await axiosWithAuth.get('/education', {params})
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        education.value = data.data
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  const addSpecialistEducation = async (params, obj) => {
+    try {
+      const { data } = await axiosWithAuth.post(
+        '/education',
+        obj,
+        { params }
+      )
       
       if (data.status === !'success') {
         toast.error('Произошла ошибка')
@@ -119,8 +143,7 @@ export const useUserStore = defineStore('user', () => {
         toast('Пароль обновлен')
       }
     } catch(e) {
-      const errorMessage = e.response.data.message || 'Произошла ошибка'
-      toast.error(errorMessage)
+      toast.error(e)
     }
   }
 
@@ -154,17 +177,20 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const addSpecialistPhoto = async (id, obj) => {
+  const addSpecialistPhoto = async (id, formData) => {
     try {
-      const { data } = await axiosWithAuth.post(`/specialists/${id}/photo`, obj)
-      
-      if (data.status === !'success') {
-        toast.error('Произошла ошибка')
+      const { data } = await axiosWithAuth.post(
+        `/specialists/${id}/photo`,
+        formData
+      )
+
+      if (data.status !== 'success') {
+        toast.error('Не удалось загрузить фото')
       } else {
-        toast('Фото профиля добавлено')
+        toast.success('Фото профиля обновлено')
       }
-    } catch(e) {
-      const errorMessage = e.response.data.message || 'Произошла ошибка'
+    } catch (e) {
+      const errorMessage = e.response?.data.message || 'Произошла ошибка'
       toast.error(errorMessage)
     }
   }
@@ -179,14 +205,16 @@ export const useUserStore = defineStore('user', () => {
         toast('Фото профиля удалено')
       }
     } catch(e) {
-      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      const errorMessage = e.response?.data.message || 'Произошла ошибка'
       toast.error(errorMessage)
     }
   }
 
-  const getAppointments = async () => {
+  const getAppointments = async (params) => {
     try {
-      const { data } = await axiosWithAuth.get('/appointments')
+      const { data } = await axiosWithAuth.get('/appointments', {
+        params
+      })
       
       if (data.status === !'success') {
         toast.error('Произошла ошибка')
@@ -229,6 +257,122 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const getWork = async (params) => {
+    try {
+      const { data } = await axiosWithAuth.get('/work-experience', {
+        params
+      })
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        job.value = data.data
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  const addSpecialistJob = async (params, obj) => {
+    try {
+      const { data } = await axiosWithAuth.post(
+        '/work-experience',
+        obj,
+        { params }
+      )
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        toast('Данные добавлены')
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  const updateSpecialistJob = async (id, obj) => {
+    try {
+      const { data } = await axiosWithAuth.put(`/work-experience/${id}`, obj)
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        toast('Данные обновлены')
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  const deleteSpecialistJob = async (id) => {
+    try {
+      const { data } = await axiosWithAuth.delete(`/work-experience/${id}`)
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        toast('Данные удалены')
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  const getShedule = async (params) => {
+    try {
+      const { data } = await axiosWithAuth.get('/schedules', {
+        params
+      })
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        shedule.value = data.data
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  const addSpecialistShedule = async (obj) => {
+    try {
+      const { data } = await axiosWithAuth.post(
+        '/schedules',
+        obj,
+      )
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        toast('Данные добавлены')
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
+  const updateSpecialistShedule = async (obj) => {
+    try {
+      const { data } = await axiosWithAuth.put(`/schedules`, obj)
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        toast('Данные обновлены')
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
   return { 
     user,
     education,
@@ -236,8 +380,10 @@ export const useUserStore = defineStore('user', () => {
     shedule,
     reviews,
     consultations,
+    specialistsMainInfo,
     getUserInfo,
     getSpecialistInfo,
+    getSpecialistEducation,
     updateSpecialistEducation,
     deleteSpecialistEducation,
     getReviews,
@@ -249,6 +395,13 @@ export const useUserStore = defineStore('user', () => {
     deleteSpecialistPhoto,
     getAppointments,
     deleteAppointments,
-    updateAppointments
+    updateAppointments,
+    getWork,
+    addSpecialistJob,
+    updateSpecialistJob,
+    deleteSpecialistJob,
+    getShedule,
+    addSpecialistShedule,
+    updateSpecialistShedule
   }
 })
