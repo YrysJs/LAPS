@@ -1,7 +1,18 @@
 <script setup>
+import { useUserStore } from '~/store/useUserStore'
+
+const userStore = useUserStore()
 
 const menuState = ref(false)
+const userInfo = computed(() => {
+  return userStore.user
+})
+const specialistInfo = computed(() => {
+  return userStore.specialistsMainInfo
+})
 const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.svg']
+
+
 </script>
 
 <template>
@@ -18,11 +29,12 @@ const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.sv
       </select>
       <div class="flex items-center justify-between gap-[20px]">
         <img
-          src="/images/no-avatar.svg"
+          class="w-[45px] h-[45px] rounded-full overflow-hidden object-cover object-center"
+          :src="specialistInfo.profile_photo_url || '/images/no-avatar.svg'"
           alt="avatar">
         <div>
-          <h3>Алтынбекова С.</h3>
-          <p>Юрист</p>
+          <h3>{{ userInfo.last_name }} {{ userInfo.first_name }} {{ userInfo.middle_name }}</h3>
+          <p>{{ specialistInfo.type == 'lawyer' ? 'Юрист' : 'Психолог' }}</p>
         </div>
       </div>
     </header>

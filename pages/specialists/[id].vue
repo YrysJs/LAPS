@@ -9,7 +9,13 @@ import { useMainStore } from '~/store/useMainStore'
 const router = useRouter()
 const route = useRoute()
 const mainStore = useMainStore()
-const specialist_info = ref(mainStore.specialistById)
+const specialist_info = computed(() => {
+  return mainStore.specialistById
+})
+const free_slots = computed(() => {
+  return mainStore.specialistFreeSlots?.free_slots || []
+})
+const selected_date = ref(new Date().toLocaleDateString('en-CA'))
 
 //data
 const activeTab = ref(0)
@@ -23,11 +29,29 @@ const setTab = (index) => {
   router.push({ query: { tab: index } });
 }
 
+const calendarAttrs = computed(() => [{
+  key: 'selected',
+  highlight: { backgroundColor: '#3f51b5' },
+  dates: selected_date.value
+}])
+
+function formatLocalDate(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+async function onDayClick({ date }) {
+  selected_date.value = formatLocalDate(date)
+
+  await mainStore.getSpecialistsFreeSlots({specialist_id: route.params.id, date: selected_date.value})
+}
 
 onMounted(async() => {
   await mainStore.getSpecialistById(route.params.id)
   await mainStore.getReviews()
-  await mainStore.getSpecialistsSheduleById(specialist_info.value.id)
+  await mainStore.getSpecialistsFreeSlots({specialist_id: route.params.id, date: selected_date.value})
 })
 </script>
 
@@ -44,36 +68,36 @@ onMounted(async() => {
               class="specialist__list-item__left">
               <div class="specialist__list-avatar">
                 <img
-                  src="/images/test-image.png"
+                  :src="specialist_info.profile_photo_url ? specialist_info.profile_photo_url : '/images/test-image.png'"
                   alt="avatar">
               </div>
               <div class="specialist__list-info">
                 <div class="specialist__list-info-top">
                   <div class="specialist__list-info__rating">
-                    <span>Юрист</span>
+                    <span>{{ specialist_info.type == 'lawyer' ? 'Юрист' : 'Психолог' }}</span>
                   </div>
                 </div>
                 <div class="specialist__list-info-main">
                   <div class="specialist__list-info__main-name">
-                    Морозов Алена Олеговна
+                    {{ specialist_info?.user?.last_name }} {{ specialist_info?.user?.first_name }} {{ specialist_info?.user?.middle_name }}
                   </div>
                   <div class="specialist__list-info__main-departure">
-                    Гражданство • Стаж 12 лет
+                    {{ specialist_info?.specialization }} • Стаж {{ specialist_info?.experience_years }} лет {{ specialist_info?.association_member ? '• Состоит в ассоциации' : '' }}
                   </div>
                 </div>
 
                 <div class="specialist__list-info-bottom">
                   <div class="specialist__list-info-bottom-count">
                     <Rating
-                      :rating="4.5"
+                      :rating="specialist_info?.rating"
                       color="#f5a623"/>
-                    <span>(4.5)</span>
+                    <span>({{ specialist_info?.rating }})</span>
                   </div>
                   <div class="specialist__list-info__reviews">
                     <img
                       src="/icons/comment-blue.svg"
                       alt="comment-icon">
-                    <span>{{ 5 }} отзывов</span>
+                    <span>{{ specialist_info?.reviews_count }} отзывов</span>
                   </div>
                 </div>
               </div>
@@ -90,7 +114,7 @@ onMounted(async() => {
                     <button
                       :class="{ 'active': activeTab === 1 }"
                       @click="setTab(1)">
-                      Отзывы (5)
+                      Отзывы ({{ specialist_info.reviews_count }})
                     </button>
                   </div>
                 </div>
@@ -103,27 +127,28 @@ onMounted(async() => {
           </div>
           <div class="specialist__list-shedule">
             <v-calendar
-              v-model.range="range"
+              v-model.range="selected_date"
               view="weekly"
               transparent
               borderless
-              expanded 
+              expanded
+              :attributes="calendarAttrs"
               :color="selectedColor"
               mode="dateTime"
-              @dayclick="e => console.log(e)"/>
+              @dayclick="onDayClick"/>
             <div class="specialist__list-shedule__worktime">
               <p>Свободное время</p>
-              <div>
-                <button>12:00</button>
-                <button>12:30</button>
-                <button>13:00</button>
-                <button>13:30</button>
-                <button>14:00</button>
-                <button>14:30</button>
+              <div
+                class="flex flex-wrap gap-2">
+                <button
+                  v-for="(slot, slotIndex) of free_slots"
+                  :key="slotIndex">
+                  {{ slot }}
+                </button>
               </div>
               <div class="specialist__list-shedule__price">
-                <div><p>Первичный приём</p><strong>11 000 ₸</strong></div>
-                <div><p>Вторичный приём</p><strong>9 000 ₸</strong></div>
+                <div><p>Первичный приём</p><strong>{{ specialist_info.primary_consult_price }} ₸</strong></div>
+                <div><p>Вторичный приём</p><strong>{{ specialist_info.secondary_consult_price }} ₸</strong></div>
               </div>
               <button @click="recordModal = true">Записаться онлайн</button>
               <a href="tel:79093332211">Позвонить</a>
@@ -165,6 +190,14 @@ onMounted(async() => {
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    &-avatar {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 20px;
+      overflow: hidden;
+    }
 
     &-item {
       display: flex;

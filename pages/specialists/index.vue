@@ -52,9 +52,32 @@ async function getSpecialists(params) {
   await store.getSpecialists(params)
 }
 
+function formatLocalDate(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+async function onDayClick(date, id, spec) {
+  const localDate = formatLocalDate(date)
+  spec.selected_date = localDate
+
+  const slots = await store.getSpecialistsFreeSlots({
+    specialist_id: id,
+    date: localDate
+  })
+  specialist.value.find(item => item.id == id).free_slots = slots
+}
+
 onUpdated( async() => {
   await getSpecializationsBullet({type: route.query.type})
-  await getSpecialists({type: route.query.type})
+  await getSpecialists({type: route.query.type, date: new Date().toLocaleDateString('en-CA')})
+
+  specialist.value.map(spec => ({
+    ...spec,
+    selected_date: new Date().toLocaleDateString('en-CA')
+  }))
 })
 
 </script>
@@ -91,78 +114,83 @@ onUpdated( async() => {
       </div>
       <div class="specialist__list">
         <div
-          v-for="specialist of specialist"
-          :key="specialist.id"
+          v-for="specialisti of specialist"
+          :key="specialisti.id"
           class="specialist__list-item">
           <nuxt-link
-            :to="`/specialists/${specialist.id}`"
+            :to="`/specialists/${specialisti.id}`"
             class="specialist__list-item__left">
             <div class="specialist__list-avatar">
               <img
-                src="/images/test-image.png"
+                :src="specialisti.profile_photo_url ? specialisti.profile_photo_url : '/images/test-image.png'"
                 alt="avatar">
             </div>
             <div class="specialist__list-info">
               <div class="specialist__list-info-top">
                 <div class="specialist__list-info__rating">
-                  <span>Рейтинг</span> <span>&#9733; {{ specialist.rating }}</span>
+                  <span>Рейтинг</span> <span>&#9733; {{ specialisti.rating }}</span>
                 </div>
                 <div class="specialist__list-info__reviews">
                   <img
                     src="/icons/comment-blue.svg"
                     alt="comment-icon">
-                  <span>{{ specialist.reviews_count }} отзывов</span>
+                  <span>{{ specialisti.reviews_count }} отзывов</span>
                 </div>
               </div>
           
               <div class="specialist__list-info-main">
                 <div class="specialist__list-info__main-name">
-                  {{ specialist.user.last_name }} {{  specialist.user.first_name }} {{ specialist.user.middle_name }} • Стаж {{ specialist.experience_years }} лет
+                  {{ specialisti.user.last_name }} {{  specialisti.user.first_name }} {{ specialisti.user.middle_name }} • Стаж {{ specialisti.experience_years }} лет
                 </div>
                 <div class="specialist__list-info__main-departure">
-                  {{ specialist.specialization }} • Стаж {{ specialist.experience_years }} лет
+                  {{ specialisti.specialization }} • Стаж {{ specialisti.experience_years }} лет
                 </div>
               </div>
 
               <div class="specialist__list-info-bottom">
                 <div class="specialist__list-info__price-first">
                   <h4>Первичный приём</h4>
-                  <p>от {{ specialist.primary_consult_price }} ₸</p>
+                  <p>от {{ specialisti.primary_consult_price }} ₸</p>
                 </div>
                 <div class="line"></div>
                 <div class="specialist__list-info__price-second">
                   <h4>Вторичный приём</h4>
-                  <p>от {{ specialist.secondary_consult_price }} ₸</p>
+                  <p>от {{ specialisti.secondary_consult_price }} ₸</p>
                 </div>
               </div>
             </div>
           </nuxt-link>
           <div class="specialist__list-shedule">
             <v-calendar
-              v-model.range="range"
+              v-model.range="selected_date"
               view="weekly"
               transparent
               borderless
-              expanded 
+              expanded
+              :attributes="[{     
+                key: 'sel-' + specialisti.id,
+                dates: specialisti.selected_date,
+                highlight: { backgroundColor: '#3f51b5' }
+              }]"
               :color="selectedColor"
-              mode="dateTime"/>
+              mode="dateTime"
+              @dayclick="({date}) => onDayClick(date, specialisti.id, specialisti)"/>
             <div class="specialist__list-shedule__worktime">
               <p>Свободное время</p>
               <div>
-                <button>12:00</button>
-                <button>12:30</button>
-                <button>13:00</button>
-                <button>13:30</button>
-                <button>14:00</button>
-                <button>14:30</button>
+                <button
+                  v-for="(slot, slotIndex) of specialisti.free_slots"
+                  :key="slotIndex">
+                  {{ slot }}
+                </button>
               </div>
             </div>
           </div>
         </div>
+        <Pagination
+          :current-page="currentPage"
+          :total-pages="totalPages" />
       </div>
-      <Pagination
-        :current-page="currentPage"
-        :total-pages="totalPages" />
     </main>
   </NuxtLayout>
 </template>
@@ -260,6 +288,14 @@ onUpdated( async() => {
       }
     }
 
+    &-avatar {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
     &-shedule {
       max-width: 424px;
       width: 100%;
@@ -342,6 +378,7 @@ onUpdated( async() => {
         padding-left: 28px;
         div {
           display: flex;
+          flex-wrap: wrap;
           gap: 12px;
           margin-top: 17px;
         }

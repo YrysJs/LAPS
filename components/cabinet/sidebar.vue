@@ -1,10 +1,14 @@
 <script setup>
-// Здесь могут быть дополнительные настройки или импорты.
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 </script>
 
 <template>
   <div class="sidebar">
-    <div class="sidebar__header">
+    <div
+      class="sidebar__header"
+      @click="router.push('/')">
       <img
         src="/images/logo-cabinet.svg"
         alt="">

@@ -68,7 +68,6 @@ function selectOption(option) {
   isOpen.value = false;
 }
   
-// Закрываем при клике вне
 const container = ref(null);
 function clickOutsideHandler(e) {
   if (container.value && !container.value.contains(e.target)) {

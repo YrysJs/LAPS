@@ -129,9 +129,11 @@ export const useMainStore = defineStore('main', () => {
     }
   }
 
-  const getSpecialistsSheduleById = async(id) => {
+  const getSpecialistsSheduleById = async(params) => {
     try {
-      const { data } = await axiosNoAuth.get(`/schedules/${id}`)
+      const { data } = await axiosNoAuth.get('/schedules', {
+        params: params
+      })
       
       if (data.status === !'success') {
         toast.error('Произошла ошибка')
@@ -154,6 +156,8 @@ export const useMainStore = defineStore('main', () => {
         toast.error('Произошла ошибка')
       } else {
         specialistFreeSlots.value = data.data
+
+        return data.data.free_slots
       }
     } catch(e) {
       const errorMessage = e.response.data.message || 'Произошла ошибка'

@@ -1,7 +1,6 @@
 <template>
   <div class="settings">
     <div class="settings__content">
-      <!-- Опционально: ввод длительности слота -->
       <div class="settings__item">
         <p>Длительность слота (минут):</p>
         <input
@@ -84,13 +83,11 @@ import { useUserStore } from '~/store/useUserStore'
 const userStore = useUserStore()
 const specialistId = userStore.specialistsMainInfo?.id || userStore.user.id
 
-// Храним оригинал API-данных
 const sheduleData = reactive({
   slot_time: 30,
   week_schedule: {}
 })
 
-// Дни недели
 const days = [
   { key: 'monday',    label: 'Понедельник' },
   { key: 'tuesday',   label: 'Вторник'     },
@@ -112,11 +109,9 @@ const today = new Date()
 const nextWeek = new Date(today)
 nextWeek.setDate(today.getDate() + 7)
 
-// Строковые даты
 const date_from = formatYMD(today)
 const date_to   = formatYMD(nextWeek)
 
-// Локальное редактируемое расписание
 const schedule = reactive({
   slot_time: 30,
   week_schedule: days.reduce((acc, { key }) => {
@@ -125,14 +120,12 @@ const schedule = reactive({
   }, {})
 })
 
-// Парсим "HH:MM" → Date
 function parseTimeString(str) {
   const [h, m] = str.split(':').map(Number)
   const d = new Date(); d.setHours(h, m, 0, 0)
   return d
 }
 
-// Инициализируем локальный schedule из sheduleData
 function initWeekSchedule() {
   schedule.slot_time = sheduleData.slot_time || 30
   days.forEach(({ key }) => {
@@ -150,7 +143,6 @@ function initWeekSchedule() {
 const dataShedule = computed(() => {
   return userStore.shedule
 })
-// Загружаем из стора
 async function fetchSchedule() {
   await userStore.getShedule({ specialist_id: specialistId, date_from: date_from, date_to: date_to })
   sheduleData.slot_time     = dataShedule.value.slot_time
@@ -160,21 +152,17 @@ async function fetchSchedule() {
 
 onMounted(fetchSchedule)
 
-// Добавить слот
 function addSlot(dayKey) {
   schedule.week_schedule[dayKey].work_time.push({
     start_time: new Date(),
     end_time:   new Date()
   })
 }
-// Удалить слот
 function removeSlot(dayKey, idx) {
   schedule.week_schedule[dayKey].work_time.splice(idx, 1)
 }
 
-// Сохранить (используем экшены из стора)
 async function stepHandler() {
-  // Формируем только непустые дни
   const week = {}
   days.forEach(({ key }) => {
     const slots = schedule.week_schedule[key].work_time
@@ -193,14 +181,12 @@ async function stepHandler() {
     week_schedule: week
   }
 
-  // Решаем – обновляем или создаём
   if (Object.keys(sheduleData.week_schedule).length > 0) {
     await userStore.updateSpecialistShedule(payload)
   } else {
     await userStore.addSpecialistShedule(payload)
   }
 
-  // Перезагружаем после сохранения
   await fetchSchedule()
 }
 </script>

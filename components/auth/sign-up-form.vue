@@ -186,7 +186,9 @@ const signUp = async () => {
           class="form-item__input"
         >
       </div>
-      <div class="form-item form-item__select">
+      <div
+        v-if="route.query.type !== 'client'"
+        class="form-item form-item__select">
         <img
           src="/icons/auth/electro-icon.svg"
           alt="icon" >

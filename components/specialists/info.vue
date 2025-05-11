@@ -1,7 +1,12 @@
 <script setup>
 import { ref } from 'vue'
+import { useMainStore } from '~/store/useMainStore'
   
 const isExpanded = ref(false)
+const mainStore = useMainStore()
+const specialist_info = computed(() => {
+  return mainStore.specialistById
+})
   
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
@@ -10,18 +15,33 @@ const toggleExpand = () => {
 
 <template>
   <div class="education">
-    <h3>Образование:</h3>
-    <p
+    <p class="education__main">
+      {{ specialist_info.description }}
+    </p>
+    <div
       class="education__text"
       :class="{ 'expanded': isExpanded }">
-      — 2009 – 2011 гг. – Алматы Госуниверситет, специализация: «Нефрология»;
-      <br >
-      — 2008 г. – Казахский Нацмед Университет, специальность «Терапия»;
-      <br >
-      — 2009 – 2011 гг. – Алматы Госуниверситет, специализация: «Нефрология»;
-      <br >
-      — 2008 г. – Казахский Нацмед Университет, специальность «Терапия»;
-    </p>
+      <div class="mb-4">
+        <h3>Образование:</h3>
+        <div>
+          <p
+            v-for="item of specialist_info.education"
+            :key="item.id">
+            - {{ item.graduation_year }}гг -- {{ item.institution }} ({{ item.degree }}, {{ item.specialization }})
+          </p>
+        </div>
+      </div>
+      <div>
+        <h3>Опыт работы:</h3>
+        <div>
+          <p
+            v-for="item of specialist_info.work_experience"
+            :key="item.id">
+            - {{ item.start_year }} - {{ item.end_year }} -- {{ item.company }} ({{ item.position }})
+          </p>
+        </div>
+      </div>
+    </div>
     <button
       class="education__button"
       @click="toggleExpand">
@@ -46,6 +66,16 @@ const toggleExpand = () => {
     line-height: 22.4px;
     color: #6B7280;
     margin-bottom: 8px;
+  }
+
+  &__main {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22.4px;
+    color: #1F2937;
+    max-height: 60px;
+    margin-bottom: 20px;
   }
 
   &__text {

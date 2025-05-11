@@ -40,7 +40,6 @@ const stepHandler = () => {
   }
 }
 
-//data with emits
 const setEducationData = (data) => {
   education.value = data
 }

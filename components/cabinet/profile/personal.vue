@@ -1,10 +1,31 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useMainStore } from '~/store/useMainStore'
 import { useUserStore } from '~/store/useUserStore'
 
 const userStore = useUserStore()
+const mainStore = useMainStore()
 
 const previewAvatar = ref(userStore.specialistsMainInfo.profile_photo_url || '')
+const specializtions = ref(mainStore.getSpecializationsList || [])
+const userData = ref({
+  first_name: userStore.user.first_name,
+  last_name:  userStore.user.last_name,
+  middle_name: userStore.user.middle_name,
+  email:      userStore.user.email,
+  phone:      userStore.user.phone,
+})
+
+const specialsitData = ref({
+  association_member: userStore.specialistsMainInfo.association_member,
+  description: userStore.specialistsMainInfo.description,
+  experience:  +userStore.specialistsMainInfo.experience,
+  experience_years:  +userStore.specialistsMainInfo.experience_years,
+  primary_consult_price:  +userStore.specialistsMainInfo.primary_consult_price,
+  secondary_consult_price:  +userStore.specialistsMainInfo.secondary_consult_price,
+  specialization:  userStore.specialistsMainInfo.specialization,
+  type:  userStore.specialistsMainInfo.type
+})
 
 watch(
   () => userStore.specialistsMainInfo.profile_photo_url,
@@ -31,13 +52,22 @@ async function deleteAvatar() {
   })
 }
 
-const userData = ref({
-  first_name: userStore.user.first_name,
-  last_name:  userStore.user.last_name,
-  middle_name: userStore.user.middle_name,
-  email:      userStore.user.email,
-  phone:      userStore.user.phone,
-})
+const fetchSpecializations = async (e) => {
+  if (specialsitData.value.specialization.trim() === '') {
+    specializtions.value = []
+    return
+  }
+  
+  await mainStore.getSpecializations({
+    limit: 10,
+    search: e.target.value
+  })
+}
+
+const updateSpecialization = (specialization) => {
+  specialsitData.value.specialization = specialization
+  specializtions.value = []
+}
 
 watch(
   () => userStore.user,
@@ -54,11 +84,60 @@ watch(
   },
   { immediate: true }
 )
+watch(
+  () => userStore.specialistsMainInfo,
+  specialist => {
+    if (specialist && Object.keys(specialist).length) {
+      specialsitData.value = {
+        association_member: userStore.specialistsMainInfo.association_member,
+        description: userStore.specialistsMainInfo.description,
+        experience:  userStore.specialistsMainInfo.experience,
+        experience_years:  userStore.specialistsMainInfo.experience_years,
+        primary_consult_price:  userStore.specialistsMainInfo.primary_consult_price,
+        secondary_consult_price:  userStore.specialistsMainInfo.secondary_consult_price,
+        specialization:  userStore.specialistsMainInfo.specialization,
+        type:  userStore.specialistsMainInfo.type
+      }
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => userStore.user,
+  user => {
+    if (user && Object.keys(user).length) {
+      userData.value = {
+        first_name:  user.first_name,
+        last_name:   user.last_name,
+        middle_name: user.middle_name,
+        email:       user.email,
+        phone:       user.phone.replace(/[()\s-]/g, ''),
+      }
+    }
+  },
+  { immediate: true }
+)
 
 const save = async () => {
-  await userStore.updateUserData(userStore.user.id, userData.value)
+  const userDataReplacePhone = {
+    ...userData.value,
+    phone: userData.value.phone.replace(/[()\s-]/g, '')
+  }
+  await userStore.updateUserData(userStore.user.id, userDataReplacePhone)
   await userStore.getUserInfo()
+
+  if (userStore.user.role !== 'client') {
+    await userStore.updateSpecialistData(userStore.specialistsMainInfo.id, specialsitData.value)
+    await userStore.getSpecialistInfo()
+  }
 }
+
+onMounted(async () => {
+  if (userStore.user.role !== 'client') {
+    await userStore.getSpecialistInfo()
+  }
+})
 </script>
 
 <template>
@@ -128,42 +207,34 @@ const save = async () => {
             v-if="userStore.user.role !== 'client'"
             class="experience__item">
             <p>
-              Номер телефона WhatsApp
-            </p>
-            <input
-              v-mask="'+7 (###) ###-##-##'"
-              type="text"
-              placeholder="Введите ваш номер телефона">
-          </div>
-          <div
-            v-if="userStore.user.role !== 'client'"
-            class="experience__item">
-            <p>
               Стаж работы
             </p>
             <input
-              type="text"
+              v-model="specialsitData.experience_years"
+              type="number"
               placeholder="Стаж работы в годах">
           </div>
           <div
             v-if="userStore.user.role !== 'client'"
-            class="experience__item">
+            class="experience__item specialist__search">
             <p>
               Специализация
             </p>
-            <input
-              type="text"
-              placeholder="Выберите специализацию">
-          </div>
-          <div
-            v-if="userStore.user.role !== 'client'"
-            class="experience__item">
-            <p>
-              Пол
-            </p>
-            <input
-              type="text"
-              placeholder="Введите год">
+            <input 
+              v-model="specialsitData.specialization" 
+              type="search" 
+              placeholder="Введите специализацию" 
+              @input="fetchSpecializations" >
+    
+            <ul v-if="specializtions.length > 0">
+              <li 
+                v-for="suggestion in specializtions" 
+                :key="suggestion" 
+                class="suggestion-item"
+                @click="updateSpecialization(suggestion.name)">
+                {{ suggestion.name }}
+              </li>
+            </ul>
           </div>
           <div
             v-if="userStore.user.role !== 'client'"
@@ -172,7 +243,8 @@ const save = async () => {
               Стоимость первичной консультации
             </p>
             <input
-              type="text"
+              v-model="specialsitData.primary_consult_price"
+              type="number"
               placeholder="Цена">
           </div>
           <div
@@ -182,8 +254,28 @@ const save = async () => {
               Стоимость вторичной консультации
             </p>
             <input
-              type="text"
+              v-model="specialsitData.secondary_consult_price"
+              type="number"
               placeholder="Цена">
+          </div>
+          <div
+            v-if="userStore.user.role !== 'client'"
+            class="experience__item">
+            <p>
+              О себе
+            </p>
+            <textarea
+              v-model="specialsitData.description"
+              type="text"
+              placeholder="О себе"></textarea>
+          </div>
+          <div
+            v-if="userStore.user.role !== 'client'"
+            class="experience__item checkbox">
+            <input
+              id="checkobx"
+              v-model="specialsitData.association_member"
+              type="checkbox"> <label for="checkobx">Состою в ассоциации</label>
           </div>
         </div>
       </div>
@@ -197,6 +289,23 @@ const save = async () => {
 </template>
 
 <style lang="scss" scoped>
+.specialist {
+  &__search {
+    position: relative;
+
+    ul {
+      padding: 10px;
+      position: absolute;
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+      background-color: #FFF;
+      box-shadow: 0px 0px 5px -1px gray;
+      z-index: 1000;
+    }
+  }
+}
+
 .content-submit {
   max-width: 418px;
   display: block;
@@ -326,7 +435,7 @@ const save = async () => {
       margin-bottom: 14px;
     }
 
-    input {
+    input, textarea {
       width: 100%;
       height: 64px;
       padding-left: 24px;
@@ -340,8 +449,22 @@ const save = async () => {
           outline: 2px solid #1F72EE;
       }
     }
-  }
 
+    textarea {
+      padding: 20px;
+      height: 200px;
+    }
+  }
+  .checkbox {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    input {
+      width: 20px;
+      height: 20px;
+    }
+  }
   @media (max-width: 1285px) {
     &__item {
       max-width: 100%;

@@ -54,7 +54,6 @@ function toggle() {
             <div class="date">12 ноября 2024</div>
           </div>
 
-          <!-- здесь добавили :class и убрали троеточие в разметке -->
           <div
             class="reviews-text reviews-send__text"
             :class="{ 'reviews-send__text--expanded': isExpanded }"

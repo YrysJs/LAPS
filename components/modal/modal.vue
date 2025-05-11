@@ -1,5 +1,11 @@
 <script setup>
 import { ref, reactive, computed, watch } from 'vue'
+import { useMainStore } from '~/store/useMainStore'
+import { useUserStore } from '~/store/useUserStore'
+
+const userStore = useUserStore()
+const mainStore = useMainStore()
+
 const emit = defineEmits(['close'])
 const props = defineProps({
   appointment_date: { type: String, default: '' },
@@ -30,8 +36,16 @@ const disabledStepButton = computed(() => {
 })
 
 function stepHandler() {
-  if (step.value < 2) step.value++
+  if (step.value < 2) step.value++;
+
+  if (step.value == 2) {
+    createAppointment()
+  }
 }
+
+async function createAppointment() {
+  // await mainStore.createAppointments(data)
+} 
 
 function closeModal() {
   emit('close', false)

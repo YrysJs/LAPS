@@ -8,14 +8,11 @@ const route = useRoute()
 const router = useRouter()
 
 const connect = ref(true)
-// Фильтр: true = Предстоящие, false = Отмененные
 const filterState = ref(route.query.filter === 'canceled' ? false : true)
-// Текущая страница (из query или 1)
 const currentPage = ref(Number(route.query.page) || 1)
 
 const appointments = ref([])
 
-// Параметры запроса
 const params = computed(() => {
   const isClient = userStore.user.role === 'client'
   const idKey = isClient ? 'client_id' : 'specialist_id'
@@ -24,19 +21,17 @@ const params = computed(() => {
     : userStore.specialistsMainInfo.id
   return {
     [idKey]: idValue,
-    status: filterState.value ? 'paid' : 'canceled',
+    // status: filterState.value ? 'paid' : 'canceled',
     limit: 10,
     page: currentPage.value
   }
 })
 
-// Запрос консультаций через стор
 async function fetchAppointments() {
   await userStore.getAppointments(params.value)
   appointments.value = userStore.consultations || []
 }
 
-// Форматирование даты
 function formatDate(dateStr) {
   const d = new Date(dateStr)
   return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -44,7 +39,6 @@ function formatDate(dateStr) {
 
 onMounted(fetchAppointments)
 
-// При изменении фильтра или страницы — обновляем query и перезагружаем
 watch([filterState, currentPage], ([f, p]) => {
   router.replace({
     query: { filter: f ? 'paid' : 'canceled', page: String(p) }
@@ -58,7 +52,6 @@ watch([filterState, currentPage], ([f, p]) => {
     <div class="history">
       <h3 class="history__title">Консультации</h3>
 
-      <!-- Фильтр состояний -->
       <div class="history__filter">
         <div class="history__filter-item history__filter-1">
           <img
@@ -111,7 +104,6 @@ watch([filterState, currentPage], ([f, p]) => {
               <div>{{ formatDate(item.date) }}</div>
               <div class="status">{{ item.status }}</div>
             </div>
-            <!-- Мобильный вид -->
             <div class="history__row history__row-mobile">
               <div class="history__row-mobile__item">
                 <div class="label">Имя:</div>
@@ -142,7 +134,6 @@ watch([filterState, currentPage], ([f, p]) => {
               </div>
             </div>
           </div>
-          <!-- Пагинация (упрощённо) -->
           <div class="pagination">
             <button
               :disabled="currentPage <= 1"
