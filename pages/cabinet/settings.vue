@@ -1,6 +1,6 @@
 <script setup>
 import { useUserStore } from '~/store/useUserStore';
-import { useToast } from 'vue-toastification';
+import { useToast } from 'vue-toastification/dist/index.mjs';
 
 //fn
 const userStore = useUserStore()

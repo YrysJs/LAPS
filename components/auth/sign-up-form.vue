@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '~/store/useAuthStore'
-import { useToast } from 'vue-toastification'
+import { useToast } from 'vue-toastification/dist/index.mjs'
 import Select from '../ui/select.vue'
 
 const emit = defineEmits()

@@ -1,5 +1,5 @@
 import { defineNuxtPlugin } from '#app'
-import VueToast from 'vue-toastification'
+import VueToast from 'vue-toastification/dist/index.mjs'
 import 'vue-toastification/dist/index.css'
 
 export default defineNuxtPlugin((nuxtApp) => {

@@ -1,6 +1,6 @@
 <script setup>
 import { useAuthStore } from '~/store/useAuthStore';
-import { useToast } from 'vue-toastification';
+import { useToast } from 'vue-toastification/dist/index.mjs';
 import { setCookie } from '~/utlis/cookie';
 
 

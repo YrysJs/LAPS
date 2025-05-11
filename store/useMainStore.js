@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useAxios } from "~/composables/useAxios";
-import { useToast } from 'vue-toastification'
+import { useToast } from 'vue-toastification/dist/index.mjs'
 
 export const useMainStore = defineStore('main', () => {
   //states

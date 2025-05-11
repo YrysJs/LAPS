@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { setCookie, removeCookie, getCookie } from '~/utlis/cookie';
 import { useAxios } from "~/composables/useAxios";
-import { useToast } from 'vue-toastification'
+import { useToast } from 'vue-toastification/dist/index.mjs'
 import { navigateTo } from '#imports'
 
 export const useAuthStore = defineStore('auth', () => {
