@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { getCookie, setCookie } from '~/utlis/cookie';
+import { getCookie } from '~/utlis/cookie';
+import { useAuthStore } from '~/store/useAuthStore';
+
 
 export default defineNuxtPlugin(nuxtApp => {
   const axiosNoAuth = axios.create({
@@ -28,14 +30,8 @@ export default defineNuxtPlugin(nuxtApp => {
     async error => {
       if (error.response && error.response.status === 401) {
         try {
-          const refreshToken = getCookie('refresh_token'); 
-          const refreshResponse = await axios.post('http://94.247.129.222/api/v1/auth/refresh', {
-            refresh_token: refreshToken,
-          });
-
-          const newToken = refreshResponse.data.data.access_token;
-          setCookie('access_token', newToken);
-          error.config.headers['Authorization'] = `Bearer ${newToken}`;
+          await useAuthStore().refreshToken({refresh_token: getCookie('refresh_token')})
+          error.config.headers['Authorization'] = `Bearer ${getCookie('access_token')}`;
 
           return axios(error.config);
         } catch (refreshError) {

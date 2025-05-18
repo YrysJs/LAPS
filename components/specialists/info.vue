@@ -74,7 +74,6 @@ const toggleExpand = () => {
     font-size: 16px;
     line-height: 22.4px;
     color: #1F2937;
-    max-height: 60px;
     margin-bottom: 20px;
   }
 

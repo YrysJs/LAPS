@@ -13,6 +13,7 @@ export const useMainStore = defineStore('main', () => {
   const specialistShedule = ref([])
   const specialistSheduleById = ref([])
   const specialistFreeSlots = ref([])
+  const replyById = ref(null)
 
   const { axiosNoAuth, axiosWithAuth } = useAxios();
   const toast = useToast()
@@ -225,12 +226,29 @@ export const useMainStore = defineStore('main', () => {
     }
   }
 
+  const getReplyById = async(id) => {
+    try {
+      const { data } = await axiosNoAuth.get(`/reviews/${id}/replies`)
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        replyById.value = data.data
+        return data.data
+      }
+    } catch(e) {
+      const errorMessage = e.response?.data?.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+      return null
+    }
+  }
 
   return { 
     specialists,
     specialistById, 
     specialistFreeSlots, 
     reviews, 
+    replyById,
     specialistShedule, 
     specialistSheduleById, 
     specializations,
@@ -247,6 +265,7 @@ export const useMainStore = defineStore('main', () => {
     deleteReview,
     addRevuewReplies,
     createAppointments,
+    getReplyById,
     getSpecializationsList,
     getSpecializationsBulletList,
     getSpecialistsList

@@ -14,15 +14,33 @@ export const useAuthStore = defineStore('auth', () => {
   const toast = useToast()
 
   // actions
+
+  const initialize = () => {
+    const access_token = getCookie('access_token')
+    const refresh_token = getCookie('refresh_token')
+
+    if (access_token && refresh_token) {
+      user.value = {
+        access_token,
+        refresh_token,
+      }
+    }
+  }
+
   const auth = async(userData) => {
     try {
       const { data } = await axiosNoAuth.post('/auth/login', userData)
 
       setCookie('access_token', data.data.access_token, { expires: 1 })
       setCookie('refresh_token', data.data.refresh_token, { expires: 1 })
-      console.log(data);
+
+      const token = {
+        access_token: getCookie('access_token'),
+        refresh_token: getCookie('refresh_token')
+      }
       
       if (data.status === 'success') {
+        user.value = data.data || token
         navigateTo('/cabinet/profile')
       } else {
         toast.error('Ошибка авторизации')
@@ -52,10 +70,11 @@ export const useAuthStore = defineStore('auth', () => {
       const { data } = await axiosNoAuth.post('/auth/refresh', obj)
       setCookie('access_token', data.data.access_token, { expires: 1 })
       setCookie('refresh_token', data.data.refresh_token, { expires: 1 })
+
+      user.value = data.data
       return data
     } catch(e) {
-      const errorMessage = e.response.data.message || 'Произошла ошибка'
-      toast.error(errorMessage)
+      console.log(e);
     }
   }
 
@@ -89,5 +108,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { user, user_type, auth, register, refreshToken, logout, setUserType, createSpecialistProfile }
+  return { user, user_type, auth, register, refreshToken, logout, setUserType, createSpecialistProfile, initialize }
 })

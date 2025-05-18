@@ -1,6 +1,14 @@
 <script setup>
+import { useAuthStore } from '~/store/useAuthStore'
+
 const menuState = ref(false)
 const burgerPath = ['/icons//burger-ff.svg', '/icons/cabinet/close-burger.svg']
+const authStore = useAuthStore()
+
+// Initialize auth state
+onMounted(() => {
+  authStore.initialize()
+})
 </script>
 
 <template>
@@ -31,24 +39,39 @@ const burgerPath = ['/icons//burger-ff.svg', '/icons/cabinet/close-burger.svg']
             <option value="ru">Рус</option>
             <option value="ru">Каз</option>
           </select>
-          <nuxt-link
-            to="/auth?type=specialist"
-            class="flex gap-[12px] items-center justify-center font-montserrat text-normal font-medium rounded-[44px] border border-[EBEBEB] h-[50px] max-w-[266px] w-[100%]"
-          >
-            Войти как специалист
-            <img
-              src="/icons/main/arrow-transparent.svg"
-              alt="arrow">
-          </nuxt-link>
-          <nuxt-link
-            to="/auth?type=client"
-            class="flex gap-[12px] items-center justify-center font-montserrat text-normal font-medium rounded-[44px] h-[50px] max-w-[130px] w-[100%] bg-[#B3DD62]"
-          >
-            Войти
-            <img
-              src="/icons/main/arrow-transparent.svg"
-              alt="arrow">
-          </nuxt-link>
+          
+          <template v-if="!authStore.user">
+            <nuxt-link
+              to="/auth?type=specialist"
+              class="flex gap-[12px] items-center justify-center font-montserrat text-normal font-medium rounded-[44px] border border-[EBEBEB] h-[50px] px-6 min-w-fit w-[100%]"
+            >
+              Войти как специалист
+              <img
+                src="/icons/main/arrow-transparent.svg"
+                alt="arrow">
+            </nuxt-link>
+            <nuxt-link
+              to="/auth?type=client"
+              class="flex gap-[12px] px-6 items-center justify-center font-montserrat text-normal font-medium rounded-[44px] h-[50px] min-w-fit w-[100%] bg-[#B3DD62]"
+            >
+              Войти
+              <img
+                src="/icons/main/arrow-transparent.svg"
+                alt="arrow">
+            </nuxt-link>
+          </template>
+          
+          <template v-else>
+            <nuxt-link
+              to="/cabinet/profile"
+              class="flex gap-[12px] items-center justify-center font-montserrat text-normal font-medium rounded-[44px] h-[50px] max-w-[260px] px-6 w-[100%] bg-[#B3DD62]"
+            >
+              Личный кабинет
+              <img
+                src="/icons/main/arrow-transparent.svg"
+                alt="arrow">
+            </nuxt-link>
+          </template>
         </div>
       </div>
     </header>
@@ -102,52 +125,53 @@ const burgerPath = ['/icons//burger-ff.svg', '/icons/cabinet/close-burger.svg']
             src="/icons/cabinet/menu-mobile-arrow.svg"
             alt="menu arrow">
         </li>
-        <li
-          class="sidebar__item"
-          :class="{ active: $route.path === '/cabinet/reviews' }">
-          <nuxt-link
-            to="/specialists?type=lawyer"
-            class="font-montserrat font-medium text-normal"
-            :class="{ active: $route.query.type === 'lawyers' }">
-            ВОЙТИ КАК СПЕЦИАЛИСТ
-          </nuxt-link>
-          <img
-            src="/icons/cabinet/menu-mobile-arrow.svg"
-            alt="menu arrow">
-        </li>
-        <li
-          class="sidebar__item"
-          :class="{ active: $route.path === '/cabinet/reviews' }">
-          <nuxt-link
-            to="/specialists?type=lawyer"
-            class="font-montserrat font-medium text-normal"
-            :class="{ active: $route.query.type === 'lawyers' }">
-            ВОЙТИ КАК КЛИЕНТ
-          </nuxt-link>
-          <img
-            src="/icons/cabinet/menu-mobile-arrow.svg"
-            alt="menu arrow">
-        </li>
-        <li
-          class="sidebar__item"
-          :class="{ active: $route.path === '/cabinet/reviews' }">
-          <nuxt-link
-            to="/specialists?type=lawyer"
-            class="font-montserrat font-medium text-normal"
-            :class="{ active: $route.query.type === 'lawyers' }">
-            ЛИЧНЫЙ КАБИНЕТ
-          </nuxt-link>
-          <img
-            src="/icons/cabinet/menu-mobile-arrow.svg"
-            alt="menu arrow">
-        </li>
-        <li class="sidebar__item exit">
-          <nuxt-link
-            to="/"
-          >
-            Выйти
-          </nuxt-link>
-        </li>
+        
+        <template v-if="!authStore.user">
+          <li
+            class="sidebar__item"
+            :class="{ active: $route.path === '/cabinet/reviews' }">
+            <nuxt-link
+              to="/auth?type=specialist"
+              class="font-montserrat font-medium text-normal">
+              ВОЙТИ КАК СПЕЦИАЛИСТ
+            </nuxt-link>
+            <img
+              src="/icons/cabinet/menu-mobile-arrow.svg"
+              alt="menu arrow">
+          </li>
+          <li
+            class="sidebar__item"
+            :class="{ active: $route.path === '/cabinet/reviews' }">
+            <nuxt-link
+              to="/auth?type=client"
+              class="font-montserrat font-medium text-normal">
+              ВОЙТИ КАК КЛИЕНТ
+            </nuxt-link>
+            <img
+              src="/icons/cabinet/menu-mobile-arrow.svg"
+              alt="menu arrow">
+          </li>
+        </template>
+        
+        <template v-else>
+          <li
+            class="sidebar__item"
+            :class="{ active: $route.path === '/cabinet/profile' }">
+            <nuxt-link
+              to="/cabinet/profile"
+              class="font-montserrat font-medium text-normal">
+              ЛИЧНЫЙ КАБИНЕТ
+            </nuxt-link>
+            <img
+              src="/icons/cabinet/menu-mobile-arrow.svg"
+              alt="menu arrow">
+          </li>
+          <li class="sidebar__item exit">
+            <a href="#" @click.prevent="authStore.logout()">
+              Выйти
+            </a>
+          </li>
+        </template>
       </ul>
     </nav>
   </header>
@@ -178,10 +202,11 @@ select {
   }
 
   &__nav {
-    max-width: 510px;
+    max-width: fit-content;
     width: 100%;
     display: flex;
     justify-content: space-between;
+    gap: 20px;
   }
 }
 .header-mobile {

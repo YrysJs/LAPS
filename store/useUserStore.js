@@ -220,6 +220,7 @@ export const useUserStore = defineStore('user', () => {
         toast.error('Произошла ошибка')
       } else {
         consultations.value = data.data
+        return data
       }
     } catch(e) {
       const errorMessage = e.response.data.message || 'Произошла ошибка'
@@ -373,6 +374,21 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const addReview = async(obj) => {
+    try {
+      const { data } = await axiosWithAuth.post(`/reviews`, obj)
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        toast('Отзыв успешно добавлен')
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
   return { 
     user,
     education,
@@ -402,6 +418,7 @@ export const useUserStore = defineStore('user', () => {
     deleteSpecialistJob,
     getShedule,
     addSpecialistShedule,
-    updateSpecialistShedule
+    updateSpecialistShedule,
+    addReview
   }
 })

@@ -4,11 +4,15 @@ import Reviews from '~/components/specialists/reviews.vue'
 import Modal from '~/components/modal/modal.vue'
 import Rating from '~/components/specialists/rating.vue'
 import { useMainStore } from '~/store/useMainStore'
+import { useAuthStore } from '~/store/useAuthStore'
+import { useToast } from 'vue-toastification/dist/index.mjs'
 
 //fn
 const router = useRouter()
 const route = useRoute()
 const mainStore = useMainStore()
+const authStore = useAuthStore()
+const toast = useToast()
 const specialist_info = computed(() => {
   return mainStore.specialistById
 })
@@ -48,10 +52,20 @@ async function onDayClick({ date }) {
   await mainStore.getSpecialistsFreeSlots({specialist_id: route.params.id, date: selected_date.value})
 }
 
+function handleAppointmentClick() {
+  if (authStore.user && authStore.user !== false) {
+    recordModal.value = true
+  } else {
+    toast.error('Для записи необходимо авторизоваться')
+  }
+}
+
 onMounted(async() => {
   await mainStore.getSpecialistById(route.params.id)
-  await mainStore.getReviews()
+  await mainStore.getReviews({specialist_id: route.params.id})
   await mainStore.getSpecialistsFreeSlots({specialist_id: route.params.id, date: selected_date.value})
+  
+  authStore.initialize()
 })
 </script>
 
@@ -150,7 +164,7 @@ onMounted(async() => {
                 <div><p>Первичный приём</p><strong>{{ specialist_info.primary_consult_price }} ₸</strong></div>
                 <div><p>Вторичный приём</p><strong>{{ specialist_info.secondary_consult_price }} ₸</strong></div>
               </div>
-              <button @click="recordModal = true">Записаться онлайн</button>
+              <button @click="handleAppointmentClick">Записаться онлайн</button>
               <a href="tel:79093332211">Позвонить</a>
             </div>
           </div>

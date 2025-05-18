@@ -1,28 +1,32 @@
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useMainStore } from '~/store/useMainStore'
 import { useUserStore } from '~/store/useUserStore'
 
 const userStore = useUserStore()
 const mainStore = useMainStore()
-
+const route = useRoute()
 const emit = defineEmits(['close'])
-const props = defineProps({
-  appointment_date: { type: String, default: '' },
-  selectedColor:    { type: String, default: '#1F72EE' }
-})
 
 const stepText = ['Ваши данные', 'Информация о консультации', 'Подтвердите и оплатите']
 const step = ref(0)
+const specialist_info = computed(() => {
+  return mainStore.specialistById
+})
+
+const selected_date = ref(new Date().toLocaleDateString('en-CA'))
+const free_slots = computed(() => {
+  return mainStore.specialistFreeSlots?.free_slots || []
+})
 
 const recordData = reactive({
-  full_name:              '',
-  phone_number:           '',
-  appointment_date:       props.appointment_date,
+  full_name:              `${userStore.user.last_name} ${userStore.user.first_name} ${userStore.user.middle_name}`,
+  phone_number:           userStore.user.phone,
+  appointment_date:       selected_date.value,
   communication_method:   'phone',
   consultation_type:      'primary',
-  specialist_id:          0,
-  specialization_id:      0
+  specialist_id:          specialist_info.value.id,
+  specialization_id:      specialist_info.value.specialization_id
 })
 
 const disabledStepButton = computed(() => {
@@ -36,15 +40,26 @@ const disabledStepButton = computed(() => {
 })
 
 function stepHandler() {
-  if (step.value < 2) step.value++;
-
-  if (step.value == 2) {
-    createAppointment()
-  }
+  if (step.value !== 2) step.value++;
 }
 
+const calendarAttrs = computed(() => [{
+  key: 'selected',
+  highlight: { backgroundColor: '#3f51b5' },
+  dates: selected_date.value
+}])
+
 async function createAppointment() {
-  // await mainStore.createAppointments(data)
+  const data = {
+    appointment_date: new Date(recordData.appointment_date.replace(' — ', 'T')).toISOString().replace('.000', ''),
+    communication_method: recordData.communication_method,
+    consultation_type: recordData.consultation_type,
+    specialist_id:          specialist_info.value.id,
+    specialization_id:      specialist_info.value.specialization_id
+  }
+  console.log(data);
+  
+  await mainStore.createAppointments(data)
 } 
 
 function closeModal() {
@@ -52,32 +67,30 @@ function closeModal() {
 }
 
 const open = ref(false)
-const selectedDate = ref(null)
-const times = ['12:00','12:30','13:00','13:30','14:00','14:30']
 
 const displayText = computed(() => {
   return recordData.appointment_date || 'Выберите дату и время'
 })
 
-function onDayClick({ date }) {
-  selectedDate.value = date
+function formatLocalDate(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+async function onDayClick({ date }) {
+  selected_date.value = formatLocalDate(date)
+
+  await mainStore.getSpecialistsFreeSlots({specialist_id: route.params.id, date: selected_date.value})
 }
 
 function onTimeSelect(time) {
-  if (!selectedDate.value) return
+  if (!selected_date.value) return
 
-  const formatter = new Intl.DateTimeFormat('ru-RU', {
-    month: 'long', day: 'numeric', year: 'numeric'
-  })
-  const dateStr = formatter.format(selectedDate.value)
-
-  recordData.appointment_date = `${dateStr} — ${time}`
+  recordData.appointment_date = `${selected_date.value} — ${time}`
   open.value = false
 }
-
-watch(() => props.appointment_date, v => {
-  recordData.appointment_date = v
-})
 </script>
 
 <template>
@@ -144,25 +157,22 @@ watch(() => props.appointment_date, v => {
             v-if="open"
             class="specialist__list-shedule">
             <v-calendar
-              v-model="selectedDate"
+              v-model="selected_date"
               view="weekly"
               transparent
               borderless
               expanded
-              :color="selectedColor"
-              mode="date"
-              @dayclick="onDayClick"
-            />
+              :attributes="calendarAttrs"
+              mode="dateTime"
+              @dayclick="onDayClick"/>
             <div class="specialist__list-shedule__worktime">
               <p>Свободное время</p>
               <div>
                 <button
-                  v-for="time in times"
-                  :key="time"
-                  type="button"
-                  @click="onTimeSelect(time)"
-                >
-                  {{ time }}
+                  v-for="(slot, slotIndex) of free_slots"
+                  :key="slotIndex"
+                  @click="onTimeSelect(slot)">
+                  {{ slot }}
                 </button>
               </div>
             </div>
@@ -218,30 +228,36 @@ watch(() => props.appointment_date, v => {
           <h3>Клиент</h3>
           <div class="block-wrapper">
             <div>
-              <p>ФИО</p> <span class="font-semibold">Алтынбекова Сымбат</span>
+              <p>ФИО</p> <span class="font-semibold">{{ recordData.full_name }}</span>
             </div>
             <div>
-              <p>Номер телефона</p> <span>+7 707 777 77 77</span>
+              <p>Номер телефона</p> <span>{{ recordData.phone_number }}</span>
             </div>
           </div>
         </div>
-        <div class="modal-record__main-step-3-block">
+        <div class="modal-record__main-step-3-block mt-4">
           <h3>Консультация</h3>
           <div class="block-wrapper">
-            <div>
+            <!-- <div>
               <p>Вид приема</p> <span class="font-semibold">Гражданство</span>
-            </div>
+            </div> -->
             <div>
-              <p>Дата и время</p> <span>март 22, 2025</span>
+              <p>Дата и время</p> <span>{{ recordData.appointment_date }}</span>
             </div>
           </div>
         </div>
       </div>
 
       <button
+        v-if="step !== 2"
         :disabled="!disabledStepButton"
         @click="stepHandler">
-        {{ step < 2 ? 'Продолжить' : 'Записаться на приём' }}
+        Продолжить
+      </button>
+      <button
+        v-else
+        @click="createAppointment">
+        Записаться на приём
       </button>
     </div>
   </div>
@@ -372,7 +388,6 @@ watch(() => props.appointment_date, v => {
       &-3-block {
         display: flex;
         flex-direction: column;
-        gap: 16px;
 
         font-family: 'Montserrat', sans-serif;
         font-weight: 400;

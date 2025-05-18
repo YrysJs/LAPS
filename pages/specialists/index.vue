@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUpdated, watchEffect } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMainStore } from '~/store/useMainStore'
 import Pagination from '~/components/layout/pagination.vue'
@@ -15,6 +15,7 @@ const totalPages = ref(250);
 
 const bulletSpecializations = ref(store.getSpecializationsBulletList)
 const specialist = ref(store.getSpecialistsList)
+const selectedSpecialization = ref(null)
 
 const fetchSpecializations = async (e) => {
   if (searchQuery.value.trim() === '') {
@@ -27,6 +28,9 @@ const fetchSpecializations = async (e) => {
     type: route.query.type,
     search: e.target.value
   })
+  
+  // Проверяем доступны ли результаты в store
+  suggestions.value = store.getSpecializationsList || []
 }
 
 const updateSpecialization = (specialization) => {
@@ -34,14 +38,38 @@ const updateSpecialization = (specialization) => {
 
   suggestions.value = []
   searchQuery.value = ''
+  selectedSpecialization.value = specialization
 
   router.push({
     path: '/specialists',
     query: {
       type: currentType,
-      specialization: specialization,
+      specialization: specialization.name,
+      specialization_id: specialization.id,
     },
   })
+
+  // Загрузить данные с учетом выбранной специализации
+  loadInitialData({ 
+    type: currentType,
+    specialization_id: specialization.id 
+  })
+}
+
+// Функция для сброса выбранной специализации
+const resetSpecialization = () => {
+  const currentType = route.query.type || 'lawyers'
+  
+  selectedSpecialization.value = null
+  
+  router.push({
+    path: '/specialists',
+    query: {
+      type: currentType
+    }
+  })
+  
+  loadInitialData({ type: currentType })
 }
 
 async function getSpecializationsBullet(params) {
@@ -70,16 +98,43 @@ async function onDayClick(date, id, spec) {
   specialist.value.find(item => item.id == id).free_slots = slots
 }
 
-onUpdated( async() => {
-  await getSpecializationsBullet({type: route.query.type})
-  await getSpecialists({type: route.query.type, date: new Date().toLocaleDateString('en-CA')})
+async function loadInitialData(params = {}) {
+  const queryParams = {
+    type: route.query.type || 'lawyers',
+    specialization_id: route.query.specialization_id,
+    date: new Date().toLocaleDateString('en-CA'),
+    ...params
+  }
+  
+  await getSpecializationsBullet({ type: queryParams.type })
+  await getSpecialists(queryParams)
 
-  specialist.value.map(spec => ({
+  // Если есть specialization_id в URL, найдем выбранную специализацию
+  if (route.query.specialization_id && !selectedSpecialization.value) {
+    const specId = route.query.specialization_id
+    // Ищем в bulletSpecializations
+    const foundSpec = bulletSpecializations.value.find(spec => spec.id == specId)
+    if (foundSpec) {
+      selectedSpecialization.value = foundSpec
+    }
+  }
+
+  specialist.value = specialist.value.map(spec => ({
     ...spec,
     selected_date: new Date().toLocaleDateString('en-CA')
   }))
+}
+
+onMounted(async () => {
+  await loadInitialData()
 })
 
+// Следим за изменениями в маршруте
+watchEffect(async () => {
+  if (route.query) {
+    await loadInitialData()
+  }
+})
 </script>
 
 <template>
@@ -98,18 +153,33 @@ onUpdated( async() => {
             v-for="suggestion in suggestions" 
             :key="suggestion" 
             class="suggestion-item"
-            @click="updateSpecialization(suggestion.name)">
+            @click="updateSpecialization(suggestion)">
             {{ suggestion.name }}
           </li>
         </ul>
       </div>
 
       <div class="specialist__category">
+        <!-- Выбранная специализация идет первой, если она есть -->
+        <button 
+          v-if="selectedSpecialization"
+          class="selected-specialization"
+          @click="updateSpecialization(selectedSpecialization)">
+          {{ selectedSpecialization.name }}
+        </button>
+        
         <button
-          v-for="specialization in bulletSpecializations" 
+          v-for="specialization in bulletSpecializations.filter(spec => !selectedSpecialization || spec.id !== selectedSpecialization.id)" 
           :key="specialization" 
-          @click="updateSpecialization(specialization.name)">
+          @click="updateSpecialization(specialization)">
           {{ specialization.name }}
+        </button>
+        
+        <button 
+          v-if="route.query.specialization_id" 
+          class="reset-button"
+          @click="resetSpecialization">
+          Сбросить фильтр
         </button>
       </div>
       <div class="specialist__list">
@@ -267,6 +337,21 @@ onUpdated( async() => {
       line-height: 20px;
       letter-spacing: 0%;
       text-align: center;
+    }
+    
+    .reset-button {
+      background-color: #f44336;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+    
+    .selected-specialization {
+      background-color: #3f51b5;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: 700;
     }
   }
 

@@ -2,14 +2,20 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '~/store/useUserStore'
+import { useMainStore } from '~/store/useMainStore'
+import AddReview from '~/components/modal/add-review.vue'
 
 const userStore = useUserStore()
+const mainStore = useMainStore()
 const route = useRoute()
 const router = useRouter()
 
-const connect = ref(true)
 const filterState = ref(route.query.filter === 'canceled' ? false : true)
 const currentPage = ref(Number(route.query.page) || 1)
+const totalPages = ref(0)
+const showDropdown = ref(null)
+const showReviewModal = ref(false)
+const selectedAppointment = ref(null)
 
 const appointments = ref([])
 
@@ -21,20 +27,67 @@ const params = computed(() => {
     : userStore.specialistsMainInfo.id
   return {
     [idKey]: idValue,
-    // status: filterState.value ? 'paid' : 'canceled',
-    limit: 10,
+    status: filterState.value ? null : 'canceled',
+    limit: 1,
     page: currentPage.value
   }
 })
 
 async function fetchAppointments() {
-  await userStore.getAppointments(params.value)
+  const res = await userStore.getAppointments(params.value)
+
+  totalPages.value = res.total_pages
+
   appointments.value = userStore.consultations || []
 }
 
 function formatDate(dateStr) {
   const d = new Date(dateStr)
-  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+  return d.toLocaleString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+function toggleDropdown(index) {
+  if (showDropdown.value === index) {
+    showDropdown.value = null
+  } else {
+    showDropdown.value = index
+  }
+}
+
+async function cancelAppointment(id) {
+  await userStore.deleteAppointments(id)
+  fetchAppointments()
+  showDropdown.value = null
+}
+
+function openReviewModal(appointment) {
+  selectedAppointment.value = appointment
+  showReviewModal.value = true
+  showDropdown.value = null
+}
+
+function closeReviewModal() {
+  showReviewModal.value = false
+  selectedAppointment.value = null
+}
+
+async function submitReview(reviewData) {
+  if (!selectedAppointment.value) return
+  
+  const review = {
+    ...reviewData,
+    appointment_id: selectedAppointment.value.id,
+    specialist_id: selectedAppointment.value.specialist_id
+  }
+  
+  await userStore.addReview(review)
+  closeReviewModal()
 }
 
 onMounted(fetchAppointments)
@@ -74,7 +127,7 @@ watch([filterState, currentPage], ([f, p]) => {
         </button>
       </div>
 
-      <div class="history__content">
+      <div class="history__content flex flex-col gap-[16px]">
         <template v-if="appointments.length">
           <div
             v-for="(item, index) in appointments"
@@ -86,23 +139,41 @@ watch([filterState, currentPage], ([f, p]) => {
               <div>Номер телефона</div>
               <div>Дата</div>
               <div>Статус</div>
+              <div>Действия</div>
             </div>
             <div class="history__row history__row-desktop">
               <div>{{ item.client_name || item.specialist_name }}</div>
               <div class="history-phone">
                 <img
                   class="phone-icon"
-                  :src="connect ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
+                  :src="item.communication_method == 'phone' ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
                   alt="phone-icon"
                 >
                 <a
-                  :href="connect
-                    ? `tel:${item.phone}`
-                    : `https://wa.me/${item.phone.replace(/\D/g, '')}`"
-                >{{ item.phone }}</a>
+                  :href="item.communication_method == 'phone'
+                    ? `tel:${item.client_phone}`
+                    : `https://wa.me/${item.client_phone.replace(/\D/g, '')}`"
+                >{{ item.client_phone }}</a>
               </div>
-              <div>{{ formatDate(item.date) }}</div>
+              <div>{{ formatDate(item.appointment_date) }}</div>
               <div class="status">{{ item.status }}</div>
+              <div class="actions">
+                <button class="action-btn" @click="toggleDropdown(index)">
+                  <span>Действия</span>
+                </button>
+                <div class="dropdown" v-if="showDropdown === index">
+                  <button class="dropdown-item" @click="cancelAppointment(item.id)">
+                    Отменить запись
+                  </button>
+                  <button 
+                    v-if="userStore.user.role === 'client'" 
+                    class="dropdown-item" 
+                    @click="openReviewModal(item)"
+                  >
+                    Добавить отзыв
+                  </button>
+                </div>
+              </div>
             </div>
             <div class="history__row history__row-mobile">
               <div class="history__row-mobile__item">
@@ -114,23 +185,43 @@ watch([filterState, currentPage], ([f, p]) => {
                 <div class="history-phone">
                   <img
                     class="phone-icon"
-                    :src="connect ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
+                    :src="item.communication_method == 'phone' ? '/icons/cabinet/phone.svg' : '/icons/cabinet/wp.svg'"
                     alt="phone-icon"
                   >
                   <a
-                    :href="connect
-                      ? `tel:${item.phone}`
-                      : `https://wa.me/${item.phone.replace(/\D/g, '')}`"
-                  >{{ item.phone }}</a>
+                    :href="item.communication_method == 'phone'
+                      ? `tel:${item.client_phone}`
+                      : `https://wa.me/${item.client_phone.replace(/\D/g, '')}`"
+                  >{{ item.client_phone }}</a>
                 </div>
               </div>
               <div class="history__row-mobile__item">
                 <div class="label">Дата:</div>
-                <div>{{ formatDate(item.date) }}</div>
+                <div>{{ formatDate(item.appointment_date) }}</div>
               </div>
               <div class="history__row-mobile__item">
                 <div class="label">Статус:</div>
                 <div class="status">{{ item.status }}</div>
+              </div>
+              <div class="history__row-mobile__item">
+                <div class="label">Действия:</div>
+                <div class="actions ml-auto sm:mx-auto">
+                  <button class="action-btn" @click="toggleDropdown(index)">
+                    <span>Действия</span>
+                  </button>
+                  <div class="dropdown mobile" v-if="showDropdown === index">
+                    <button class="dropdown-item" @click="cancelAppointment(item.id)">
+                      Отменить запись
+                    </button>
+                    <button 
+                      v-if="userStore.user.role === 'client'" 
+                      class="dropdown-item" 
+                      @click="openReviewModal(item)"
+                    >
+                      Добавить отзыв
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -139,16 +230,37 @@ watch([filterState, currentPage], ([f, p]) => {
               :disabled="currentPage <= 1"
               @click="currentPage--"
             >
-              &larr; Назад
+              &larr;
             </button>
-            <span>Страница {{ currentPage }}</span>
-            <button @click="currentPage++">Вперёд &rarr;</button>
+
+            <span>Страница {{ currentPage }} из {{ totalPages }}</span>
+
+            <button
+              :disabled="currentPage >= totalPages"
+              @click="currentPage++"
+            >
+              &rarr;
+            </button>
           </div>
         </template>
         <div
           v-else
           class="history__empty">
           Здесь появятся все консультации
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div v-if="showReviewModal" class="modal-overlay">
+      <div class="modal-container">
+        <button class="close-modal" @click="closeReviewModal">×</button>
+        <div v-if="selectedAppointment" class="modal-content">
+          <add-review 
+            :appointment="selectedAppointment" 
+            @submit="submitReview" 
+            @close="closeReviewModal"
+          />
         </div>
       </div>
     </div>
@@ -159,7 +271,27 @@ watch([filterState, currentPage], ([f, p]) => {
 .active {
   color: #1F72EE;
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
 
+  button {
+    background-color: #1F72EE;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: 0.2s ease;
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
 .history {
   &__title {
     font-family: 'Montserrat', sans-serif;
@@ -225,12 +357,11 @@ watch([filterState, currentPage], ([f, p]) => {
     flex-direction: column;
     border: .5px solid #e0e0e0;
     border-radius: 14px;
-    overflow: hidden;
   }
 
   &__header {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     background-color: #fff;
     padding: 10px 20px;
     border-radius: 14px 14px 0px 0px;
@@ -249,7 +380,7 @@ watch([filterState, currentPage], ([f, p]) => {
   }
 
   &__row {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     background-color: #fff;
     padding: 10px 20px;
     border-radius: 0px 0px 14px 14px;
@@ -388,8 +519,6 @@ watch([filterState, currentPage], ([f, p]) => {
   }
 }
 
-
-
 .status {
   display: flex;
   justify-content: center;
@@ -412,4 +541,95 @@ watch([filterState, currentPage], ([f, p]) => {
   margin-right: 8px;
 }
 
+.actions {
+  position: relative;
+}
+
+.action-btn {
+  background-color: #1F72EE;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: -40px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  min-width: 180px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+
+  &.mobile {
+    left: auto;
+    right: 0;
+  }
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #333;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+  
+  &:first-child {
+    border-radius: 8px 8px 0 0;
+  }
+  
+  &:last-child {
+    border-radius: 0 0 8px 8px;
+  }
+  
+  &:only-child {
+    border-radius: 8px;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: white;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 24px;
+}
+
+.close-modal {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 </style>
