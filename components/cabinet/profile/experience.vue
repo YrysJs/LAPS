@@ -1,8 +1,10 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useUserStore } from '~/store/useUserStore'
+import { useI18n } from 'vue-i18n'
 
 const userStore = useUserStore()
+const i18n = useI18n()
 
 const job = ref([])
 const newJob = ref([])
@@ -33,9 +35,9 @@ const removeJob = (index) => {
 const removeExistingJob = async (id, index) => {
   try {
     await userStore.deleteSpecialistJob(id)
-    education.value.splice(index, 1)
+    job.value.splice(index, 1)
   } catch (e) {
-    console.error('Ошибка удаления:', e)
+    console.error(i18n.t('errors.delete_error'), e)
   }
 }
 
@@ -54,12 +56,12 @@ const saveJob = async () => {
 
     await userStore.getWork({specialist_id: userStore.specialistsMainInfo.id})
   } catch (e) {
-    console.error('Ошибка при сохранении:', e)
+    console.error(i18n.t('errors.save_error'), e)
   }
 }
 
 onMounted(async () => {
-  await userStore.getWork({specialist_id: userStore.specialistsMainInfo.id, date_from: '', date_to: ''})
+  await userStore.getWork({specialist_id: userStore.specialistsMainInfo.id})
 })
 </script>
 
@@ -79,35 +81,35 @@ onMounted(async () => {
             &#10006;
           </button>
           <div class="experience__item">
-            <p>Место работы</p>
+            <p>{{ $t('specialists.company') }}</p>
             <input
               v-model="job[index].company"
               type="text"
-              placeholder="Введите год"
+              :placeholder="$t('specialists.company')"
             >
           </div>
           <div class="experience__item">
-            <p>Должность</p>
+            <p>{{ $t('specialists.position') }}</p>
             <input
               v-model="job[index].position"
               type="text"
-              placeholder="Введите название"
+              :placeholder="$t('specialists.position')"
             >
           </div>
           <div class="experience__item">
-            <p>Год начала работы</p>
+            <p>{{ $t('specialists.start_year') }}</p>
             <input
               v-model="job[index].start_year"
               type="number"
-              placeholder="Введите год"
+              :placeholder="$t('specialists.start_year')"
             >
           </div>
           <div class="experience__item">
-            <p>Год окончания работы</p>
+            <p>{{ $t('specialists.end_year') }}</p>
             <input
               v-model="job[index].end_year"
               type="number"
-              placeholder="Введите год"
+              :placeholder="$t('specialists.end_year')"
             >
           </div>
         </div>
@@ -124,35 +126,35 @@ onMounted(async () => {
             &#10006;
           </button>
           <div class="experience__item">
-            <p>Место работы</p>
+            <p>{{ $t('specialists.company') }}</p>
             <input
               v-model="newJob[index].company"
               type="text"
-              placeholder="Введите название"
+              :placeholder="$t('specialists.company')"
             >
           </div>
           <div class="experience__item">
-            <p>Должность</p>
+            <p>{{ $t('specialists.position') }}</p>
             <input
               v-model="newJob[index].position"
               type="text"
-              placeholder="Введите название"
+              :placeholder="$t('specialists.position')"
             >
           </div>
           <div class="experience__item">
-            <p>Год начала работы</p>
+            <p>{{ $t('specialists.start_year') }}</p>
             <input
               v-model="newJob[index].start_year"
               type="number"
-              placeholder="Введите год"
+              :placeholder="$t('specialists.start_year')"
             >
           </div>
           <div class="experience__item">
-            <p>Год окончания работы</p>
+            <p>{{ $t('specialists.end_year') }}</p>
             <input
               v-model="newJob[index].end_year"
               type="number"
-              placeholder="Введите год"
+              :placeholder="$t('specialists.end_year')"
             >
           </div>
         </div>
@@ -161,7 +163,7 @@ onMounted(async () => {
           class="add-item"
           @click="addJob"
         >
-          &#10011; Добавить место работы
+          &#10011; {{ $t('specialists.add_work') }}
         </button>
       </div>
     </div>
@@ -170,7 +172,7 @@ onMounted(async () => {
       class="content-submit"
       @click="saveJob"
     >
-      Сохранить
+      {{ $t('profile.save') }}
     </button>
   </div>
 </template>

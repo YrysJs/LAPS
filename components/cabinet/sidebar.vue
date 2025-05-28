@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router';
-
+const localPath = useLocalePath()
 const router = useRouter()
 </script>
 
@@ -20,53 +20,53 @@ const router = useRouter()
           class="sidebar__item"
           :class="{ active: $route.path === '/cabinet/profile'}">
           <nuxt-link
-            to="/cabinet/profile"
+            :to="localPath('/cabinet/profile')"
           >
             <img
               src="/icons/cabinet/man.svg"
-              alt="person-icon"> Личные данные
+              alt="person-icon"> {{ $t('cabinet.menu.personal_data') }}
           </nuxt-link>
         </li>
         <li
           class="sidebar__item"
           :class="{ active: $route.path === '/cabinet/history' }">
           <nuxt-link
-            to="/cabinet/history"
+            :to="localPath('/cabinet/history')"
           >
             <img
               src="/icons/cabinet/list.svg"
-              alt="list-icon"> История обращений
+              alt="list-icon"> {{ $t('cabinet.menu.history') }}
           </nuxt-link>
         </li>
         <li
           class="sidebar__item"
           :class="{ active: $route.path === '/cabinet/reviews' }">
           <nuxt-link
-            to="/cabinet/reviews"
+            :to="localPath('/cabinet/reviews')"
           >
             <img
               src="/icons/cabinet/review.svg"
-              alt=""> Отзывы
+              alt=""> {{ $t('cabinet.menu.reviews') }}
           </nuxt-link>
         </li>
         <li
           class="sidebar__item"
           :class="{ active: $route.path === '/cabinet/settings' }">
           <nuxt-link
-            to="/cabinet/settings"
+            :to="localPath('/cabinet/settings')"
           >
             <img
               src="/icons/cabinet/settings.svg"
-              alt=""> Настройки
+              alt=""> {{ $t('cabinet.menu.settings') }}
           </nuxt-link>
         </li>
         <li class="sidebar__item">
           <nuxt-link
-            to="/"
+            :to="localPath('/')"
           >
             <img
               src="/icons/cabinet/logout.svg"
-              alt=""> Выйти
+              alt=""> {{ $t('cabinet.menu.logout') }}
           </nuxt-link>
         </li>
       </ul>

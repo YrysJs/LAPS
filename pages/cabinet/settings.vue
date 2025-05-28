@@ -1,21 +1,21 @@
 <script setup>
 import { useUserStore } from '~/store/useUserStore';
 import { useToast } from 'vue-toastification/dist/index.mjs';
+import { useI18n } from 'vue-i18n';
 
 //fn
 const userStore = useUserStore()
 const toast = useToast()
-
+const { t } = useI18n()
 
 //data
 const newPassword = ref('')
 const passwordRepeat = ref('')
 
-
 //actions
 const updatePassword = async () => {
   if (!newPassword.value.length || !passwordRepeat.value.length) {
-    toast.warning('Заполните поля')
+    toast.warning(t('settings.fill_fields'))
   } else {
     const data = {
       new_password: newPassword.value,
@@ -34,34 +34,34 @@ definePageMeta({
   <NuxtLayout name="cabinet">
     <div class="settings">
       <h3 class="settings__title">
-        Изменение пароля
+        {{ $t('settings.title') }}
       </h3>
       <div class="settings__content">
         <div class="settings__wrapper">
           <div class="settings__item">
             <p>
-              Новый пароль
+              {{ $t('settings.new_password') }}
             </p>
             <input
               v-model="newPassword"
               type="password"
-              placeholder="Введите пароль">
+              :placeholder="$t('settings.new_password_placeholder')">
           </div>
           <div class="settings__item">
             <p>
-              Старый пароль
+              {{ $t('settings.old_password') }}
             </p>
             <input
               v-model="passwordRepeat"
               type="password"
-              placeholder="Старый пароль">
+              :placeholder="$t('settings.old_password_placeholder')">
           </div>
         </div>
       </div>
       <button
         class="content-submit"
         @click="updatePassword">
-        Сохранить
+        {{ $t('settings.save') }}
       </button>
     </div>
   </NuxtLayout>

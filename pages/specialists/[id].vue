@@ -56,7 +56,7 @@ function handleAppointmentClick() {
   if (authStore.user && authStore.user !== false) {
     recordModal.value = true
   } else {
-    toast.error('Для записи необходимо авторизоваться')
+    toast.error($t('errors.auth_required'))
   }
 }
 
@@ -82,13 +82,14 @@ onMounted(async() => {
               class="specialist__list-item__left">
               <div class="specialist__list-avatar">
                 <img
+                  class="w-[100%] h-[100%] object-cover"
                   :src="specialist_info.profile_photo_url ? specialist_info.profile_photo_url : '/images/test-image.png'"
                   alt="avatar">
               </div>
               <div class="specialist__list-info">
                 <div class="specialist__list-info-top">
                   <div class="specialist__list-info__rating">
-                    <span>{{ specialist_info.type == 'lawyer' ? 'Юрист' : 'Психолог' }}</span>
+                    <span>{{ specialist_info.type == 'lawyer' ? $t('specialists.lawyer') : $t('specialists.psychologist') }}</span>
                   </div>
                 </div>
                 <div class="specialist__list-info-main">
@@ -111,7 +112,7 @@ onMounted(async() => {
                     <img
                       src="/icons/comment-blue.svg"
                       alt="comment-icon">
-                    <span>{{ specialist_info?.reviews_count }} отзывов</span>
+                    <span>{{ specialist_info?.reviews_count }} {{ $t('specialists.reviews_count') }}</span>
                   </div>
                 </div>
               </div>
@@ -123,12 +124,12 @@ onMounted(async() => {
                     <button
                       :class="{ 'active': activeTab === 0 }"
                       @click="setTab(0)">
-                      Основная информация
+                      {{ $t('specialists.main_info') }}
                     </button>
                     <button
                       :class="{ 'active': activeTab === 1 }"
                       @click="setTab(1)">
-                      Отзывы ({{ specialist_info.reviews_count }})
+                      {{ $t('reviews.title') }} ({{ specialist_info.reviews_count }})
                     </button>
                   </div>
                 </div>
@@ -151,7 +152,7 @@ onMounted(async() => {
               mode="dateTime"
               @dayclick="onDayClick"/>
             <div class="specialist__list-shedule__worktime">
-              <p>Свободное время</p>
+              <p>{{ $t('specialists.available_time') }}</p>
               <div
                 class="flex flex-wrap gap-2">
                 <button
@@ -161,11 +162,11 @@ onMounted(async() => {
                 </button>
               </div>
               <div class="specialist__list-shedule__price">
-                <div><p>Первичный приём</p><strong>{{ specialist_info.primary_consult_price }} ₸</strong></div>
-                <div><p>Вторичный приём</p><strong>{{ specialist_info.secondary_consult_price }} ₸</strong></div>
+                <div><p>{{ $t('specialists.primary_appointment') }}</p><strong>{{ specialist_info.primary_consult_price }} ₸</strong></div>
+                <div><p>{{ $t('specialists.secondary_appointment') }}</p><strong>{{ specialist_info.secondary_consult_price }} ₸</strong></div>
               </div>
-              <button @click="handleAppointmentClick">Записаться онлайн</button>
-              <a href="tel:79093332211">Позвонить</a>
+              <button @click="handleAppointmentClick">{{ $t('specialists.make_appointment') }}</button>
+              <a href="tel:79093332211">{{ $t('specialists.call') }}</a>
             </div>
           </div>
         </div>
@@ -436,7 +437,48 @@ onMounted(async() => {
     } 
   }
 }
+@media (max-width: 610px) {
+  .specialist__list-item__left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 
+    * {
+      width: fit-content;
+      margin: 5px auto;
+    }
+  }
+  .specialist__list-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      margin: 0;
+    }
+  }
+  .specialist__list-shedule {
+    margin-top: 30px;
+  }
+  .profile__content {
+    padding: 20px 10px;
+  }
+  .profile__tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    button {
+      height: initial;
+    }
+  }
+  .reviews-avatar {
+    display: none !important;
+  }
+}
 .active {
   color: #1F72EE !important;
   border-bottom: 3px solid #1F72EE;

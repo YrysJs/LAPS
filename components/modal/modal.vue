@@ -2,13 +2,19 @@
 import { ref, reactive, computed } from 'vue'
 import { useMainStore } from '~/store/useMainStore'
 import { useUserStore } from '~/store/useUserStore'
+import { useI18n } from 'vue-i18n'
 
 const userStore = useUserStore()
 const mainStore = useMainStore()
 const route = useRoute()
 const emit = defineEmits(['close'])
+const { t } = useI18n()
 
-const stepText = ['Ваши данные', 'Информация о консультации', 'Подтвердите и оплатите']
+const stepText = [
+  t('modal.steps.your_data'),
+  t('modal.steps.consultation_info'),
+  t('modal.steps.confirm_and_pay')
+]
 const step = ref(0)
 const specialist_info = computed(() => {
   return mainStore.specialistById
@@ -69,7 +75,7 @@ function closeModal() {
 const open = ref(false)
 
 const displayText = computed(() => {
-  return recordData.appointment_date || 'Выберите дату и время'
+  return recordData.appointment_date || 'Выберите дату и время'
 })
 
 function formatLocalDate(d) {
@@ -101,10 +107,10 @@ function onTimeSelect(time) {
         @click="closeModal">
         <img
           src="/icons/x-close.svg"
-          alt="close icon" >
+          :alt="$t('modal.buttons.close')" >
       </button>
-      <h3>Морозова Алена Олеговна</h3>
-      <h4>{{ stepText[step] }} {{ step + 1 }}/3</h4>
+      <h3>{{ specialist_info.user?.last_name }} {{ specialist_info.user?.first_name }} {{ specialist_info.user?.middle_name }}</h3>
+      <h4>{{ stepText[step] }} {{ $t('modal.steps.step') }} {{ step + 1 }}/3</h4>
       <div class="modal-record__main-step">
         <div :class="{ active: step >= 0 }"></div>
         <div :class="{ active: step >= 1 }"></div>
@@ -121,7 +127,7 @@ function onTimeSelect(time) {
           <input
             v-model="recordData.full_name"
             type="text"
-            placeholder="|ФИО"
+            :placeholder="$t('modal.form.full_name')"
             class="form-item__input"
           >
         </div>
@@ -133,7 +139,7 @@ function onTimeSelect(time) {
             v-model="recordData.phone_number"
             v-mask="'+7 (###) ###-##-##'"
             type="tel"
-            placeholder="Введите номер телефона"
+            :placeholder="$t('modal.form.phone')"
             class="form-item__input"
           >
         </div>
@@ -143,14 +149,14 @@ function onTimeSelect(time) {
         v-if="step === 1"
         class="modal-record__main-step-2">
         <div class="modal-record__main-step-2__date">
-          <p>Дата и время</p>
+          <p>{{ $t('modal.form.date_time') }}</p>
           <button
             type="button"
             @click="open = true">
             <img
               src="/icons/main/search-icon.svg"
               alt="icon" >
-            {{ displayText }}
+            {{ displayText || $t('modal.form.select_date_time') }}
           </button>
 
           <div
@@ -166,7 +172,7 @@ function onTimeSelect(time) {
               mode="dateTime"
               @dayclick="onDayClick"/>
             <div class="specialist__list-shedule__worktime">
-              <p>Свободное время</p>
+              <p>{{ $t('modal.form.available_time') }}</p>
               <div>
                 <button
                   v-for="(slot, slotIndex) of free_slots"
@@ -188,7 +194,7 @@ function onTimeSelect(time) {
             <img
               src="/icons/wp-modal-icon.svg"
               alt="icon" >
-            <span>WhatsApp</span>
+            <span>{{ $t('modal.form.communication.whatsapp') }}</span>
           </div>
           <div>
             <img
@@ -208,7 +214,7 @@ function onTimeSelect(time) {
             <img
               src="/icons/main/phone-modal-icon.svg"
               alt="icon" >
-            <span>Звонок</span>
+            <span>{{ $t('modal.form.communication.phone') }}</span>
           </div>
           <div>
             <img
@@ -225,24 +231,21 @@ function onTimeSelect(time) {
         v-if="step === 2"
         class="modal-record__main-step-3">
         <div class="modal-record__main-step-3-block">
-          <h3>Клиент</h3>
+          <h3>{{ $t('modal.confirmation.client') }}</h3>
           <div class="block-wrapper">
             <div>
-              <p>ФИО</p> <span class="font-semibold">{{ recordData.full_name }}</span>
+              <p>{{ $t('modal.form.full_name') }}</p> <span class="font-semibold">{{ recordData.full_name }}</span>
             </div>
             <div>
-              <p>Номер телефона</p> <span>{{ recordData.phone_number }}</span>
+              <p>{{ $t('modal.confirmation.phone_number') }}</p> <span>{{ recordData.phone_number }}</span>
             </div>
           </div>
         </div>
         <div class="modal-record__main-step-3-block mt-4">
-          <h3>Консультация</h3>
+          <h3>{{ $t('modal.confirmation.consultation') }}</h3>
           <div class="block-wrapper">
-            <!-- <div>
-              <p>Вид приема</p> <span class="font-semibold">Гражданство</span>
-            </div> -->
             <div>
-              <p>Дата и время</p> <span>{{ recordData.appointment_date }}</span>
+              <p>{{ $t('modal.confirmation.date_and_time') }}</p> <span>{{ recordData.appointment_date }}</span>
             </div>
           </div>
         </div>
@@ -252,12 +255,12 @@ function onTimeSelect(time) {
         v-if="step !== 2"
         :disabled="!disabledStepButton"
         @click="stepHandler">
-        Продолжить
+        {{ $t('modal.buttons.continue') }}
       </button>
       <button
         v-else
         @click="createAppointment">
-        Записаться на приём
+        {{ $t('modal.buttons.book_appointment') }}
       </button>
     </div>
   </div>

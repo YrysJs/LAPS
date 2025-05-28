@@ -6,34 +6,33 @@
     <div class="footer__wrapper">
       <div class="footer__left">
         <div class="footer__left-top">
-          <nuxt-link to="/">Юристы</nuxt-link>
-          <nuxt-link to="/">Психологи</nuxt-link>
-          <nuxt-link to="/">Психологи</nuxt-link>
+          <nuxt-link to="/specialists?type=lawyer">{{ $t('navigation.lawyers') }}</nuxt-link>
+          <nuxt-link to="/specialists?type=psychologist">{{ $t('navigation.psychologists') }}</nuxt-link>
         </div>
         <p>
-          © 2025 LAPS
-          iDoctor – сервис по поиску врачей по всему Казахстану. Вызов врача на дом, онлайн-консультация, бесплатная запись на приём.
+          {{ $t('footer.copyright') }}
+          {{ $t('footer.description') }}
         </p>
       </div>
       <div class="footer__right">
-        <h3>Мы в социальных сетях</h3>
+        <h3>{{ $t('footer.social_networks') }}</h3>
         <div class="footer__right-social">
           <a
             href=""
-            aria-label="instagram">
+            :aria-label="$t('footer.instagram_aria')">
             <img
               src="/icons/inst.svg"
               alt="">
           </a>
           <a
             href=""
-            aria-label="youtube">
+            :aria-label="$t('footer.youtube_aria')">
             <img
               src="/icons/youtube.svg"
               alt="">
           </a>
         </div>
-        <p>Есть ошибка? Сообщите нам</p>
+        <p>{{ $t('footer.report_error') }}</p>
       </div>
     </div>
   </footer>

@@ -27,6 +27,8 @@ const showingReplies = ref({});
 const replies = ref({});
 const loadingReplies = ref({});
 
+const ITEMS_PER_PAGE = 20
+
 // Get current user info
 onMounted(async () => {
   if (!userStore.user.id) {
@@ -51,8 +53,8 @@ async function fetchReviews() {
   
   try {
     const params = {
-      page: currentPage.value,
-      limit: 10
+      limit: ITEMS_PER_PAGE,
+      offset: (currentPage.value - 1) * ITEMS_PER_PAGE
     }
 
     // We need to ensure specialist_id is always included as it's required
@@ -179,15 +181,15 @@ async function submitResponse() {
   <NuxtLayout name="cabinet">
     <div class="reviews-page">
       <h1 class="reviews-page__title">
-        {{ userRole === 'specialist' ? 'Отзывы о вас' : 'Ваши отзывы' }}
+        {{ userRole === 'specialist' ? $t('reviews.specialist_reviews') : $t('reviews.client_reviews') }}
       </h1>
       
       <div v-if="loading" class="reviews-page__loading">
-        Загрузка отзывов...
+        {{ $t('reviews.loading') }}
       </div>
       
       <div v-else-if="reviews.length === 0" class="reviews-page__empty">
-        {{ userRole === 'specialist' ? 'Пока нет отзывов о вас' : 'Вы еще не оставили отзывов' }}
+        {{ userRole === 'specialist' ? $t('reviews.no_specialist_reviews') : $t('reviews.no_client_reviews') }}
       </div>
       
       <div v-else class="reviews">
@@ -223,15 +225,15 @@ async function submitResponse() {
               <div class="date">{{ formatDate(review.created_at) }}</div>
             </div>
             <div class="reviews-bullet">
-              <div v-if="review.service_rating">Обслуживание: {{ review.service_rating }}</div>
-              <div v-if="review.meeting_efficiency">Эффективность встречи: {{ review.meeting_efficiency }}</div>
-              <div v-if="review.professionalism">Профессионализм: {{ review.professionalism }}</div>
-              <div v-if="review.price_quality">Цена/Качество: {{ review.price_quality }}</div>
-              <div v-if="review.cleanliness">Чистота: {{ review.cleanliness }}</div>
-              <div v-if="review.attentiveness">Внимательность: {{ review.attentiveness }}</div>
-              <div v-if="review.specialist_experience">Опыт специалиста: {{ review.specialist_experience }}</div>
-              <div v-if="review.grammar">Грамотность: {{ review.grammar }}</div>
-              <div v-if="review.is_recommended" class="recommended">Рекомендует</div>
+              <div v-if="review.service_rating">{{ $t('reviews.service_rating') }}: {{ review.service_rating }}</div>
+              <div v-if="review.meeting_efficiency">{{ $t('reviews.meeting_efficiency') }}: {{ review.meeting_efficiency }}</div>
+              <div v-if="review.professionalism">{{ $t('reviews.professionalism') }}: {{ review.professionalism }}</div>
+              <div v-if="review.price_quality">{{ $t('reviews.price_quality') }}: {{ review.price_quality }}</div>
+              <div v-if="review.cleanliness">{{ $t('reviews.cleanliness') }}: {{ review.cleanliness }}</div>
+              <div v-if="review.attentiveness">{{ $t('reviews.attentiveness') }}: {{ review.attentiveness }}</div>
+              <div v-if="review.specialist_experience">{{ $t('reviews.specialist_experience') }}: {{ review.specialist_experience }}</div>
+              <div v-if="review.grammar">{{ $t('reviews.grammar') }}: {{ review.grammar }}</div>
+              <div v-if="review.is_recommended" class="recommended">{{ $t('reviews.recommend') }}</div>
             </div>
             <div 
               class="reviews-text"
@@ -246,7 +248,7 @@ async function submitResponse() {
               class="reviews-expand-btn"
               @click="toggleExpand(review.id)"
             >
-              {{ expandedReviews[review.id] ? 'Свернуть' : 'Развернуть' }}
+              {{ expandedReviews[review.id] ? $t('reviews.collapse') : $t('reviews.expand') }}
             </button>
             <br>
             <!-- Show Reply button if review has reply_id -->
@@ -255,8 +257,8 @@ async function submitResponse() {
               class="reviews-reply-btn"
               @click="viewReply(review.id)"
             >
-              {{ showingReplies[review.id] ? 'Скрыть ответ' : 'Посмотреть ответ' }}
-              <span v-if="loadingReplies[review.id]"> загрузка...</span>
+              {{ showingReplies[review.id] ? $t('reviews.hide_reply') : $t('reviews.show_reply') }}
+              <span v-if="loadingReplies[review.id]">{{ $t('reviews.loading_reply') }}</span>
             </button>
 
             <!-- Reply section -->
@@ -264,7 +266,7 @@ async function submitResponse() {
               v-if="showingReplies[review.id] && replies[review.id]"
               class="reviews-reply">
               <div class="flex justify-between items-center mb-4">
-                <h4>Ответ специалиста:</h4>
+                <h4>{{ $t('reviews.specialist_reply') }}:</h4>
                 <div class="reviews-date" v-if="replies[review.id]">
                   {{ formatDate(replies[review.id].created_at) }}
                 </div>
@@ -281,7 +283,7 @@ async function submitResponse() {
                 v-if="replies[review.id] && replies[review.id].text && replies[review.id].text.length > 100"
                 class="reviews-reply__btn"
                 @click="toggleExpand('reply-'+review.id)">
-                {{ expandedReviews['reply-'+review.id] ? 'Свернуть' : 'Развернуть' }}
+                {{ expandedReviews['reply-'+review.id] ? $t('reviews.collapse') : $t('reviews.expand') }}
               </button>
             </div>
 
@@ -291,26 +293,26 @@ async function submitResponse() {
                 v-if="selectedReviewId !== review.id"
                 class="reviews-actions__btn" 
                 @click="openResponseForm(review.id)">
-                Ответить на отзыв
+                {{ $t('reviews.reply_to_review') }}
               </button>
               
               <div v-else class="reviews-response-form">
                 <textarea 
                   v-model="responseText"
                   class="reviews-response-form__input"
-                  placeholder="Введите ваш ответ"
+                  :placeholder="$t('reviews.enter_reply')"
                   rows="3"></textarea>
                 <div class="reviews-response-form__actions">
                   <button 
                     class="reviews-response-form__cancel"
                     @click="closeResponseForm()">
-                    Отмена
+                    {{ $t('reviews.cancel') }}
                   </button>
                   <button 
                     class="reviews-response-form__submit"
                     :disabled="submittingResponse || !responseText.trim()"
                     @click="submitResponse()">
-                    {{ submittingResponse ? 'Отправка...' : 'Отправить' }}
+                    {{ submittingResponse ? $t('reviews.sending') : $t('reviews.send') }}
                   </button>
                 </div>
               </div>

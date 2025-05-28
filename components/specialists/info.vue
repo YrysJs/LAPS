@@ -1,9 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useMainStore } from '~/store/useMainStore'
-  
+import { useI18n } from 'vue-i18n'
+
 const isExpanded = ref(false)
 const mainStore = useMainStore()
+const { t } = useI18n()
+
 const specialist_info = computed(() => {
   return mainStore.specialistById
 })
@@ -22,22 +25,22 @@ const toggleExpand = () => {
       class="education__text"
       :class="{ 'expanded': isExpanded }">
       <div class="mb-4">
-        <h3>Образование:</h3>
+        <h3>{{ $t('specialists.info.education') }}:</h3>
         <div>
           <p
             v-for="item of specialist_info.education"
             :key="item.id">
-            - {{ item.graduation_year }}гг -- {{ item.institution }} ({{ item.degree }}, {{ item.specialization }})
+            - {{ item.graduation_year }}{{ $t('specialists.info.years') }} -- {{ item.institution }} ({{ item.degree }}, {{ item.specialization }})
           </p>
         </div>
       </div>
       <div>
-        <h3>Опыт работы:</h3>
+        <h3>{{ $t('specialists.info.work_experience') }}:</h3>
         <div>
           <p
             v-for="item of specialist_info.work_experience"
             :key="item.id">
-            - {{ item.start_year }} - {{ item.end_year }} -- {{ item.company }} ({{ item.position }})
+            - {{ item.start_year }} - {{ item.end_year }} -- {{ item.company }} ({{ $t('specialists.info.position') }}: {{ item.position }})
           </p>
         </div>
       </div>
@@ -45,7 +48,7 @@ const toggleExpand = () => {
     <button
       class="education__button"
       @click="toggleExpand">
-      {{ isExpanded ? 'Скрыть' : 'Показать еще' }}
+      {{ isExpanded ? $t('specialists.info.hide') : $t('specialists.info.show_more') }}
     </button>
   </div>
 </template>

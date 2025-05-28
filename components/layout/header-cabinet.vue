@@ -1,5 +1,15 @@
 <script setup>
 import { useUserStore } from '~/store/useUserStore'
+import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
+const { locale, locales, setLocale } = useI18n()
+const localPath = useLocalePath()
+const language = computed({
+  get: () => locale.value,
+  set: (value) => {
+    setLocale(value)
+  }
+});
 
 const userStore = useUserStore()
 
@@ -12,7 +22,9 @@ const specialistInfo = computed(() => {
 })
 const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.svg']
 
-
+const specialistType = computed(() => {
+  return specialistInfo.value?.type === 'lawyer' ? 'specialists.lawyer' : 'specialists.psychologist'
+})
 </script>
 
 <template>
@@ -23,9 +35,13 @@ const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.sv
           src=""
           alt="">
       </div>
-      <select>
-        <option value="ru">Рус</option>
-        <option value="ru">Каз</option>
+      <select v-model="language">
+        <option 
+          v-for="item of locales" 
+          :key="item" 
+          :value="item.code">
+          {{ item.name }}
+        </option>
       </select>
       <div class="flex items-center justify-between gap-[20px]">
         <img
@@ -34,20 +50,24 @@ const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.sv
           alt="avatar">
         <div>
           <h3>{{ userInfo.last_name }} {{ userInfo.first_name }} {{ userInfo.middle_name }}</h3>
-          <p>{{ specialistInfo.type == 'lawyer' ? 'Юрист' : 'Психолог' }}</p>
+          <p>{{ $t(specialistType)}}</p>
         </div>
       </div>
     </header>
     <header class="header-mobile">
-      <nuxt-link to="/">
+      <nuxt-link :to="localPath('/')">
         <img
           src="/images/logo-mobile-cabinet.svg"
           alt="logo">
       </nuxt-link>
       <div class="flex items-center gap-[16px]">
-        <select class="text-xs outline-none">
-          <option value="ru">Рус</option>
-          <option value="ru">Каз</option>
+        <select v-model="language">
+          <option 
+            v-for="item of locales" 
+            :key="item" 
+            :value="item.code">
+            {{ item.name }}
+          </option>
         </select>
         <button @click="menuState = !menuState">
           <img
@@ -63,9 +83,9 @@ const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.sv
             class="sidebar__item"
             :class="{ active: $route.path === '/cabinet/profile'}">
             <nuxt-link
-              to="/cabinet/profile"
+              :to="localPath('/cabinet/profile')"
             >
-              Личные данные
+              {{ $t('cabinet.menu.personal_data') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -75,9 +95,9 @@ const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.sv
             class="sidebar__item"
             :class="{ active: $route.path === '/cabinet/history' }">
             <nuxt-link
-              to="/cabinet/history"
+              :to="localPath('/cabinet/history')"
             >
-              История обращений
+              {{ $t('cabinet.menu.history') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -87,9 +107,9 @@ const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.sv
             class="sidebar__item"
             :class="{ active: $route.path === '/cabinet/reviews' }">
             <nuxt-link
-              to="/cabinet/reviews"
+              :to="localPath('/cabinet/reviews')"
             >
-              Отзывы
+              {{ $t('cabinet.menu.reviews') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -101,7 +121,7 @@ const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.sv
             <nuxt-link
               to="/cabinet/settings"
             >
-              Настройки
+              {{ $t('cabinet.menu.settings') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -109,9 +129,9 @@ const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.sv
           </li>
           <li class="sidebar__item exit">
             <nuxt-link
-              to="/"
+              :to="localPath('/')"
             >
-              Выйти
+              {{ $t('cabinet.menu.logout') }}
             </nuxt-link>
           </li>
         </ul>

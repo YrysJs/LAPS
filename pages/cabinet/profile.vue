@@ -75,32 +75,32 @@ definePageMeta({
     <div class="profile">
       <div class="profile-desktop">
         <h3 class="profile__title">
-          Ваши данные
+          {{ $t('profile.tabs.personal_data') }}
         </h3>
         <div class="profile__content">
           <div class="profile__tabs">
             <button
               :class="{ 'active': activeTab === 0 }"
               @click="setTab(0)">
-              Ваши данные
+              {{ $t('profile.tabs.personal_data') }}
             </button>
             <button
               v-if="userStore.user.role !== 'client'"
               :class="{ 'active': activeTab === 1 }"
               @click="setTab(1)">
-              Образование
+              {{ $t('profile.tabs.education') }}
             </button>
             <button
               v-if="userStore.user.role !== 'client'"
               :class="{ 'active': activeTab === 2 }"
               @click="setTab(2)">
-              Опыт работы
+              {{ $t('profile.tabs.work_experience') }}
             </button>
             <button
               v-if="userStore.user.role !== 'client'"
               :class="{ 'active': activeTab === 3 }"
               @click="setTab(3)">
-              График работы
+              {{ $t('profile.tabs.work_schedule') }}
             </button>
           </div>
           <div class="profile__wrapper">
@@ -130,7 +130,7 @@ definePageMeta({
               <h3
                 v-if="userStore.user.role !== 'client'"
                 class="text-xs text-[#767485] font-montserrat">
-                Гражданство · Стаж 40 лет
+                {{ $t('profile.citizenship') }} · {{ $t('profile.experience_info', { years: 40 }) }}
               </h3>
               <h4 class="font-montserrat text-base font-bold text-[#242424] leading-[18px] mt-[6px] mb-[8px]">
                 {{ userStore.user.last_name }} {{ userStore.user.first_name }} {{ userStore.user.middle_name }}
@@ -138,7 +138,7 @@ definePageMeta({
               <h5
                 v-if="userStore.user.role !== 'client'"
                 class="text-sm font-montserrat text-[#242424] flex gap-[6px]">
-                Рейтинг <img
+                {{ $t('profile.rating') }} <img
                   src="/icons/cabinet/star-black.svg"
                   alt="icon-star">
                 8.4
@@ -177,7 +177,7 @@ definePageMeta({
           class="profile-mobile__tabs">
           <button
             @click="setTab(0)">
-            Ваши данные
+            {{ $t('profile.tabs.personal_data') }}
             <img
               src="/icons/cabinet/arrow-blue.svg"
               alt="">
@@ -185,7 +185,7 @@ definePageMeta({
           <button
             v-if="userStore.user.role !== 'client'"
             @click="setTab(1)">
-            Образование
+            {{ $t('profile.tabs.education') }}
             <img
               src="/icons/cabinet/arrow-blue.svg"
               alt="">
@@ -193,7 +193,7 @@ definePageMeta({
           <button
             v-if="userStore.user.role !== 'client'"
             @click="setTab(2)">
-            Опыт работы
+            {{ $t('profile.tabs.work_experience') }}
             <img
               src="/icons/cabinet/arrow-blue.svg"
               alt="">
@@ -201,7 +201,7 @@ definePageMeta({
           <button
             v-if="userStore.user.role !== 'client'"
             @click="setTab(3)">
-            График работы
+            {{ $t('profile.tabs.work_schedule') }}
             <img
               src="/icons/cabinet/arrow-blue.svg"
               alt="">

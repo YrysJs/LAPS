@@ -14,35 +14,35 @@
             &#10006;
           </button>
           <div class="experience__item">
-            <p>Год окончания</p>
+            <p>{{ $t('specialists.graduation_year') }}</p>
             <input
               v-model="education[index].graduation_year"
               type="text"
-              placeholder="Введите год"
+              :placeholder="$t('specialists.education.year_placeholder')"
             >
           </div>
           <div class="experience__item">
-            <p>Учебное заведение</p>
+            <p>{{ $t('specialists.institution') }}</p>
             <input
               v-model="education[index].institution"
               type="text"
-              placeholder="Введите название"
+              :placeholder="$t('specialists.education.institution_placeholder')"
             >
           </div>
           <div class="experience__item">
-            <p>Степень</p>
+            <p>{{ $t('specialists.degree') }}</p>
             <input
               v-model="education[index].degree"
               type="text"
-              placeholder="Введите степень"
+              :placeholder="$t('specialists.education.degree_placeholder')"
             >
           </div>
           <div class="experience__item">
-            <p>Специальность</p>
+            <p>{{ $t('specialists.specialization') }}</p>
             <input
               v-model="education[index].specialization"
               type="text"
-              placeholder="Введите специальность"
+              :placeholder="$t('specialists.education.specialization_placeholder')"
             >
           </div>
         </div>
@@ -59,35 +59,35 @@
             &#10006;
           </button>
           <div class="experience__item">
-            <p>Год окончания</p>
+            <p>{{ $t('specialists.graduation_year') }}</p>
             <input
               v-model="newEducation[index].graduation_year"
               type="number"
-              placeholder="Введите год"
+              :placeholder="$t('specialists.education.year_placeholder')"
             >
           </div>
           <div class="experience__item">
-            <p>Учебное заведение</p>
+            <p>{{ $t('specialists.institution') }}</p>
             <input
               v-model="newEducation[index].institution"
               type="text"
-              placeholder="Введите название"
+              :placeholder="$t('specialists.education.institution_placeholder')"
             >
           </div>
           <div class="experience__item">
-            <p>Степень</p>
+            <p>{{ $t('specialists.degree') }}</p>
             <input
               v-model="newEducation[index].degree"
               type="text"
-              placeholder="Введите степень"
+              :placeholder="$t('specialists.education.degree_placeholder')"
             >
           </div>
           <div class="experience__item">
-            <p>Специальность</p>
+            <p>{{ $t('specialists.specialization') }}</p>
             <input
               v-model="newEducation[index].specialization"
               type="text"
-              placeholder="Введите специальность"
+              :placeholder="$t('specialists.education.specialization_placeholder')"
             >
           </div>
         </div>
@@ -96,7 +96,7 @@
           class="add-item"
           @click="addEducation"
         >
-          &#10011; Добавить диплом
+          &#10011; {{ $t('specialists.education.add_diploma') }}
         </button>
       </div>
     </div>
@@ -105,7 +105,7 @@
       class="content-submit"
       @click="saveEducation"
     >
-      Сохранить
+      {{ $t('profile.save') }}
     </button>
   </div>
 </template>

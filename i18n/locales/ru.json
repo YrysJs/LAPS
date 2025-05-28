@@ -1,0 +1,261 @@
+{
+  "errors": {
+    "general": "Произошла ошибка",
+    "photo_upload": "Не удалось загрузить фото",
+    "fill_required_fields": "Заполните поля логин и пароль",
+    "password_number": "Пароль должен содержать хотя бы одну цифру",
+    "password_uppercase": "Пароль должен содержать ровно одну заглавную букву (латиница)",
+    "password_symbol": "Пароль должен содержать ровно один спецсимвол",
+    "auth_required": "Для записи необходимо авторизоваться",
+    "delete_error": "Ошибка удаления",
+    "save_error": "Ошибка при сохранении"
+  },
+  "success": {
+    "education_added": "Образование добавлено",
+    "education_updated": "Данные по образованию обновлены",
+    "education_deleted": "Данные по образованию удалены",
+    "password_updated": "Пароль обновлен",
+    "data_updated": "Данные обновлены",
+    "photo_updated": "Фото профиля обновлено",
+    "review_added": "Отзыв успешно добавлен",
+    "photo_deleted": "Фото профиля удалено",
+    "record_deleted": "Запись удалена",
+    "record_updated": "Запись обновлена",
+    "data_added": "Данные добавлены",
+    "data_deleted": "Данные удалены",
+    "registration_complete": "Регистрация прошла успешно"
+  },
+  "specialists": {
+    "title": "Записаться к специалисту",
+    "search_placeholder": "Введите специализацию",
+    "reset_filter": "Сбросить фильтр",
+    "rating": "Рейтинг",
+    "reviews_count": "отзывов",
+    "experience_years": "Стаж",
+    "years": "лет",
+    "primary_appointment": "Первичный приём",
+    "secondary_appointment": "Вторичный приём",
+    "price_from": "от",
+    "available_time": "Свободное время",
+    "lawyer": "Юрист",
+    "psychologist": "Психолог",
+    "main_info": "Основная информация",
+    "make_appointment": "Записаться онлайн",
+    "call": "Позвонить",
+    "association_member": "Состоит в ассоциации",
+    "education": {
+      "add_diploma": "Добавить диплом",
+      "year_placeholder": "Введите год",
+      "institution_placeholder": "Введите название",
+      "degree_placeholder": "Введите степень",
+      "specialization_placeholder": "Введите специальность"
+    },
+    "work_experience": "Опыт работы",
+    "show_more": "Показать еще",
+    "hide": "Скрыть",
+    "graduation_year": "Год окончания",
+    "institution": "Учебное заведение",
+    "degree": "Степень",
+    "specialization": "Специальность",
+    "company": "Место работы",
+    "position": "Должность",
+    "start_year": "Год начала работы",
+    "end_year": "Год окончания работы",
+    "add_education": "Добавить образование",
+    "add_work": "Добавить место работы",
+    "info": {
+      "education": "Образование",
+      "work_experience": "Опыт работы",
+      "show_more": "Показать еще",
+      "hide": "Скрыть",
+      "years": "гг",
+      "position": "должность"
+    }
+  },
+  "navigation": {
+    "lawyers": "ЮРИСТЫ",
+    "psychologists": "ПСИХОЛОГИ",
+    "cabinet": "Личный кабинет"
+  },
+  "auth": {
+    "login": "Войти",
+    "login_as_specialist": "Войти как специалист",
+    "login_as_client": "Войти как клиент",
+    "logout": "Выйти",
+    "sign_in": {
+      "phone_placeholder": "Введите номер телефона",
+      "password_placeholder": "Введите пароль",
+      "forgot_password": "Не помню пароль",
+      "register_prompt": "Не зарегистрированы?",
+      "register_link": "Регистрация",
+      "specialist_cabinet": "Личный кабинет"
+    },
+    "sign_up": {
+      "first_name_placeholder": "Имя",
+      "last_name_placeholder": "Фамилия",
+      "middle_name_placeholder": "Отчество",
+      "email_placeholder": "Email",
+      "phone_placeholder": "Введите номер телефона",
+      "submit": "Зарегистрироваться",
+      "have_account": "Уже есть аккаунт?"
+    }
+  },
+  "profile": {
+    "personal_data": "Ваши данные",
+    "education": "Образование",
+    "work_experience": "Опыт работы",
+    "schedule": "График работы",
+    "profile_photo": "Фото профиля",
+    "experience_years": "Стаж работы",
+    "experience_years_placeholder": "Стаж работы в годах",
+    "specialization": "Специализация",
+    "specialization_placeholder": "Введите специализацию",
+    "primary_consult_price": "Стоимость первичной консультации",
+    "secondary_consult_price": "Стоимость вторичной консультации",
+    "price_placeholder": "Цена",
+    "about": "О себе",
+    "about_placeholder": "О себе",
+    "save": "Сохранить",
+    "citizenship": "Гражданство",
+    "experience_info": "Стаж {years} лет",
+    "rating": "Рейтинг",
+    "tabs": {
+      "personal_data": "Ваши данные",
+      "education": "Образование",
+      "work_experience": "Опыт работы",
+      "work_schedule": "График работы"
+    }
+  },
+  "reviews": {
+    "title": "Отзывы",
+    "specialist_reviews": "Отзывы о вас",
+    "client_reviews": "Ваши отзывы",
+    "loading": "Загрузка отзывов...",
+    "no_specialist_reviews": "Пока нет отзывов о вас",
+    "no_client_reviews": "Вы еще не оставили отзывов",
+    "leave_review": "Оставить отзыв",
+    "overall_rating": "Общий рейтинг",
+    "service_rating": "Обслуживание",
+    "meeting_efficiency": "Эффективность встречи",
+    "attentiveness": "Внимательность",
+    "cleanliness": "Чистоплотность",
+    "grammar": "Грамотность",
+    "price_quality": "Цена-качество",
+    "professionalism": "Профессионализм",
+    "specialist_experience": "Опыт специалиста",
+    "recommend": "Порекомендуете ли",
+    "review_text": "Текст отзыва",
+    "cancel": "Отмена",
+    "submit": "Отправить отзыв",
+    "show_reply": "Посмотреть ответ",
+    "hide_reply": "Скрыть ответ",
+    "specialist_reply": "Ответ специалиста",
+    "expand": "Развернуть",
+    "collapse": "Свернуть",
+    "loading_reply": "загрузка...",
+    "reply_to_review": "Ответить на отзыв",
+    "enter_reply": "Введите ваш ответ",
+    "sending": "Отправка...",
+    "send": "Отправить"
+  },
+  "history": {
+    "title": "История обращений",
+    "columns": {
+      "name": "Имя",
+      "phone": "Номер телефона",
+      "date": "Дата",
+      "status": "Статус",
+      "actions": "Действия"
+    }
+  },
+  "cabinet": {
+    "menu": {
+      "personal_data": "Личные данные",
+      "history": "История обращений",
+      "reviews": "Отзывы",
+      "settings": "Настройки",
+      "logout": "Выйти"
+    }
+  },
+  "ui": {
+    "select": {
+      "placeholder": "Выберите..."
+    }
+  },
+  "schedule": {
+    "slot_duration": "Длительность слота (минут)",
+    "slot_duration_placeholder": "Введите длительность",
+    "days": {
+      "monday": "Понедельник",
+      "tuesday": "Вторник",
+      "wednesday": "Среда",
+      "thursday": "Четверг",
+      "friday": "Пятница",
+      "saturday": "Суббота",
+      "sunday": "Воскресенье"
+    },
+    "time": {
+      "start": "Начало",
+      "end": "Конец"
+    },
+    "add_time": "Добавить время",
+    "save": "Сохранить"
+  },
+  "language": {
+    "ru": "Рус",
+    "kk": "Каз"
+  },
+  "footer": {
+    "copyright": "© 2025 LAPS",
+    "description": "iDoctor – сервис по поиску врачей по всему Казахстану. Вызов врача на дом, онлайн-консультация, бесплатная запись на приём.",
+    "social_networks": "Мы в социальных сетях",
+    "report_error": "Есть ошибка? Сообщите нам",
+    "instagram_aria": "instagram",
+    "youtube_aria": "youtube"
+  },
+  "modal": {
+    "steps": {
+      "your_data": "Ваши данные",
+      "consultation_info": "Информация о консультации",
+      "confirm_and_pay": "Подтвердите и оплатите",
+      "step": "Шаг"
+    },
+    "form": {
+      "full_name": "ФИО",
+      "phone": "Введите номер телефона",
+      "date_time": "Дата и время",
+      "select_date_time": "Выберите дату и время",
+      "available_time": "Свободное время",
+      "communication": {
+        "whatsapp": "WhatsApp",
+        "phone": "Звонок"
+      }
+    },
+    "buttons": {
+      "continue": "Продолжить",
+      "book_appointment": "Записаться на приём",
+      "close": "Закрыть"
+    },
+    "confirmation": {
+      "client": "Клиент",
+      "consultation": "Консультация",
+      "phone_number": "Номер телефона",
+      "date_and_time": "Дата и время"
+    }
+  },
+  "settings": {
+    "title": "Изменение пароля",
+    "new_password": "Новый пароль",
+    "new_password_placeholder": "Введите пароль",
+    "old_password": "Старый пароль",
+    "old_password_placeholder": "Старый пароль",
+    "save": "Сохранить",
+    "fill_fields": "Заполните поля"
+  },
+  "main": {
+    "title": "Сервис по поиску юристов и психологов",
+    "subtitle": "Мы поможем найти проверенного юриста или психолога и записаться на прием в удобное для Вас время",
+    "choose_lawyer": "Выбрать юриста",
+    "choose_psychologist": "Выбрать психолога"
+  }
+} 

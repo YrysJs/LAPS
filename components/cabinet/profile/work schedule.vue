@@ -2,21 +2,21 @@
   <div class="settings">
     <div class="settings__content">
       <div class="settings__item">
-        <p>Длительность слота (минут):</p>
+        <p>{{ $t('schedule.slot_duration') }}:</p>
         <input
           v-model.number="schedule.slot_time"
           type="number"
           min="0"
-          placeholder="Введите длительность"
+          :placeholder="$t('schedule.slot_duration_placeholder')"
         >
       </div>
       <div class="settings__wrapper">
         <div
-          v-for="({ key, label }) in days"
+          v-for="({ key }) in days"
           :key="key"
           class="settings__wrapper-day"
         >
-          <h4>{{ label }}:</h4>
+          <h4>{{ $t(`schedule.days.${key}`) }}:</h4>
 
           <div
             v-for="(slot, idx) in schedule.week_schedule[key].work_time"
@@ -25,7 +25,7 @@
           >
             <div class="flex items-center gap-1 border p-2">
               <div class="flex items-center gap-2">
-                <span>Начало:</span>
+                <span>{{ $t('schedule.time.start') }}:</span>
                 <VDatePicker
                   v-model="slot.start_time"
                   mode="time"
@@ -36,7 +36,7 @@
                 />
               </div>
               <div class="flex items-center gap-2">
-                <span>Конец:</span>
+                <span>{{ $t('schedule.time.end') }}:</span>
                 <VDatePicker
                   v-model="slot.end_time"
                   mode="time"
@@ -61,7 +61,7 @@
             class="add-slot-btn"
             @click="addSlot(key)"
           >
-            + Добавить время
+            + {{ $t('schedule.add_time') }}
           </button>
         </div>
       </div>
@@ -71,7 +71,7 @@
       class="content-submit"
       @click="stepHandler"
     >
-      Сохранить
+      {{ $t('schedule.save') }}
     </button>
   </div>
 </template>
@@ -89,13 +89,13 @@ const sheduleData = reactive({
 })
 
 const days = [
-  { key: 'monday',    label: 'Понедельник' },
-  { key: 'tuesday',   label: 'Вторник'     },
-  { key: 'wednesday', label: 'Среда'       },
-  { key: 'thursday',  label: 'Четверг'     },
-  { key: 'friday',    label: 'Пятница'     },
-  { key: 'saturday',  label: 'Суббота'     },
-  { key: 'sunday',    label: 'Воскресенье' }
+  { key: 'monday' },
+  { key: 'tuesday' },
+  { key: 'wednesday' },
+  { key: 'thursday' },
+  { key: 'friday' },
+  { key: 'saturday' },
+  { key: 'sunday' }
 ]
 
 function formatYMD(d) {

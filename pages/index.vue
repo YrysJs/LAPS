@@ -1,5 +1,6 @@
 <script setup>
 import HeaderMain from '@/components/layout/header-main.vue'
+const localPath = useLocalePath()
 </script>
 
 <template>
@@ -15,22 +16,22 @@ import HeaderMain from '@/components/layout/header-main.vue'
       <!-- Main Section -->
       <section class="main">
         <div class="main-left">
-          <h1 class="main-title text-[48px] font-montserrat font-bold text-[#1A1C1F] leading-[105%] mb-2">Сервис по поиску юристов и психологов</h1>
-          <p class="main-subtitle mt-4 text-[22px] font-montserrat font-extralight text-[#1A1C1F]">Мы поможем найти проверенного юриста или психолога и записаться на прием в удобное для Вас время</p>
+          <h1 class="main-title text-[48px] font-montserrat font-bold text-[#1A1C1F] leading-[105%] mb-2">{{ $t('main.title') }}</h1>
+          <p class="main-subtitle mt-4 text-[22px] font-montserrat font-extralight text-[#1A1C1F]">{{ $t('main.subtitle') }}</p>
           <div class="main-btn mt-[128px] flex justify-center md:justify-start space-x-6">
             <nuxt-link
-              to="/specialists?type=lawyer"
+              :to="localPath('/specialists?type=lawyer')"
               class="main-btn__item pt-[29px] pl-[18px] pb-[14px] bg-blue-600 text-white rounded-[48px] text-[36px] font-montserrat_alt font-bold hover:bg-blue-700">
-              Выбрать юриста
+              {{ $t('main.choose_lawyer') }}
               <img
                 src="/icons/main/arrow.svg"
                 alt="link"
                 class="mt-[57px]">
             </nuxt-link>
             <nuxt-link
-              to="/specialists?type=psychologist"
+              :to="localPath('/specialists?type=psychologist')"
               class="main-btn__item pt-[29px] pl-[18px] pb-[14px] bg-green-600 text-white rounded-[48px] text-[36px] font-montserrat_alt font-bold hover:bg-green-700">
-              Выбрать психолога
+              {{ $t('main.choose_psychologist') }}
               <img
                 src="/icons/main/arrow.svg"
                 alt="link"

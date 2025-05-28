@@ -163,67 +163,67 @@ onMounted(async () => {
             accept="image/*"
             @change="onAvatarChange"
           >
-          <p>Фото профиля</p>
+          <p>{{ $t('profile.profile_photo') }}</p>
         </div>
         <div class="experience__wrapper-item">
           <div class="experience__item">
             <p>
-              Имя
+              {{ $t('auth.sign_up.first_name_placeholder') }}
             </p>
             <input
               v-model="userData.first_name"
               type="text"
-              placeholder="Введите имя">
+              :placeholder="$t('auth.sign_up.first_name_placeholder')">
           </div>
           <div class="experience__item">
             <p>
-              Фамилия
+              {{ $t('auth.sign_up.last_name_placeholder') }}
             </p>
             <input
               v-model="userData.last_name"
               type="text"
-              placeholder="Введите фамилию">
+              :placeholder="$t('auth.sign_up.last_name_placeholder')">
           </div>
           <div class="experience__item">
             <p>
-              E-mail
+              {{ $t('auth.sign_up.email_placeholder') }}
             </p>
             <input
               v-model="userData.email"
               type="text"
-              placeholder="Введите email">
+              :placeholder="$t('auth.sign_up.email_placeholder')">
           </div>
           <div class="experience__item">
             <p>
-              Номер телефона
+              {{ $t('auth.sign_up.phone_placeholder') }}
             </p>
             <input
               v-model="userData.phone"
               v-mask="'+7 (###) ###-##-##'"
               type="text"
-              placeholder="Введите ваш номер телефона">
+              :placeholder="$t('auth.sign_up.phone_placeholder')">
           </div>
           <div
             v-if="userStore.user.role !== 'client'"
             class="experience__item">
             <p>
-              Стаж работы
+              {{ $t('profile.experience_years') }}
             </p>
             <input
               v-model="specialsitData.experience_years"
               type="number"
-              placeholder="Стаж работы в годах">
+              :placeholder="$t('profile.experience_years_placeholder')">
           </div>
           <div
             v-if="userStore.user.role !== 'client'"
             class="experience__item specialist__search">
             <p>
-              Специализация
+              {{ $t('profile.specialization') }}
             </p>
             <input 
               v-model="specialsitData.specialization" 
               type="search" 
-              placeholder="Введите специализацию" 
+              :placeholder="$t('profile.specialization_placeholder')"
               @input="fetchSpecializations" >
     
             <ul v-if="specializtions.length > 0">
@@ -240,34 +240,34 @@ onMounted(async () => {
             v-if="userStore.user.role !== 'client'"
             class="experience__item">
             <p>
-              Стоимость первичной консультации
+              {{ $t('profile.primary_consult_price') }}
             </p>
             <input
               v-model="specialsitData.primary_consult_price"
               type="number"
-              placeholder="Цена">
+              :placeholder="$t('profile.price_placeholder')">
           </div>
           <div
             v-if="userStore.user.role !== 'client'"
             class="experience__item">
             <p>
-              Стоимость вторичной консультации
+              {{ $t('profile.secondary_consult_price') }}
             </p>
             <input
               v-model="specialsitData.secondary_consult_price"
               type="number"
-              placeholder="Цена">
+              :placeholder="$t('profile.price_placeholder')">
           </div>
           <div
             v-if="userStore.user.role !== 'client'"
             class="experience__item">
             <p>
-              О себе
+              {{ $t('profile.about') }}
             </p>
             <textarea
               v-model="specialsitData.description"
               type="text"
-              placeholder="О себе"></textarea>
+              :placeholder="$t('profile.about_placeholder')"></textarea>
           </div>
           <div
             v-if="userStore.user.role !== 'client'"

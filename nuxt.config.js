@@ -21,8 +21,20 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxtjs/sitemap',
     '@nuxtjs/robots',
-    'dayjs-nuxt'
+    'dayjs-nuxt',
+    '@nuxtjs/i18n'
   ],
+
+  i18n: {
+    locales: [
+      { code: 'ru', name: 'Рус', file: 'ru.json' },
+      { code: 'kk', name: 'Қаз', file: 'kk.json' }
+    ],
+    defaultLocale: 'ru',
+    langDir: './locales',
+    lazy: true,
+    strategy: 'prefix_except_default',
+  },
 
   runtimeConfig: {
     public: {

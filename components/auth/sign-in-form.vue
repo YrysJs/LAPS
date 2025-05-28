@@ -31,7 +31,7 @@ const signIn = async () => {
     await authStore.auth(userData)
     await authStore.setUserType(route.query.type)
   } else {
-    toast.warning('Заполните поля логин и пароль')
+    toast.warning($t('errors.fill_required_fields'))
   }
 }
 
@@ -47,7 +47,7 @@ onMounted(() => {
       src="/images/logo-auth.svg"
       alt="logo"
       class="logo">
-    <p class="logo-subtitle">Личный кабинет специалиста</p>
+    <p class="logo-subtitle">{{ $t('auth.sign_in.specialist_cabinet') }}</p>
     <div class="mt-8 space-y-6">
       <div
         class="form-item"
@@ -59,7 +59,7 @@ onMounted(() => {
           v-model="phoneNumber"
           v-mask="'+7 (###) ###-##-##'"
           type="tel" 
-          placeholder="Введите номер телефона"
+          :placeholder="$t('auth.sign_in.phone_placeholder')"
           class="form-item__input">
       </div>
       <div class="form-item">
@@ -70,25 +70,25 @@ onMounted(() => {
           id="password"
           v-model="password"
           type="password"
-          placeholder="Введите пароль"
+          :placeholder="$t('auth.sign_in.password_placeholder')"
           class="form-item__input">
       </div>
       <button
         type="submit"
         class="submit"
         @click="signIn">
-        Войти
+        {{ $t('auth.login') }}
       </button>
       <button
         type=""
         class="reset"
         @click.prevent="userActions('reset')">
-        Не помню пароль
+        {{ $t('auth.sign_in.forgot_password') }}
       </button>
       <button
         class="register"
         @click.prevent="userActions('register')">
-        Не зарегистрированы? <span>Регистрация</span>
+        {{ $t('auth.sign_in.register_prompt') }} <span>{{ $t('auth.sign_in.register_link') }}</span>
       </button>
     </div>
   </div>

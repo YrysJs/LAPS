@@ -1,0 +1,261 @@
+{
+  "errors": {
+    "general": "Қате орын алды",
+    "photo_upload": "Фотосуретті жүктеу мүмкін болмады",
+    "fill_required_fields": "Логин және құпия сөз өрістерін толтырыңыз",
+    "password_number": "Құпия сөзде кем дегенде бір сан болуы керек",
+    "password_uppercase": "Құпия сөзде дәл бір бас әріп болуы керек (латын)",
+    "password_symbol": "Құпия сөзде дәл бір арнайы таңба болуы керек",
+    "auth_required": "Жазылу үшін авторизациядан өту қажет",
+    "delete_error": "Жою кезінде қате",
+    "save_error": "Сақтау кезінде қате"
+  },
+  "success": {
+    "education_added": "Білім қосылды",
+    "education_updated": "Білім туралы деректер жаңартылды",
+    "education_deleted": "Білім туралы деректер жойылды",
+    "password_updated": "Құпия сөз жаңартылды",
+    "data_updated": "Деректер жаңартылды",
+    "photo_updated": "Профиль фотосы жаңартылды",
+    "review_added": "Пікір сәтті қосылды",
+    "photo_deleted": "Профиль фотосы жойылды",
+    "record_deleted": "Жазба жойылды",
+    "record_updated": "Жазба жаңартылды",
+    "data_added": "Деректер қосылды",
+    "data_deleted": "Деректер жойылды",
+    "registration_complete": "Тіркелу сәтті аяқталды"
+  },
+  "specialists": {
+    "title": "Маманға жазылу",
+    "search_placeholder": "Мамандықты енгізіңіз",
+    "reset_filter": "Сүзгіні тазалау",
+    "rating": "Рейтинг",
+    "reviews_count": "пікір",
+    "experience_years": "Тәжірибе",
+    "years": "жыл",
+    "primary_appointment": "Алғашқы қабылдау",
+    "secondary_appointment": "Қайталама қабылдау",
+    "price_from": "бастап",
+    "available_time": "Бос уақыт",
+    "lawyer": "Заңгер",
+    "psychologist": "Психолог",
+    "main_info": "Негізгі ақпарат",
+    "make_appointment": "Онлайн жазылу",
+    "call": "Қоңырау шалу",
+    "association_member": "Қауымдастық мүшесі",
+    "education": {
+      "add_diploma": "Диплом қосу",
+      "year_placeholder": "Жылды енгізіңіз",
+      "institution_placeholder": "Атауын енгізіңіз",
+      "degree_placeholder": "Дәрежені енгізіңіз",
+      "specialization_placeholder": "Мамандықты енгізіңіз"
+    },
+    "work_experience": "Жұмыс тәжірибесі",
+    "show_more": "Көбірек көрсету",
+    "hide": "Жасыру",
+    "graduation_year": "Бітіру жылы",
+    "institution": "Оқу орны",
+    "degree": "Дәреже",
+    "specialization": "Мамандық",
+    "company": "Жұмыс орны",
+    "position": "Лауазым",
+    "start_year": "Жұмысты бастау жылы",
+    "end_year": "Жұмысты аяқтау жылы",
+    "add_education": "Білім қосу",
+    "add_work": "Жұмыс орнын қосу",
+    "info": {
+      "education": "Білім",
+      "work_experience": "Жұмыс тәжірибесі",
+      "show_more": "Көбірек көрсету",
+      "hide": "Жасыру",
+      "years": "жж",
+      "position": "лауазым"
+    }
+  },
+  "navigation": {
+    "lawyers": "ЗАҢГЕРЛЕР",
+    "psychologists": "ПСИХОЛОГТАР",
+    "cabinet": "Жеке кабинет"
+  },
+  "auth": {
+    "login": "Кіру",
+    "login_as_specialist": "Маман ретінде кіру",
+    "login_as_client": "Клиент ретінде кіру",
+    "logout": "Шығу",
+    "sign_in": {
+      "phone_placeholder": "Телефон нөірін енгізіңіз",
+      "password_placeholder": "Құпия сөзді енгізіңіз",
+      "forgot_password": "Құпия сөзді ұмыттым",
+      "register_prompt": "Тіркелмегенсіз бе?",
+      "register_link": "Тіркелу",
+      "specialist_cabinet": "Маманның жеке кабинеті"
+    },
+    "sign_up": {
+      "first_name_placeholder": "Аты",
+      "last_name_placeholder": "Тегі",
+      "middle_name_placeholder": "Әкесінің аты",
+      "email_placeholder": "Email",
+      "phone_placeholder": "Телефон нөмірін енгізіңіз",
+      "submit": "Тіркелу",
+      "have_account": "Аккаунтыңыз бар ма?"
+    }
+  },
+  "profile": {
+    "personal_data": "Сіздің деректеріңіз",
+    "education": "Білім",
+    "work_experience": "Жұмыс тәжірибесі",
+    "schedule": "Жұмыс кестесі",
+    "profile_photo": "Профиль фотосы",
+    "experience_years": "Жұмыс тәжірибесі",
+    "experience_years_placeholder": "Жұмыс тәжірибесі жылмен",
+    "specialization": "Мамандану",
+    "specialization_placeholder": "Мамандануды енгізіңіз",
+    "primary_consult_price": "Алғашқы кеңес беру құны",
+    "secondary_consult_price": "Қайталама кеңес беру құны",
+    "price_placeholder": "Баға",
+    "about": "Өзім туралы",
+    "about_placeholder": "Өзіңіз туралы",
+    "save": "Сақтау",
+    "citizenship": "Азаматтық",
+    "experience_info": "Тәжірибесі {years} жыл",
+    "rating": "Рейтинг",
+    "tabs": {
+      "personal_data": "Сіздің деректеріңіз",
+      "education": "Білім",
+      "work_experience": "Жұмыс тәжірибесі",
+      "work_schedule": "Жұмыс кестесі"
+    }
+  },
+  "reviews": {
+    "title": "Пікірлер",
+    "specialist_reviews": "Сіз туралы пікірлер",
+    "client_reviews": "Сіздің пікірлеріңіз",
+    "loading": "Пікірлер жүктелуде...",
+    "no_specialist_reviews": "Сіз туралы әзірше пікірлер жоқ",
+    "no_client_reviews": "Сіз әлі пікір қалдырған жоқсыз",
+    "leave_review": "Пікір қалдыру",
+    "overall_rating": "Жалпы рейтинг",
+    "service_rating": "Қызмет көрсету",
+    "meeting_efficiency": "Кездесу тиімділігі",
+    "attentiveness": "Мұқияттылық",
+    "cleanliness": "Тазалық",
+    "grammar": "Сауаттылық",
+    "price_quality": "Баға-сапа",
+    "professionalism": "Кәсібилік",
+    "specialist_experience": "Маман тәжірибесі",
+    "recommend": "Ұсынасыз ба",
+    "review_text": "Пікір мәтіні",
+    "cancel": "Болдырмау",
+    "submit": "Пікір жіберу",
+    "show_reply": "Жауапты көру",
+    "hide_reply": "Жауапты жасыру",
+    "specialist_reply": "Маманның жауабы",
+    "expand": "Кеңейту",
+    "collapse": "Жию",
+    "loading_reply": "жүктелуде...",
+    "reply_to_review": "Пікірге жауап беру",
+    "enter_reply": "Жауабыңызды енгізіңіз",
+    "sending": "Жіберілуде...",
+    "send": "Жіберу"
+  },
+  "history": {
+    "title": "Өтініштер тарихы",
+    "columns": {
+      "name": "Аты",
+      "phone": "Телефон нөмірі",
+      "date": "Күні",
+      "status": "Мәртебесі",
+      "actions": "Әрекеттер"
+    }
+  },
+  "cabinet": {
+    "menu": {
+      "personal_data": "Жеке деректер",
+      "history": "Өтініштер тарихы",
+      "reviews": "Пікірлер",
+      "settings": "Баптаулар",
+      "logout": "Шығу"
+    }
+  },
+  "ui": {
+    "select": {
+      "placeholder": "Таңдаңыз..."
+    }
+  },
+  "schedule": {
+    "slot_duration": "Слот ұзақтығы (минут)",
+    "slot_duration_placeholder": "Ұзақтығын енгізіңіз",
+    "days": {
+      "monday": "Дүйсенбі",
+      "tuesday": "Сейсенбі",
+      "wednesday": "Сәрсенбі",
+      "thursday": "Бейсенбі",
+      "friday": "Жұма",
+      "saturday": "Сенбі",
+      "sunday": "Жексенбі"
+    },
+    "time": {
+      "start": "Басталуы",
+      "end": "Аяқталуы"
+    },
+    "add_time": "Уақыт қосу",
+    "save": "Сақтау"
+  },
+  "language": {
+    "ru": "Орыс",
+    "kk": "Қаз"
+  },
+  "footer": {
+    "copyright": "© 2025 LAPS",
+    "description": "iDoctor – Қазақстан бойынша дәрігерлерді іздеу қызметі. Дәрігерді үйге шақыру, онлайн кеңес беру, тегін жазылу.",
+    "social_networks": "Біз әлеуметтік желілерде",
+    "report_error": "Қате бар ма? Бізге хабарлаңыз",
+    "instagram_aria": "instagram",
+    "youtube_aria": "youtube"
+  },
+  "modal": {
+    "steps": {
+      "your_data": "Сіздің деректеріңіз",
+      "consultation_info": "Кеңес туралы ақпарат",
+      "confirm_and_pay": "Растаңыз және төлеңіз",
+      "step": "Қадам"
+    },
+    "form": {
+      "full_name": "ТАӘ",
+      "phone": "Телефон нөмірін енгізіңіз",
+      "date_time": "Күні мен уақыты",
+      "select_date_time": "Күні мен уақытын таңдаңыз",
+      "available_time": "Бос уақыт",
+      "communication": {
+        "whatsapp": "WhatsApp",
+        "phone": "Қоңырау"
+      }
+    },
+    "buttons": {
+      "continue": "Жалғастыру",
+      "book_appointment": "Қабылдауға жазылу",
+      "close": "Жабу"
+    },
+    "confirmation": {
+      "client": "Клиент",
+      "consultation": "Кеңес",
+      "phone_number": "Телефон нөмірі",
+      "date_and_time": "Күні мен уақыты"
+    }
+  },
+  "settings": {
+    "title": "Құпия сөзді өзгерту",
+    "new_password": "Жаңа құпия сөз",
+    "new_password_placeholder": "Құпия сөзді енгізіңіз",
+    "old_password": "Ескі құпия сөз",
+    "old_password_placeholder": "Ескі құпия сөз",
+    "save": "Сақтау",
+    "fill_fields": "Өрістерді толтырыңыз"
+  },
+  "main": {
+    "title": "Заңгерлер мен психологтарды іздеу қызметі",
+    "subtitle": "Біз сізге тексерілген заңгер немесе психологты табуға және өзіңізге ыңғайлы уақытта қабылдауға жазылуға көмектесеміз",
+    "choose_lawyer": "Заңгерді таңдау",
+    "choose_psychologist": "Психологты таңдау"
+  }
+} 

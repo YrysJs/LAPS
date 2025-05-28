@@ -23,11 +23,11 @@ const specialistType = ref({
 const selectValue = [
   {
     value: 'lawyer',
-    label: 'Юрист'
+    label: $t('specialists.lawyer')
   },
   {
     value: 'psychologist',
-    label: 'Психолог'
+    label: $t('specialists.psychologist')
   }
 ]
 
@@ -61,24 +61,24 @@ const signUp = async () => {
     !password.value ||
     !phone.value
   ) {
-    toast.error('Пожалуйста, заполните все поля')
+    toast.error($t('errors.fill_required_fields'))
     return
   }
 
   if (!/\d/.test(password.value)) {
-    toast.error('Пароль должен содержать хотя бы одну цифру')
+    toast.error($t('errors.password_number'))
     return
   }
 
   const uppercaseCount = (password.value.match(/[A-Z]/g) || []).length
   if (uppercaseCount !== 1) {
-    toast.error('Пароль должен содержать ровно одну заглавную букву (латиница)')
+    toast.error($t('errors.password_uppercase'))
     return
   }
 
   const symbolMatches = password.value.match(/[^A-Za-z0-9]/g)
   if (!symbolMatches || symbolMatches.length !== 1) {
-    toast.error('Пароль должен содержать ровно один спецсимвол')
+    toast.error($t('errors.password_symbol'))
     return
   }
 
@@ -99,7 +99,7 @@ const signUp = async () => {
   }
 
   if (route.query.type == 'client' && res.status) {
-    toast('Регистрация прошла успешно')
+    toast($t('success.registration_complete'))
     emit('action', 'login')
   }
 }
@@ -112,7 +112,7 @@ const signUp = async () => {
       src="/images/logo-auth.svg"
       alt="logo"
       class="logo" >
-    <p class="logo-subtitle">Личный кабинет специалиста</p>
+    <p class="logo-subtitle">{{ $t('auth.sign_in.specialist_cabinet') }}</p>
     <div class="mt-8 space-y-6">
       <div class="form-item">
         <img
@@ -122,7 +122,7 @@ const signUp = async () => {
           id="first_name"
           v-model="first_name"
           type="text"
-          placeholder="Имя"
+          :placeholder="$t('auth.sign_up.first_name_placeholder')"
           class="form-item__input"
         >
       </div>
@@ -134,7 +134,7 @@ const signUp = async () => {
           id="last_name"
           v-model="last_name"
           type="text"
-          placeholder="Фамилия"
+          :placeholder="$t('auth.sign_up.last_name_placeholder')"
           class="form-item__input"
         >
       </div>
@@ -146,7 +146,7 @@ const signUp = async () => {
           id="middle_name"
           v-model="middle_name"
           type="text"
-          placeholder="Отчество"
+          :placeholder="$t('auth.sign_up.middle_name_placeholder')"
           class="form-item__input"
         >
       </div>
@@ -158,7 +158,7 @@ const signUp = async () => {
           id="email"
           v-model="email"
           type="email"
-          placeholder="Email"
+          :placeholder="$t('auth.sign_up.email_placeholder')"
           class="form-item__input"
         >
       </div>
@@ -170,7 +170,7 @@ const signUp = async () => {
           v-model="phone"
           v-mask="'+7 (###) ###-##-##'"
           type="tel"
-          placeholder="Введите номер телефона"
+          :placeholder="$t('auth.sign_up.phone_placeholder')"
           class="form-item__input"
         >
       </div>
@@ -203,12 +203,12 @@ const signUp = async () => {
         type="submit"
         class="submit"
         @click="signUp">
-        Зарегистрироваться
+        {{ $t('auth.sign_up.submit') }}
       </button>
       <button
         class="register"
         @click.prevent="userActions('login')">
-        Уже есть аккаунт? <span>Войти</span>
+        {{ $t('auth.sign_up.have_account') }} <span>{{ $t('auth.login') }}</span>
       </button>
     </div>
   </div>

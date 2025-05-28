@@ -19,6 +19,8 @@ const selectedAppointment = ref(null)
 
 const appointments = ref([])
 
+const ITEMS_PER_PAGE = 20
+
 const params = computed(() => {
   const isClient = userStore.user.role === 'client'
   const idKey = isClient ? 'client_id' : 'specialist_id'
@@ -28,8 +30,8 @@ const params = computed(() => {
   return {
     [idKey]: idValue,
     status: filterState.value ? null : 'canceled',
-    limit: 1,
-    page: currentPage.value
+    limit: ITEMS_PER_PAGE,
+    offset: (currentPage.value - 1) * ITEMS_PER_PAGE
   }
 })
 

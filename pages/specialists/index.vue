@@ -7,6 +7,7 @@ import Pagination from '~/components/layout/pagination.vue'
 const router = useRouter()
 const route = useRoute()
 const store = useMainStore()
+const localPath = useLocalePath()
 
 const searchQuery = ref('')
 const suggestions = ref(store.getSpecializationsList || [])
@@ -188,7 +189,7 @@ watchEffect(async () => {
           :key="specialisti.id"
           class="specialist__list-item">
           <nuxt-link
-            :to="`/specialists/${specialisti.id}`"
+            :to="localPath(`/specialists/${specialisti.id}`)"
             class="specialist__list-item__left">
             <div class="specialist__list-avatar">
               <img
@@ -258,8 +259,8 @@ watchEffect(async () => {
           </div>
         </div>
         <Pagination
-          :current-page="currentPage"
-          :total-pages="totalPages" />
+          :current-page="1"
+          :total-pages="1" />
       </div>
     </main>
   </NuxtLayout>
@@ -379,6 +380,12 @@ watchEffect(async () => {
       object-fit: cover;
       border-radius: 20px;
       overflow: hidden;
+
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
     }
 
     &-shedule {

@@ -78,15 +78,15 @@ function formatDate(dateString) {
           <div class="date">{{ formatDate(review.created_at) }}</div>
         </div>
         <div class="reviews-bullet">
-          <div v-if="review.service_rating">Обслуживание: {{ review.service_rating }}</div>
-          <div v-if="review.meeting_efficiency">Эффективность встречи: {{ review.meeting_efficiency }}</div>
-          <div v-if="review.professionalism">Профессионализм: {{ review.professionalism }}</div>
-          <div v-if="review.price_quality">Цена/Качество: {{ review.price_quality }}</div>
-          <div v-if="review.cleanliness">Чистота: {{ review.cleanliness }}</div>
-          <div v-if="review.attentiveness">Внимательность: {{ review.attentiveness }}</div>
-          <div v-if="review.specialist_experience">Опыт специалиста: {{ review.specialist_experience }}</div>
-          <div v-if="review.grammar">Грамотность: {{ review.grammar }}</div>
-          <div v-if="review.is_recommended" class="recommended">Рекомендует</div>
+          <div v-if="review.service_rating">{{ $t('reviews.service_rating') }}: {{ review.service_rating }}</div>
+          <div v-if="review.meeting_efficiency">{{ $t('reviews.meeting_efficiency') }}: {{ review.meeting_efficiency }}</div>
+          <div v-if="review.professionalism">{{ $t('reviews.professionalism') }}: {{ review.professionalism }}</div>
+          <div v-if="review.price_quality">{{ $t('reviews.price_quality') }}: {{ review.price_quality }}</div>
+          <div v-if="review.cleanliness">{{ $t('reviews.cleanliness') }}: {{ review.cleanliness }}</div>
+          <div v-if="review.attentiveness">{{ $t('reviews.attentiveness') }}: {{ review.attentiveness }}</div>
+          <div v-if="review.specialist_experience">{{ $t('reviews.specialist_experience') }}: {{ review.specialist_experience }}</div>
+          <div v-if="review.grammar">{{ $t('reviews.grammar') }}: {{ review.grammar }}</div>
+          <div v-if="review.is_recommended" class="recommended">{{ $t('reviews.recommend') }}</div>
         </div>
         <div class="reviews-text">
           {{ review.text }}
@@ -97,8 +97,8 @@ function formatDate(dateString) {
           v-if="review.reply_id"
           class="reviews-reply-btn"
           @click="viewReply(review.id)">
-          {{ showingReplies[review.id] ? 'Скрыть ответ' : 'Посмотреть ответ' }}
-          <span v-if="loadingReplies[review.id]"> загрузка...</span>
+          {{ showingReplies[review.id] ? $t('reviews.hide_reply') : $t('reviews.show_reply') }}
+          <span v-if="loadingReplies[review.id]">{{ $t('reviews.loading_reply') }}</span>
         </button>
 
         <!-- Reply section -->
@@ -106,7 +106,7 @@ function formatDate(dateString) {
           v-if="showingReplies[review.id] && replies[review.id]"
           class="reviews-send">
           <div class="flex justify-between items-center mb-4">
-            <h4>Ответ специалиста:</h4>
+            <h4>{{ $t('reviews.specialist_reply') }}:</h4>
             <div class="reviews-date" v-if="replies[review.id]">
               {{ formatDate(replies[review.id].created_at) }}
             </div>
@@ -123,7 +123,7 @@ function formatDate(dateString) {
             v-if="replies[review.id] && replies[review.id].text && replies[review.id].text.length > 100"
             class="reviews-send__btn"
             @click="toggleExpand(review.id)">
-            {{ expandedReviews[review.id] ? 'Свернуть' : 'Развернуть' }}
+            {{ expandedReviews[review.id] ? $t('reviews.collapse') : $t('reviews.expand') }}
           </button>
         </div>
       </div>
@@ -312,6 +312,49 @@ function formatDate(dateString) {
     font-size: 11.44px;
     line-height: 16px;
     color: #6B7280;
+  }
+}
+
+@media (max-width: 610px) {
+  .specialist__list-item__left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    * {
+      width: fit-content;
+      margin: 5px auto;
+    }
+  }
+  .specialist__list-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      margin: 0;
+    }
+  }
+  .specialist__list-shedule {
+    margin-top: 30px;
+  }
+  .profile__content {
+    padding: 20px 10px;
+  }
+  .profile__tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    button {
+      height: initial;
+    }
+  }
+  .reviews-avatar {
+    display: none !important;
   }
 }
 </style>

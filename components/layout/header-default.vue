@@ -1,9 +1,19 @@
 <script setup>
 import { useAuthStore } from '~/store/useAuthStore'
+import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 
 const menuState = ref(false)
 const burgerPath = ['/icons/cabinet/burger.svg', '/icons/cabinet/close-burger.svg']
 const authStore = useAuthStore()
+const { locale, locales, setLocale } = useI18n()
+const localPath = useLocalePath()
+const language = computed({
+  get: () => locale.value,
+  set: (value) => {
+    setLocale(value)
+  }
+});
 
 onMounted(() => {
   authStore.initialize()
@@ -13,46 +23,50 @@ onMounted(() => {
 <template>
   <header class="header header-desktop">
     <div class="header__wrapper">
-      <nuxt-link to="/">
+      <nuxt-link :to="localPath('/')">
         <img
           src="/images/logo-header.svg"
           alt="logo">
       </nuxt-link>
       <div class="header__routes">
         <nuxt-link
-          to="/specialists?type=lawyer"
+          :to="localPath('/specialists?type=lawyer')"
           class="font-montserrat font-medium text-normal"
           :class="{ active: $route.query.type === 'lawyers' }">
-          ЮРИСТЫ
+          {{ $t('navigation.lawyers') }}
         </nuxt-link>
         <nuxt-link
-          to="/specialists?type=psychologist"
+          :to="localPath('/specialists?type=psychologist')"
           class="font-montserrat font-medium text-normal"
           :class="{ active: $route.query.type === 'psychologists' }">
-          ПСИХОЛОГИ
+          {{ $t('navigation.psychologists') }}
         </nuxt-link>
       </div>
       <div class="header__nav">
-        <select>
-          <option value="ru">Рус</option>
-          <option value="ru">Каз</option>
+        <select v-model="language">
+          <option 
+            v-for="item of locales" 
+            :key="item" 
+            :value="item.code">
+            {{ item.name }}
+          </option>
         </select>
         
         <template v-if="!authStore.user">
           <nuxt-link
-            to="/auth?type=specialist"
+            :to="localPath('/auth?type=specialist')"
             class="flex gap-[12px] items-center justify-center px-6 font-montserrat text-normal font-medium rounded-[44px] border border-[EBEBEB] h-[50px] min-w-fit w-[100%]"
           >
-            Войти как специалист
+            {{ $t('auth.login_as_specialist') }}
             <img
               src="/icons/main/arrow-transparent.svg"
               alt="arrow">
           </nuxt-link>
           <nuxt-link
-            to="/auth?type=client"
+            :to="localPath('/auth?type=client')"
             class="flex gap-[12px] items-center justify-center font-montserrat text-normal font-medium rounded-[44px] h-[50px] min-w-fit px-6 w-[100%] bg-[#B3DD62]"
           >
-            Войти
+            {{ $t('auth.login') }}
             <img
               src="/icons/main/arrow-transparent.svg"
               alt="arrow">
@@ -61,10 +75,10 @@ onMounted(() => {
         
         <template v-else>
           <nuxt-link
-            to="/cabinet/profile"
+            :to="localPath('/cabinet/profile')"
             class="flex gap-[12px] items-center justify-center font-montserrat text-normal font-medium rounded-[44px] h-[50px] max-w-[260px] px-6 w-[100%] bg-[#B3DD62]"
           >
-            Личный кабинет
+            {{ $t('navigation.cabinet') }}
             <img
               src="/icons/main/arrow-transparent.svg"
               alt="arrow">
@@ -74,15 +88,19 @@ onMounted(() => {
     </div>
   </header>
   <header class="header-mobile">
-    <nuxt-link to="/">
+    <nuxt-link :to="localPath('/')">
       <img
         src="/images/logo-mobile-cabinet.svg"
         alt="logo">
     </nuxt-link>
     <div class="flex items-center gap-[16px]">
-      <select class="text-xs outline-none">
-        <option value="ru">Рус</option>
-        <option value="ru">Каз</option>
+      <select v-model="language">
+        <option 
+          v-for="item of locales" 
+          :key="item" 
+          :value="item.code">
+          {{ item.name }}
+        </option>
       </select>
       <button @click="menuState = !menuState">
         <img
@@ -98,10 +116,10 @@ onMounted(() => {
           class="sidebar__item"
           :class="{ active: $route.path === '/cabinet/profile'}">
           <nuxt-link
-            to="/specialists?type=lawyer"
+            :to="localPath('/specialists?type=lawyer')"
             class="font-montserrat font-medium text-normal"
             :class="{ active: $route.query.type === 'lawyers' }">
-            ЮРИСТЫ
+            {{ $t('navigation.lawyers') }}
           </nuxt-link>
           <img
             src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -111,10 +129,10 @@ onMounted(() => {
           class="sidebar__item"
           :class="{ active: $route.path === '/cabinet/history' }">
           <nuxt-link
-            to="/specialists?type=psycholog"
+            :to="localPath('/specialists?type=psychologist')"
             class="font-montserrat font-medium text-normal"
             :class="{ active: $route.query.type === 'psychologists' }">
-            ПСИХОЛОГИ
+            {{ $t('navigation.psychologists') }}
           </nuxt-link>
           <img
             src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -126,9 +144,9 @@ onMounted(() => {
             class="sidebar__item"
             :class="{ active: $route.path === '/cabinet/reviews' }">
             <nuxt-link
-              to="/auth?type=specialist"
+              :to="localPath('/auth?type=specialist')"
               class="font-montserrat font-medium text-normal min-w-fit">
-              ВОЙТИ КАК СПЕЦИАЛИСТ
+              {{ $t('auth.login_as_specialist') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -138,9 +156,9 @@ onMounted(() => {
             class="sidebar__item"
             :class="{ active: $route.path === '/cabinet/reviews' }">
             <nuxt-link
-              to="/auth?type=client"
+              :to="localPath('/auth?type=client')"
               class="font-montserrat font-medium text-normal">
-              ВОЙТИ КАК КЛИЕНТ
+              {{ $t('auth.login_as_client') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -153,9 +171,9 @@ onMounted(() => {
             class="sidebar__item"
             :class="{ active: $route.path === '/cabinet/profile' }">
             <nuxt-link
-              to="/cabinet/profile"
+              :to="localPath('/cabinet/profile')"
               class="font-montserrat font-medium text-normal">
-              ЛИЧНЫЙ КАБИНЕТ
+              {{ $t('navigation.cabinet') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -163,7 +181,7 @@ onMounted(() => {
           </li>
           <li class="sidebar__item exit">
             <a href="#" @click.prevent="authStore.logout()">
-              Выйти
+              {{ $t('auth.logout') }}
             </a>
           </li>
         </template>
