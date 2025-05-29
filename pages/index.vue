@@ -39,9 +39,9 @@ const localPath = useLocalePath()
             </nuxt-link>
           </div>
         </div>
-        <div class="main-right">
+        <div class="main-right max-w-[530px]">
           <img
-            src="/images/main.webp"
+            src="/images/main.jpg"
             alt="main image"
             class="w-full rounded-[45px] shadow-lg">
         </div>
@@ -70,7 +70,7 @@ const localPath = useLocalePath()
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding-top: 50px;
+  padding-top: 20px;
 
   &-left {
     max-width: 706px;
@@ -183,7 +183,7 @@ const localPath = useLocalePath()
   .main-page {
     background-image:
     linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
-    url('/images/main.webp');
+    url('/images/main.jpg');
     background-size: cover;
     background-position: center;
   }

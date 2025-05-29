@@ -56,7 +56,14 @@ function handleAppointmentClick() {
   if (authStore.user && authStore.user !== false) {
     recordModal.value = true
   } else {
-    toast.error($t('errors.auth_required'))
+    toast.error('Можете записаться только после авторизации', {
+      position: 'top-right',
+      timeout: 3000,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined
+    })
   }
 }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUpdated, watchEffect } from 'vue'
+import { ref, onMounted, watchEffect, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMainStore } from '~/store/useMainStore'
 import Pagination from '~/components/layout/pagination.vue'
@@ -11,8 +11,9 @@ const localPath = useLocalePath()
 
 const searchQuery = ref('')
 const suggestions = ref(store.getSpecializationsList || [])
-const currentPage = ref(6);
-const totalPages = ref(250);
+const currentPage = ref(Number(route.query.page) || 1)
+const totalPages = ref(1)
+const ITEMS_PER_PAGE = 20
 
 const bulletSpecializations = ref(store.getSpecializationsBulletList)
 const specialist = ref(store.getSpecialistsList)
@@ -78,7 +79,10 @@ async function getSpecializationsBullet(params) {
 }
 
 async function getSpecialists(params) {
-  await store.getSpecialists(params)
+  const response = await store.getSpecialists(params)
+  if (response && response.total_pages) {
+    totalPages.value = response.total_pages
+  }
 }
 
 function formatLocalDate(d) {
@@ -104,6 +108,8 @@ async function loadInitialData(params = {}) {
     type: route.query.type || 'lawyers',
     specialization_id: route.query.specialization_id,
     date: new Date().toLocaleDateString('en-CA'),
+    limit: ITEMS_PER_PAGE,
+    offset: (currentPage.value - 1) * ITEMS_PER_PAGE,
     ...params
   }
   
@@ -125,6 +131,17 @@ async function loadInitialData(params = {}) {
     selected_date: new Date().toLocaleDateString('en-CA')
   }))
 }
+
+// Следим за изменениями страницы
+watch(currentPage, () => {
+  router.push({
+    query: {
+      ...route.query,
+      page: currentPage.value
+    }
+  })
+  loadInitialData()
+})
 
 onMounted(async () => {
   await loadInitialData()
@@ -258,9 +275,10 @@ watchEffect(async () => {
             </div>
           </div>
         </div>
-        <Pagination
-          :current-page="1"
-          :total-pages="1" />
+        <Pagination 
+          v-model:currentPage="currentPage"
+          :total-pages="totalPages"
+          :maxPagesToShow="5" />
       </div>
     </main>
   </NuxtLayout>

@@ -30,6 +30,21 @@ export const useMainStore = defineStore('main', () => {
     return specialists
   })
 
+  const checkPay = async (id) => {
+    try {
+      const { data } = await axiosWithAuth.get(`/appointments/check-pay?specialist_id=${id}`)
+      
+      if (data.status === !'success') {
+        toast.error('Произошла ошибка')
+      } else {
+        return data.data
+      }
+    } catch(e) {
+      const errorMessage = e.response.data.message || 'Произошла ошибка'
+      toast.error(errorMessage)
+    }
+  }
+
   //actions
   const getSpecialists = async(params) => {
     try {
@@ -268,6 +283,7 @@ export const useMainStore = defineStore('main', () => {
     getReplyById,
     getSpecializationsList,
     getSpecializationsBulletList,
-    getSpecialistsList
+    getSpecialistsList,
+    checkPay
   }
 })

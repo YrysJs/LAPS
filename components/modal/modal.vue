@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useMainStore } from '~/store/useMainStore'
 import { useUserStore } from '~/store/useUserStore'
 import { useI18n } from 'vue-i18n'
@@ -25,12 +25,19 @@ const free_slots = computed(() => {
   return mainStore.specialistFreeSlots?.free_slots || []
 })
 
+const consultation_type = ref(null)
+
+onMounted(async () => {
+  const payData = await mainStore.checkPay(route.params.id)
+  consultation_type.value = payData.consultation_type
+})
+
 const recordData = reactive({
   full_name:              `${userStore.user.last_name} ${userStore.user.first_name} ${userStore.user.middle_name}`,
   phone_number:           userStore.user.phone,
   appointment_date:       selected_date.value,
   communication_method:   'phone',
-  consultation_type:      'primary',
+  consultation_type:      '',
   specialist_id:          specialist_info.value.id,
   specialization_id:      specialist_info.value.specialization_id
 })
@@ -59,9 +66,9 @@ async function createAppointment() {
   const data = {
     appointment_date: new Date(recordData.appointment_date.replace(' — ', 'T')).toISOString().replace('.000', ''),
     communication_method: recordData.communication_method,
-    consultation_type: recordData.consultation_type,
-    specialist_id:          specialist_info.value.id,
-    specialization_id:      specialist_info.value.specialization_id
+    consultation_type: consultation_type.value,
+    specialist_id: specialist_info.value.id,
+    specialization_id: specialist_info.value.specialization_id
   }
   console.log(data);
   
