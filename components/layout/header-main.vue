@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 
 const menuState = ref(false)
-const burgerPath = ['/icons//burger-ff.svg', '/icons/cabinet/close-burger.svg']
+const burgerPath = ['/icons/burger-ff.svg', '/icons/cabinet/close-burger.svg']
 const authStore = useAuthStore()
 const localPath = useLocalePath()
 const { locale, locales, setLocale } = useI18n()
@@ -107,12 +107,13 @@ onMounted(() => {
         </option>
       </select>
       <button
+        class="burger-button"
         :class="{'active-menu': menuState}"
         @click="menuState = !menuState"
       >
-        <img
+        <NuxtImg
           :src="menuState ? burgerPath[1] : burgerPath[0]"
-          alt="menu button mobile">
+          alt="menu button mobile" />
       </button>
     </div>
     <nav
@@ -201,6 +202,17 @@ onMounted(() => {
 select {
   background: transparent;
 }
+
+.burger-button {
+  width: 24px;
+  height: 24px;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
 .header {
   padding: 12px 20px;
   backdrop-filter: blur(30px);
