@@ -158,12 +158,12 @@ watchEffect(async () => {
 <template>
   <NuxtLayout name="default">
     <main class="specialist">
-      <h1>Записаться к специалисту</h1>
+      <h1>{{ $t('specialists.title') }}</h1>
       <div class="specialist__search">
         <input 
           v-model="searchQuery" 
           type="search" 
-          placeholder="Введите специализацию" 
+          :placeholder="$t('specialists.search_placeholder')" 
           @input="fetchSpecializations" >
     
         <ul v-if="suggestions.length > 0">
@@ -197,7 +197,7 @@ watchEffect(async () => {
           v-if="route.query.specialization_id" 
           class="reset-button"
           @click="resetSpecialization">
-          Сбросить фильтр
+          {{ $t('specialists.reset_filter') }}
         </button>
       </div>
       <div class="specialist__list">
@@ -216,34 +216,34 @@ watchEffect(async () => {
             <div class="specialist__list-info">
               <div class="specialist__list-info-top">
                 <div class="specialist__list-info__rating">
-                  <span>Рейтинг</span> <span>&#9733; {{ specialisti.rating }}</span>
+                  <span>{{ $t('specialists.rating') }}</span> <span>&#9733; {{ specialisti.rating }}</span>
                 </div>
                 <div class="specialist__list-info__reviews">
                   <img
                     src="/icons/comment-blue.svg"
                     alt="comment-icon">
-                  <span>{{ specialisti.reviews_count }} отзывов</span>
+                  <span>{{ specialisti.reviews_count }} {{ $t('specialists.reviews_count') }}</span>
                 </div>
               </div>
           
               <div class="specialist__list-info-main">
                 <div class="specialist__list-info__main-name">
-                  {{ specialisti.user.last_name }} {{  specialisti.user.first_name }} {{ specialisti.user.middle_name }} • Стаж {{ specialisti.experience_years }} лет
+                  {{ specialisti.user.last_name }} {{  specialisti.user.first_name }} {{ specialisti.user.middle_name }} • {{ $t('specialists.experience_years') }} {{ specialisti.experience_years }} {{ $t('specialists.years') }}
                 </div>
                 <div class="specialist__list-info__main-departure">
-                  {{ specialisti.specialization }} • Стаж {{ specialisti.experience_years }} лет
+                  {{ specialisti.specialization }} • {{ $t('specialists.experience_years') }} {{ specialisti.experience_years }} {{ $t('specialists.years') }}
                 </div>
               </div>
 
               <div class="specialist__list-info-bottom">
                 <div class="specialist__list-info__price-first">
-                  <h4>Первичный приём</h4>
-                  <p>от {{ specialisti.primary_consult_price }} ₸</p>
+                  <h4>{{ $t('specialists.primary_appointment') }}</h4>
+                  <p>{{ $t('specialists.price_from') }} {{ specialisti.primary_consult_price }} ₸</p>
                 </div>
                 <div class="line"></div>
                 <div class="specialist__list-info__price-second">
-                  <h4>Вторичный приём</h4>
-                  <p>от {{ specialisti.secondary_consult_price }} ₸</p>
+                  <h4>{{ $t('specialists.secondary_appointment') }}</h4>
+                  <p>{{ $t('specialists.price_from') }} {{ specialisti.secondary_consult_price }} ₸</p>
                 </div>
               </div>
             </div>
@@ -264,7 +264,7 @@ watchEffect(async () => {
               mode="dateTime"
               @dayclick="({date}) => onDayClick(date, specialisti.id, specialisti)"/>
             <div class="specialist__list-shedule__worktime">
-              <p>Свободное время</p>
+              <p>{{ $t('specialists.available_time') }}</p>
               <div>
                 <button
                   v-for="(slot, slotIndex) of specialisti.free_slots"

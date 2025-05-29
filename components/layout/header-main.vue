@@ -153,7 +153,7 @@ onMounted(() => {
             <nuxt-link
               :to="localPath('/auth?type=specialist')"
               class="font-montserrat font-medium text-normal">
-              {{ $t('enter_as_specialist') }}
+              {{ $t('auth.login_as_specialist') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
@@ -165,7 +165,7 @@ onMounted(() => {
             <nuxt-link
               :to="localPath('/auth?type=client')"
               class="font-montserrat font-medium text-normal">
-              {{ $t('enter_as_client') }}
+              {{ $t('auth.login_as_client') }}
             </nuxt-link>
             <img
               src="/icons/cabinet/menu-mobile-arrow.svg"
