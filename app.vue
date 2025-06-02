@@ -11,4 +11,7 @@
 body {
   background: #F9FAFB;
 }
+.Vue-Toastification__toast-body::first-letter {
+  text-transform: uppercase;
+}
 </style>

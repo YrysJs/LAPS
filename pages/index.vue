@@ -159,8 +159,9 @@ const localPath = useLocalePath()
       margin-bottom: 0;
     }
     &-subtitle {
-      font-size: 10px;
+      font-size: 12px;
       margin-top: 8px;
+      font-weight: 400;
     }
 
     &-btn {
@@ -182,7 +183,7 @@ const localPath = useLocalePath()
   }
   .main-page {
     background-image:
-    linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
+    linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
     url('/images/main.jpg');
     background-size: cover;
     background-position: center;

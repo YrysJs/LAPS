@@ -46,7 +46,9 @@ onMounted(() => {
           </nuxt-link>
         </div>
         <div class="header__nav">
-          <select v-model="language">
+          <select
+            v-model="language"
+            class="text-[12px]">
             <option 
               v-for="item of locales" 
               :key="item" 
@@ -98,7 +100,9 @@ onMounted(() => {
         alt="logo">
     </nuxt-link>
     <div class="flex items-center gap-[16px]">
-      <select v-model="language">
+      <select
+        v-model="language"
+        class="text-[12px]">
         <option 
           v-for="item of locales" 
           :key="item" 
@@ -122,55 +126,51 @@ onMounted(() => {
       <ul class="sidebar__list">
         <li
           class="sidebar__item"
-          :class="{ active: $route.path === '/cabinet/profile'}">
+          :class="{ active: $route.query.type === 'lawyers' }">
           <nuxt-link
             :to="localPath('/specialists?type=lawyer')"
-            class="font-montserrat font-medium text-normal"
-            :class="{ active: $route.query.type === 'lawyers' }">
+            class="sidebar__link font-montserrat font-medium text-normal">
             {{ $t('navigation.lawyers') }}
+            <img
+              src="/icons/cabinet/menu-mobile-arrow.svg"
+              alt="menu arrow">
           </nuxt-link>
-          <img
-            src="/icons/cabinet/menu-mobile-arrow.svg"
-            alt="menu arrow">
         </li>
         <li
           class="sidebar__item"
-          :class="{ active: $route.path === '/cabinet/history' }">
+          :class="{ active: $route.query.type === 'psychologists' }">
           <nuxt-link
             :to="localPath('/specialists?type=psychologist')"
-            class="font-montserrat font-medium text-normal"
-            :class="{ active: $route.query.type === 'psychologists' }">
+            class="sidebar__link font-montserrat font-medium text-normal">
             {{ $t('navigation.psychologists') }}
+            <img
+              src="/icons/cabinet/menu-mobile-arrow.svg"
+              alt="menu arrow">
           </nuxt-link>
-          <img
-            src="/icons/cabinet/menu-mobile-arrow.svg"
-            alt="menu arrow">
         </li>
-        
+
         <template v-if="!authStore.user">
           <li
-            class="sidebar__item"
-            :class="{ active: $route.path === '/cabinet/reviews' }">
+            class="sidebar__item">
             <nuxt-link
               :to="localPath('/auth?type=specialist')"
-              class="font-montserrat font-medium text-normal">
+              class="sidebar__link font-montserrat font-medium text-normal">
               {{ $t('auth.login_as_specialist') }}
+              <img
+                src="/icons/cabinet/menu-mobile-arrow.svg"
+                alt="menu arrow">
             </nuxt-link>
-            <img
-              src="/icons/cabinet/menu-mobile-arrow.svg"
-              alt="menu arrow">
           </li>
           <li
-            class="sidebar__item"
-            :class="{ active: $route.path === '/cabinet/reviews' }">
+            class="sidebar__item">
             <nuxt-link
               :to="localPath('/auth?type=client')"
-              class="font-montserrat font-medium text-normal">
+              class="sidebar__link font-montserrat font-medium text-normal">
               {{ $t('auth.login_as_client') }}
+              <img
+                src="/icons/cabinet/menu-mobile-arrow.svg"
+                alt="menu arrow">
             </nuxt-link>
-            <img
-              src="/icons/cabinet/menu-mobile-arrow.svg"
-              alt="menu arrow">
           </li>
         </template>
         
@@ -182,13 +182,16 @@ onMounted(() => {
               :to="localPath('/cabinet/profile')"
               class="font-montserrat font-medium text-normal">
               {{ $t('navigation.cabinet') }}
+              <img
+                src="/icons/cabinet/menu-mobile-arrow.svg"
+                alt="menu arrow">
             </nuxt-link>
-            <img
-              src="/icons/cabinet/menu-mobile-arrow.svg"
-              alt="menu arrow">
+            
           </li>
           <li class="sidebar__item exit">
-            <a href="#" @click.prevent="authStore.logout()">
+            <a
+              href="#"
+              @click.prevent="authStore.logout()">
               {{ $t('auth.logout') }}
             </a>
           </li>
@@ -277,7 +280,7 @@ select {
     }
 
     select {
-      width: 50px;
+      width: 40px;
       color: #fff;
 
       option {
@@ -304,9 +307,11 @@ select {
   z-index: 1;
 }
 .sidebar__item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
   font-family: 'Montserrat', sans-serif;
   font-weight: 400;

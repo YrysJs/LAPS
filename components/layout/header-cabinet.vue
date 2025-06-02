@@ -35,7 +35,9 @@ const specialistType = computed(() => {
           src=""
           alt="">
       </div>
-      <select v-model="language">
+      <select
+        v-model="language"
+        class="text-[12px]">
         <option 
           v-for="item of locales" 
           :key="item" 
@@ -61,7 +63,9 @@ const specialistType = computed(() => {
           alt="logo">
       </nuxt-link>
       <div class="flex items-center gap-[16px]">
-        <select v-model="language">
+        <select
+          v-model="language"
+          class="text-[12px]">
           <option 
             v-for="item of locales" 
             :key="item" 
