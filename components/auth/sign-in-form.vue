@@ -1,6 +1,7 @@
 <script setup>
 import { useAuthStore } from '~/store/useAuthStore';
 import { useToast } from 'vue-toastification/dist/index.mjs';
+import { useI18n } from 'vue-i18n';
 import { setCookie } from '~/utlis/cookie';
 
 
@@ -8,9 +9,16 @@ const route = useRoute()
 const emit = defineEmits()
 const toast = useToast()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const phoneNumber = ref('')
 const password = ref('')
+const userType = ref('specialist')
+
+const userTypeOptions = [
+  { value: 'client', label: 'Клиент' },
+  { value: 'specialist', label: 'Специалист' }
+]
 
 const userActions = (type) => {
   if (type == 'reset') {
@@ -23,21 +31,38 @@ const userActions = (type) => {
 }
 
 const signIn = async () => {
-  if (phoneNumber.value.length && password.value.length) {
-    const userData = {
-      login: phoneNumber.value.replace(/[()\s-]/g, ''),
-      password: password.value
-    }
-    await authStore.auth(userData)
-    await authStore.setUserType(route.query.type)
-  } else {
-    toast.warning($t('errors.fill_required_fields'))
+  if (!phoneNumber.value.length || !password.value.length) {
+    toast.warning(t('errors.fill_required_fields'))
+    return
   }
+
+  const cleanPhone = phoneNumber.value.replace(/[()\s-]/g, '')
+  const phoneRegex = /^\+7\d{10}$/
+  
+  if (!phoneRegex.test(cleanPhone)) {
+    toast.error('Неверный формат номера телефона')
+    return
+  }
+
+  const userData = {
+    login: cleanPhone,
+    password: password.value
+  }
+  
+  setCookie('user_type', userType.value)
+  
+  await authStore.auth(userData)
+  await authStore.setUserType(userType.value)
 }
 
+watch(userType, (newType) => {
+  setCookie('user_type', newType)
+  authStore.setUserType(newType)
+})
+
 onMounted(() => {
-  setCookie('user_type', route.query.type)
-  authStore.setUserType(route.query.type)
+  setCookie('user_type', userType.value)
+  authStore.setUserType(userType.value)
 })
 </script>
 
@@ -49,11 +74,26 @@ onMounted(() => {
       class="logo">
     <p class="logo-subtitle">{{ $t('auth.sign_in.specialist_cabinet') }}</p>
     <div class="mt-8 space-y-6">
+      <div class="form-item">
+        <img
+          src="/icons/auth/stack-icon.svg"
+          alt="icon">
+        <select
+          v-model="userType"
+          class="form-item__input form-item__select">
+          <option
+            v-for="option in userTypeOptions"
+            :key="option.value"
+            :value="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
       <div
         class="form-item"
       >
         <img
-          src="/icons/auth/stack-icon.svg"
+          src="/icons/auth/phone.svg"
           alt="icon">
         <input
           v-model="phoneNumber"
@@ -64,7 +104,7 @@ onMounted(() => {
       </div>
       <div class="form-item">
         <img
-          src="/icons/auth/electro-icon.svg"
+          src="/icons/auth/secure.svg"
           alt="icon">
         <input
           id="password"
@@ -120,6 +160,15 @@ onMounted(() => {
       &:focus {
         outline: 2px solid #1F72EE;
       }
+    }
+
+    &__select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 20px;
+      cursor: pointer;
     }
 
     img {

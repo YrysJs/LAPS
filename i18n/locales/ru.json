@@ -79,8 +79,8 @@
   },
   "auth": {
     "login": "Войти",
-    "login_as_specialist": "Войти как специалист",
-    "login_as_client": "Войти как клиент",
+    "login_as_specialist": "Войти",
+    "login_as_client": "Войти",
     "logout": "Выйти",
     "sign_in": {
       "phone_placeholder": "Введите номер телефона",

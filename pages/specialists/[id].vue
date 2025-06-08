@@ -2,9 +2,11 @@
 import Info from '~/components/specialists/info.vue'
 import Reviews from '~/components/specialists/reviews.vue'
 import Modal from '~/components/modal/modal.vue'
+import SignInModal from '~/components/modal/sign-in-modal.vue'
 import Rating from '~/components/specialists/rating.vue'
 import { useMainStore } from '~/store/useMainStore'
 import { useAuthStore } from '~/store/useAuthStore'
+import { useUserStore } from '~/store/useUserStore'
 import { useToast } from 'vue-toastification/dist/index.mjs'
 
 //fn
@@ -12,6 +14,7 @@ const router = useRouter()
 const route = useRoute()
 const mainStore = useMainStore()
 const authStore = useAuthStore()
+const userStore = useUserStore()
 const toast = useToast()
 const specialist_info = computed(() => {
   return mainStore.specialistById
@@ -24,6 +27,7 @@ const selected_date = ref(new Date().toLocaleDateString('en-CA'))
 //data
 const activeTab = ref(0)
 const recordModal = ref(false)
+const signInModal = ref(false)
 
 //tab fn
 const tabSegment = [Info, Reviews]
@@ -56,15 +60,12 @@ function handleAppointmentClick() {
   if (authStore.user && authStore.user !== false) {
     recordModal.value = true
   } else {
-    toast.error('Можете записаться только после авторизации', {
-      position: 'top-right',
-      timeout: 3000,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined
-    })
+    signInModal.value = true
   }
+}
+
+function handleSignInAction(action) {
+  console.log('Sign in action:', action)
 }
 
 onMounted(async() => {
@@ -73,6 +74,10 @@ onMounted(async() => {
   await mainStore.getSpecialistsFreeSlots({specialist_id: route.params.id, date: selected_date.value})
   
   authStore.initialize()
+  
+  if (authStore.user && authStore.user !== false) {
+    await userStore.getUserInfo()
+  }
 })
 </script>
 
@@ -81,6 +86,10 @@ onMounted(async() => {
     <Modal
       v-if="recordModal"
       @close="data => recordModal = data"/>
+    <SignInModal
+      v-if="signInModal"
+      @close="signInModal = false"
+      @action="handleSignInAction"/>
     <div class="specialist">
       <div class="specialist__list">
         <div class="specialist__list-item">

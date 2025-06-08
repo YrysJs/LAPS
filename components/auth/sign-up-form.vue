@@ -2,12 +2,14 @@
 import { ref } from 'vue'
 import { useAuthStore } from '~/store/useAuthStore'
 import { useToast } from 'vue-toastification/dist/index.mjs'
+import { useI18n } from 'vue-i18n'
 import Select from '../ui/select.vue'
 
 const emit = defineEmits()
 const authStore = useAuthStore()
 const route = useRoute()
 const toast = useToast()
+const { t } = useI18n()
 
 const email = ref('')
 const first_name = ref('')
@@ -15,19 +17,35 @@ const last_name = ref('')
 const middle_name = ref('')
 const password = ref('')
 const phone = ref('')
-const role = ref(route.query.type)
+const userType = ref({
+  label: '',
+  value: ''
+})
+const role = ref('')
 const specialistType = ref({
   label: '',
   value: ''
 })
+
+const userTypeOptions = [
+  {
+    value: 'client',
+    label: 'Клиент'
+  },
+  {
+    value: 'specialist',
+    label: 'Специалист'
+  }
+]
+
 const selectValue = [
   {
     value: 'lawyer',
-    label: $t('specialists.lawyer')
+    label: t('specialists.lawyer')
   },
   {
     value: 'psychologist',
-    label: $t('specialists.psychologist')
+    label: t('specialists.psychologist')
   }
 ]
 
@@ -39,7 +57,7 @@ const userActions = (type) => {
 
 async function createSpecialistProfile(user_id, token) {
   const data = {
-    type: specialistType.value,
+    type: specialistType.value.value,
     user_id: user_id,
   }
   console.log(data);
@@ -61,24 +79,37 @@ const signUp = async () => {
     !password.value ||
     !phone.value
   ) {
-    toast.error($t('errors.fill_required_fields'))
+    toast.error(t('errors.fill_required_fields'))
+    return
+  }
+
+  if (userType.value && userType.value.value === 'specialist' && !specialistType.value.value) {
+    toast.error('Выберите специализацию')
+    return
+  }
+
+  const cleanPhone = phone.value.replace(/[()\s-]/g, '')
+  const phoneRegex = /^\+7\d{10}$/
+  
+  if (!phoneRegex.test(cleanPhone)) {
+    toast.error('Неверный формат номера телефона')
     return
   }
 
   if (!/\d/.test(password.value)) {
-    toast.error($t('errors.password_number'))
+    toast.error(t('errors.password_number'))
     return
   }
 
   const uppercaseCount = (password.value.match(/[A-Z]/g) || []).length
   if (uppercaseCount !== 1) {
-    toast.error($t('errors.password_uppercase'))
+    toast.error(t('errors.password_uppercase'))
     return
   }
 
   const symbolMatches = password.value.match(/[^A-Za-z0-9]/g)
   if (!symbolMatches || symbolMatches.length !== 1) {
-    toast.error($t('errors.password_symbol'))
+    toast.error(t('errors.password_symbol'))
     return
   }
 
@@ -88,18 +119,19 @@ const signUp = async () => {
     last_name: last_name.value,
     middle_name: middle_name.value,
     password: password.value,
-    phone: phone.value.replace(/[()\s-]/g, ''),
-    role: role.value
+    phone: cleanPhone,
+    role: userType.value
   }
+  console.log(userData);
 
   const res = await authStore.register(userData)
 
-  if (route.query.type !== 'client') {
+  if (userType.value && userType.value.value === 'specialist') {
     await createSpecialistProfile(res.data.id, res.data.access_token)
   }
 
-  if (route.query.type == 'client' && res.status) {
-    toast($t('success.registration_complete'))
+  if (res.status) {
+    toast(t('success.registration_complete'))
     emit('action', 'login')
   }
 }
@@ -114,6 +146,17 @@ const signUp = async () => {
       class="logo" >
     <p class="logo-subtitle">{{ $t('auth.sign_in.specialist_cabinet') }}</p>
     <div class="mt-8 space-y-6">
+      <div class="form-item form-item__select">
+        <img
+          src="/icons/auth/stack-icon.svg"
+          alt="icon" >
+        <Select
+          v-model="userType"
+          :options="userTypeOptions"
+          label-key="label"
+          value-key="value"
+          placeholder="Выберите тип пользователя"/>
+      </div>
       <div class="form-item">
         <img
           src="/icons/auth/stack-icon.svg"
@@ -164,7 +207,7 @@ const signUp = async () => {
       </div>
       <div class="form-item">
         <img
-          src="/icons/auth/stack-icon.svg"
+          src="/icons/auth/phone.svg"
           alt="icon" >
         <input
           v-model="phone"
@@ -176,7 +219,7 @@ const signUp = async () => {
       </div>
       <div class="form-item">
         <img
-          src="/icons/auth/electro-icon.svg"
+          src="/icons/auth/secure.svg"
           alt="icon" >
         <input
           id="password"
@@ -187,7 +230,7 @@ const signUp = async () => {
         >
       </div>
       <div
-        v-if="route.query.type !== 'client'"
+        v-if="userType && userType === 'specialist'"
         class="form-item form-item__select">
         <img
           src="/icons/auth/electro-icon.svg"

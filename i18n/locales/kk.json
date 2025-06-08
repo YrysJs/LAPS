@@ -79,8 +79,8 @@
   },
   "auth": {
     "login": "Кіру",
-    "login_as_specialist": "Маман ретінде кіру",
-    "login_as_client": "Клиент ретінде кіру",
+    "login_as_specialist": "Кіру",
+    "login_as_client": "Кіру",
     "logout": "Шығу",
     "sign_in": {
       "phone_placeholder": "Телефон нөірін енгізіңіз",

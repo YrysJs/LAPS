@@ -59,16 +59,7 @@ onMounted(() => {
           
           <template v-if="!authStore.user">
             <nuxt-link
-              :to="localPath('/auth?type=specialist')"
-              class="flex gap-[12px] items-center justify-center font-montserrat text-normal font-medium rounded-[44px] border border-[EBEBEB] h-[50px] px-6 min-w-fit w-[100%]"
-            >
-              {{ $t('auth.login_as_specialist') }}
-              <img
-                src="/icons/main/arrow-transparent.svg"
-                alt="arrow">
-            </nuxt-link>
-            <nuxt-link
-              :to="localPath('/auth?type=client')"
+              :to="localPath('/auth')"
               class="flex gap-[12px] px-6 items-center justify-center font-montserrat text-normal font-medium rounded-[44px] h-[50px] min-w-fit w-[100%] bg-[#B3DD62]"
             >
               {{ $t('auth.login_as_client') }}
@@ -153,18 +144,7 @@ onMounted(() => {
           <li
             class="sidebar__item">
             <nuxt-link
-              :to="localPath('/auth?type=specialist')"
-              class="sidebar__link font-montserrat font-medium text-normal">
-              {{ $t('auth.login_as_specialist') }}
-              <img
-                src="/icons/cabinet/menu-mobile-arrow.svg"
-                alt="menu arrow">
-            </nuxt-link>
-          </li>
-          <li
-            class="sidebar__item">
-            <nuxt-link
-              :to="localPath('/auth?type=client')"
+              :to="localPath('/auth')"
               class="sidebar__link font-montserrat font-medium text-normal">
               {{ $t('auth.login_as_client') }}
               <img
